@@ -1,0 +1,290 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        40
+      ],
+      "id": "9a1c0604-aa78-46d7-82bd-4a20281a7a09",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=article: \n{{ $('Hacker News1').item.json._highlightResult.title.value }}\ntags: {{ $('Hacker News1').item.json._tags }}\nauthor: {{ $('Hacker News1').item.json.author }}\ncomments: {{ $('Hacker News1').item.json.num_comments }}\nstoryid: {{ $('Hacker News1').item.json.story_id }} \n{{ $('Hacker News1').item.json.url }}\n\ncomments: {{ JSON.stringify($json.children)}}\n\n\n\n\nUse the hackernews article in the context and give me summery of it. Include technical info with explenation and context but be brief. Explain why you think it is popular. Include community conversation points summeries and sentiments. Add links to \"sources\" for comments related to it when doing so, make sure to use correct ids. eg: **Developers:** Excited to experiment with real-world use cases—automating batch renaming, npm scripts, and web scraping tasks ([1](https://news.ycombinator.com/item?id=x), [7](https://news.ycombinator.com/item?id=x), [8](https://news.ycombinator.com/item?id=x))\n\n**Users:** Excited to see how they can use the platform to automate their workflows ([1](https://news.ycombinator.com/item?id=x), [2](https://news.ycombinator.com/item?id=x), [3](https://news.ycombinator.com/item?id=x), [4](https://news.ycombinator.com/item?id=x)) If a comment is divisive add a note on your take on the matter. Use a lot of emojis to help parse information. \n\nif there is a simple example of usage or similar include at the bottom\n\nformat everything in github markdown flavor (not in codeblock)\n\ninclude link to article and link to hackernews page\n\noutput should be a json with content and title \n\ntell me if there is an issue with the context input\n\ntailor the whole thing to someone who is new to tech. Include links to google searches of relevent keywords and topics where relevant"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        180,
+        40
+      ],
+      "id": "8ecc391a-c689-4a22-889b-d882e2755032",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "IT6OSmvFphKtgz0V",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "yarden-zamir",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "news",
+          "mode": "list",
+          "cachedResultName": "news",
+          "cachedResultUrl": "https://github.com/Yarden-zamir/news"
+        },
+        "filePath": "={{ $json.message.content.title }}.md",
+        "fileContent": "={{ $json.message.content.content }}",
+        "commitMessage": "news"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        40
+      ],
+      "id": "a6baed9c-213c-40a6-8ac5-2072c01a8dca",
+      "name": "GitHub",
+      "webhookId": "55c918ec-af1f-4ad9-b86e-712d207ea33b",
+      "credentials": {
+        "githubApi": {
+          "id": "NmLwoe2czUl6jd5j",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "all",
+        "limit": 1,
+        "additionalFields": {
+          "tags": [
+            "front_page"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.hackerNews",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        40
+      ],
+      "id": "d87952e2-98c1-42ec-8cdb-6a6b5a8115d6",
+      "name": "Hacker News1"
+    },
+    {
+      "parameters": {
+        "url": "=https://hn.algolia.com/api/v1/items/{{ $json.story_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        40
+      ],
+      "id": "9b3b4b15-5873-4e8d-b342-c14a74bc756f",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        240
+      ],
+      "id": "05a77be2-f4e3-4cc5-8569-c0b50d5c9611",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "delete",
+        "owner": {
+          "__rl": true,
+          "value": "yarden-zamir",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "news",
+          "mode": "name"
+        },
+        "filePath": "latest.md",
+        "commitMessage": "clear latest"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        580,
+        200
+      ],
+      "id": "da6c394f-b910-4fa0-b163-501202797d6c",
+      "name": "GitHub1",
+      "webhookId": "3316791e-0228-48ab-90f2-7c869c858b57",
+      "credentials": {
+        "githubApi": {
+          "id": "NmLwoe2czUl6jd5j",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "yarden-zamir",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "news",
+          "mode": "list",
+          "cachedResultName": "news",
+          "cachedResultUrl": "https://github.com/Yarden-zamir/news"
+        },
+        "filePath": "=latest.md",
+        "fileContent": "={{ $json.message.content.content }}",
+        "commitMessage": "news"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        200
+      ],
+      "id": "09e4ed5b-ceea-4eac-80c1-499c7efec6fa",
+      "name": "GitHub2",
+      "webhookId": "55c918ec-af1f-4ad9-b86e-712d207ea33b",
+      "credentials": {
+        "githubApi": {
+          "id": "NmLwoe2czUl6jd5j",
+          "name": "GitHub account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Hacker News1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "GitHub1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hacker News1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Hacker News1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub1": {
+      "main": [
+        [
+          {
+            "node": "GitHub2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1bc53348-058f-43ba-9ff8-8c3dc6a6e9be",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f57059429da6a62f50f1695021aeca7d2f03ec40660cb04ac874405005cdff33"
+  },
+  "id": "OdoDWJ5c7y2FwaMo",
+  "tags": []
+}
