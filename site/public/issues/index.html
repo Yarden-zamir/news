@@ -199,6 +199,32 @@ footer p { margin: 0; }
 .missing { max-width: 40rem; margin: 3rem auto; }
 .missing h1 { font-size: 2rem; margin-top: 0.6rem; }
 .missing .stamp { justify-self: start; }
+
+/* Sync with the reader's changelorg. The page script fills the bar and adds the buttons after sign-in. */
+.sync-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.35rem 0.7rem; padding: 0.45rem 0.9rem;
+  font-size: 0.8rem; font-weight: 600; text-align: center; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.sync-bar[hidden] { display: none; }
+.sync-bar .sticker { font-size: 0.72rem; }
+.sync-bar .hint { color: var(--muted); }
+.sync-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.sync-btn { display: inline-flex; align-items: center; gap: 0.3rem; min-height: 2rem; padding: 0.1rem 0.6rem; font: inherit; font-size: 0.72rem;
+  font-weight: 800; cursor: pointer; color: var(--ink); background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.sync-btn:hover { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 0 var(--shadow-ink); }
+.sync-btn[aria-pressed="true"][data-field="dismissed"] { background: var(--green); color: #000000; }
+.sync-btn[aria-pressed="true"][data-field="saved"] { background: var(--yellow); color: #000000; }
+.sync-btn:disabled { cursor: progress; opacity: 0.6; }
+.pad > .sync-actions { margin-top: 0.2rem; }
+.box > .sync-actions { padding: 0 0.85rem 0.6rem; }
+.quote > .sync-actions { margin-top: 0.55rem; }
+.quote .sync-btn { color: #000000; }
+.ticker > .sync-actions { flex: none; align-items: center; flex-wrap: nowrap; padding: 0.3rem 0.6rem; border-left: var(--bw) solid var(--border); }
+/* A brief row has room for the signs only. The words stay for screen readers. */
+li > .sync-actions { flex: none; flex-wrap: nowrap; gap: 0.25rem; margin-left: auto; align-self: center; }
+li .sync-btn { min-width: 2rem; justify-content: center; padding: 0.1rem 0.3rem; }
+li .sync-btn span, .ticker .sync-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.is-viewed > :not(.pad, .sync-actions), .is-viewed > .pad > :not(.sync-actions) { opacity: 0.5; }
+a.entry-viewed::before { content: "✓ "; }
+a.entry-shelved::after { content: " ★"; }
 </style></head>
 <body><a class="skip" href="#main">Skip to the list</a><div class="page">
 <header class="card masthead" id="top"><div class="rule"><span class="label">Archive</span><span class="label">1 issue</span></div>
