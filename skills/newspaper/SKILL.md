@@ -188,6 +188,26 @@ Box kinds for `flow`:
  "items": [{"url": "…", "title": "…", "kind": "article", "source": "…", "published_at": "…", "headline": "…", "anchor": "…"}]}
 ```
 
+## Reader sync
+
+If the items file has `home`, readers can sign in to changelorg from the page. The page then shows and changes their own state.
+
+- Each block lists the items that it is based on in `data-entries`: the item URLs.
+  The blocks are the lead, side stories, cards, the quote, boxes, the release ticker and each In brief row.
+  A block without items, such as the numbers or the prolific chart, gets no buttons.
+- The page reads the reader's items of the issue window from `/changes`, and matches them by URL. Item ids differ per account.
+- A block shows as viewed when all of its items are dismissed, and as shelved when all of them are saved.
+  Its Viewed and Shelved buttons change every item of the block. Links of dismissed items get a ✓, and links of saved items get a ★.
+- The page reads the state again when the tab comes back, and every minute while it is open.
+- Sign-in and sign-out run on changelorg (`/auth/start?rd=<page>` and `/auth/sign_out?rd=<page>`). The site stores no data and sets no cookie.
+- If changelorg does not answer, the page shows no sync bar.
+
+The changelorg server must allow the site:
+
+- `CHANGELORG_CORS_ORIGINS` lists the origin of the site.
+- oauth2-proxy has `--whitelist-domain=<site host>`, so that sign-in can return to the page.
+- The site and changelorg share a registrable domain, such as `news.example.com` and `changelorg.example.com`. The session cookie is `SameSite=Lax`, so browsers do not send it from another site.
+
 ## Editorial rules
 
 - **Rank.** Put the most interesting story first. The page deals cards into columns in rank order.

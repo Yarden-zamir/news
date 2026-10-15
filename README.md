@@ -16,6 +16,10 @@ This repository holds the renderer, the agent skill, and the site with every iss
 
 Each story links to its source. Images load from the publishers' websites and credit them. The site sets no cookies.
 
+Readers can sign in to changelorg with GitHub from the page. The page then marks what they viewed and shelved in their own changelorg.
+Each block has buttons that mark its items as viewed or shelved. The changes go straight to changelorg.
+[`SKILL.md`](skills/newspaper/SKILL.md#reader-sync) describes how a block finds its items.
+
 ## Make your own paper
 
 You need [uv](https://docs.astral.sh/uv/), Node.js for the deploy, and an agent that reads skills, such as Claude Code.
@@ -67,6 +71,7 @@ The site is a Cloudflare Worker with static assets only. It runs no Worker code.
 - `not_found_handling` is `404-page`, so a missing page returns `public/404.html` with status 404.
 - `preview_urls` is off. The Worker has no preview URLs.
 - Cloudflare Web Analytics counts visits. Cloudflare adds its script at the edge. It sets no cookies.
+- Reader sync needs the changelorg deployment to allow this site: `https://news.yarden-zamir.com` in its CORS origins, and in the `--whitelist-domain` of its oauth2-proxy. The `compose.yml` of [changeLorg](https://github.com/Yarden-zamir/changeLorg) sets both.
 
 To deploy, run this from the repository root:
 

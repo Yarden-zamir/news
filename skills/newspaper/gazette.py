@@ -22,6 +22,7 @@ import json
 import shutil
 import sys
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, tzinfo
 from html.parser import HTMLParser
@@ -441,6 +442,13 @@ def a(item: Item, label: str, cls: str = "", note: str | None = None) -> str:
     return f'<a{klass} href="{e(item.url)}" title="{e(note or tip(item))}">{e(label)}</a>'
 
 
+def entries(items: Iterable[Item]) -> str:
+    """The data-entries attribute of a block: the URLs of the items that it is based on.
+    The page script finds the reader's own changelorg items by URL, because item ids differ per account."""
+    urls = list(dict.fromkeys(item.url for item in items if item.url))
+    return f' data-entries="{e(json.dumps(urls))}"' if urls else ""
+
+
 def clean_title(item: Item) -> str:
     """Release feeds often prefix titles with the repository name: 'uv - uv 0.13.0 ...'."""
     prefix, sep, rest = item.title.partition(" - ")
@@ -570,23 +578,24 @@ class Paper:
         return (f'<figure class="photo"><img src="{e(url)}" alt="{e(alt or "")}" loading="lazy" decoding="async" '
                 f'referrerpolicy="no-referrer"><figcaption>Image: {e(item.source)}</figcaption></figure>')
 
-    def also(self, story: Story, main: Item) -> str:
+    def extras(self, story: Story) -> list[Item]:
+        return [self.use(extra_id) for extra_id in story.also]
+
+    @staticmethod
+    def also(extras: list[Item], main: Item) -> str:
         """Extra sources of a story. Name the source, or a short title when the source repeats."""
-        parts = []
-        for extra_id in story.also:
-            item = self.use(extra_id)
-            parts.append(f' · {a(item, item.source if item.source != main.source else short_title(item))}')
-        return "".join(parts)
+        return "".join(f' · {a(item, item.source if item.source != main.source else short_title(item))}' for item in extras)
 
     def card(self, story: Story) -> str:
         item, story_anchor = self.story_use(story)
+        extras = self.extras(story)
         tag = f'<span class="sticker warn">{e(story.tag)}</span>' if story.tag else ""
         sticker, follows = self.development(story)
-        return f"""<article class="card story" id="{e(story_anchor)}">{self.figure(item, story.image, story.alt)}
+        return f"""<article class="card story" id="{e(story_anchor)}"{entries([item, *extras])}>{self.figure(item, story.image, story.alt)}
           <div class="pad"><div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{tag}{self.marks(item)}</div>
           <h3>{a(item, story.headline or clean_title(item))}</h3>
           {f'<p class="deck">{e(story.deck)}</p>' if story.deck else ""}{follows}
-          <p class="src">{e(item.source)}{self.also(story, item)}</p></div></article>"""
+          <p class="src">{e(item.source)}{self.also(extras, item)}</p></div></article>"""
 
     @staticmethod
     def box_head(box: Box) -> str:
@@ -602,40 +611,45 @@ class Paper:
                 f'<span class="bar" style="--w:{count / peak:.3f}"></span><b>{count}</b></li>'
                 for name, count in counts)
             return f'<section class="card box prolific">{self.box_head(box)}<ol>{rows}</ol></section>'
+        lines = [(line, self.use(line.item)) for line in box.rows]
         rows = "".join(
             f'<li><span class="{"sticker wait" if box.kind == "classifieds" else "label"}">{e(line.head)}</span> '
-            f'{a(self.use(line.item), line.text)}</li>'
-            for line in box.rows)
-        return f'<section class="card box {e(box.kind)}">{self.box_head(box)}<ul>{rows}</ul></section>'
+            f'{a(item, line.text)}</li>'
+            for line, item in lines)
+        return f'<section class="card box {e(box.kind)}"{entries(item for _, item in lines)}>{self.box_head(box)}<ul>{rows}</ul></section>'
 
     def lead(self, edition: Edition) -> str:
         story = edition.lead.story
         item, story_anchor = self.story_use(story)
+        extras = self.extras(story)
         self.leads.append({"section": edition.section, "headline": story.headline or clean_title(item), "anchor": story_anchor})
         sticker, follows = self.development(story)
-        return f"""<article class="card lead" id="{e(story_anchor)}">{self.figure(item, story.image, story.alt)}
+        return f"""<article class="card lead" id="{e(story_anchor)}"{entries([item, *extras])}>{self.figure(item, story.image, story.alt)}
           <div class="pad"><span class="stamp extra" title="The biggest story of the edition, as picked by the agent">Extra!</span>
           <div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{self.marks(item)}</div>
           <h3>{a(item, story.headline or clean_title(item))}</h3>
           {f'<p class="deck">{e(story.deck)}</p>' if story.deck else ""}{follows}<p class="body">{e(edition.lead.body)}</p>
-          <p class="jump">{a(item, "Continued at " + item.source + " →")}{self.also(story, item)}</p></div></article>"""
+          <p class="jump">{a(item, "Continued at " + item.source + " →")}{self.also(extras, item)}</p></div></article>"""
 
     def side(self, edition: Edition) -> str:
         parts = []
         for story in edition.side:
             item, story_anchor = self.story_use(story)
+            extras = self.extras(story)
             sticker, follows = self.development(story)
-            parts.append(f"""<article class="card side-story" id="{e(story_anchor)}"><div class="pad">
+            parts.append(f"""<article class="card side-story" id="{e(story_anchor)}"{entries([item, *extras])}><div class="pad">
               <div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{self.marks(item)}</div>
               <h3>{a(item, story.headline or clean_title(item))}</h3><p class="deck">{e(story.deck or "")}</p>{follows}
-              <p class="src">{e(item.source)}{self.also(story, item)}</p></div></article>""")
+              <p class="src">{e(item.source)}{self.also(extras, item)}</p></div></article>""")
         if edition.quote:
-            parts.append(f'<figure class="card quote"><blockquote>“{e(edition.quote.head)}”</blockquote>'
-                         f'<figcaption>{a(self.use(edition.quote.item), edition.quote.text)}</figcaption></figure>')
+            quoted = self.use(edition.quote.item)
+            parts.append(f'<figure class="card quote"{entries([quoted])}><blockquote>“{e(edition.quote.head)}”</blockquote>'
+                         f'<figcaption>{a(quoted, edition.quote.text)}</figcaption></figure>')
         if edition.dates:
-            rows = "".join(f'<li><span class="sticker wait">{e(line.head)}</span>{a(self.use(line.item), line.text)}</li>'
-                           for line in edition.dates)
-            parts.append(f'<section class="card box coming"><header><h2>Save the date</h2></header><ul>{rows}</ul></section>')
+            dated = [(line, self.use(line.item)) for line in edition.dates]
+            rows = "".join(f'<li><span class="sticker wait">{e(line.head)}</span>{a(item, line.text)}</li>' for line, item in dated)
+            parts.append(f'<section class="card box coming"{entries(item for _, item in dated)}><header><h2>Save the date</h2></header>'
+                         f'<ul>{rows}</ul></section>')
         return "".join(parts)
 
     def release_log(self, section: str) -> str:
@@ -652,20 +666,21 @@ class Paper:
         # A source that a story already covers stays out of the ticker. Releases never reach In brief.
         covered = {item.source for item in releases if item.id in self.used}
         self.used.update(item.id for item in releases)
-        cells, total = "", 0
+        cells, counted = "", []
         for name, items in sorted(groups.items(), key=lambda pair: (-len(pair[1]), pair[0].lower())):
             if name in covered:
                 continue
             latest = items[0]
             self.shown[latest.id] = (short_title(latest), None)
             project = name.removesuffix(" Releases")
-            total += len(items)
+            counted += items
             cells += (f'<li><span class="name">{e(project)}</span>'
                       f'{a(latest, short_title(latest), "ver", f"{project}: newest of {len(items)} releases in {self.days} days")}'
                       f'<span class="label">{len(items)}× · {latest.published_at:%d %b}</span></li>')
         if not cells:
             return ""
-        return f"""<section class="card ticker" aria-label="Also shipped"><span class="ticker-label">Also shipped · {total}</span>
+        # The ticker counts every release of a project, so it is based on all of them, not only on the newest one.
+        return f"""<section class="card ticker" aria-label="Also shipped"{entries(counted)}><span class="ticker-label">Also shipped · {len(counted)}</span>
           <ul>{cells}</ul></section>"""
 
     def brief(self, section: str, limit: int = 14) -> str:
@@ -684,7 +699,8 @@ class Paper:
             return ""
         for item in rest[:limit]:
             self.shown[item.id] = (clean_title(item), None)
-        rows = "".join(f'<li>{self.date(item)}<span>{a(item, clean_title(item))} '
+        # The page script deals each row into a column on its own, so each row is a block.
+        rows = "".join(f'<li{entries([item])}>{self.date(item)}<span>{a(item, clean_title(item))} '
                        f'<span class="label">{e(item.source)}</span>{self.marks(item)}</span></li>'
                        for item in rest[:limit])
         more = len(rest) - min(limit, len(rest))
@@ -701,7 +717,7 @@ class Paper:
             return ""
         rows = "".join(f'<li>{a(self.use(item.id), item.title)} <span class="label">{e(item.source)}</span>{self.marks(item)}</li>'
                        for item in items)
-        return (f'<section class="card box shelf"><header><h2>On your shelf</h2><p class="note">Saved for later. Later is now.</p>'
+        return (f'<section class="card box shelf"{entries(items)}><header><h2>On your shelf</h2><p class="note">Saved for later. Later is now.</p>'
                 f'</header><ul>{rows}</ul></section>')
 
     def get_desk(self, section: str, label: str = "Start a feed with these sources →") -> str:
@@ -785,6 +801,20 @@ class Paper:
         return {"issue": self.picks.issue, "page": self.picks.page, "date": f"{self.fetched:%Y-%m-%d}", "built": self.fetched.isoformat(),
                 "title": self.picks.title, "description": self.description(), "leads": self.leads, "items": items}
 
+    def sync_config(self) -> str:
+        """Settings of the page script that shows and changes the viewed and shelved state in the reader's changelorg.
+        Without a changelorg home in the items file, the page has no sync."""
+        if self.feed.home is None:
+            return ""
+        home = urlsplit(self.feed.home)
+        config = {"origin": f"{home.scheme}://{home.netloc}",
+                  "since": (self.fetched - timedelta(days=self.days + 1)).isoformat(),
+                  "until": (self.fetched + timedelta(days=1)).isoformat(),
+                  "shares": self.feed.shares}
+        # "<" never appears raw, so the JSON cannot close the script element.
+        data = json.dumps(config).replace("<", "\\u003c")
+        return f'<script type="application/json" id="changelorg-sync">{data}</script>'
+
     def description(self) -> str:
         if self.picks.description:
             return self.picks.description
@@ -823,13 +853,14 @@ class Paper:
   <p class="motto">{e(picks.motto)}</p>
   <div class="rule">{buttons}<span class="stamp big" title="Every story links to the item that it comes from">✓ Every story sourced</span></div>
 </header>
+<section class="sync-bar" data-sync aria-label="Your changelorg" aria-live="polite" hidden></section>
 <main id="main" class="page-main">
 {self.numbers(first)}
 {self.about()}
 {body}
 </main>
 {self.footer()}
-</div><script>{JS}</script></body></html>"""
+</div>{self.sync_config()}<script>{JS}</script></body></html>"""
 
 
 # ---------- site ----------
@@ -1097,6 +1128,32 @@ footer p { margin: 0; }
 .missing { max-width: 40rem; margin: 3rem auto; }
 .missing h1 { font-size: 2rem; margin-top: 0.6rem; }
 .missing .stamp { justify-self: start; }
+
+/* Sync with the reader's changelorg. The page script fills the bar and adds the buttons after sign-in. */
+.sync-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.35rem 0.7rem; padding: 0.45rem 0.9rem;
+  font-size: 0.8rem; font-weight: 600; text-align: center; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.sync-bar[hidden] { display: none; }
+.sync-bar .sticker { font-size: 0.72rem; }
+.sync-bar .hint { color: var(--muted); }
+.sync-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.sync-btn { display: inline-flex; align-items: center; gap: 0.3rem; min-height: 2rem; padding: 0.1rem 0.6rem; font: inherit; font-size: 0.72rem;
+  font-weight: 800; cursor: pointer; color: var(--ink); background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.sync-btn:hover { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 0 var(--shadow-ink); }
+.sync-btn[aria-pressed="true"][data-field="dismissed"] { background: var(--green); color: #000000; }
+.sync-btn[aria-pressed="true"][data-field="saved"] { background: var(--yellow); color: #000000; }
+.sync-btn:disabled { cursor: progress; opacity: 0.6; }
+.pad > .sync-actions { margin-top: 0.2rem; }
+.box > .sync-actions { padding: 0 0.85rem 0.6rem; }
+.quote > .sync-actions { margin-top: 0.55rem; }
+.quote .sync-btn { color: #000000; }
+.ticker > .sync-actions { flex: none; align-items: center; flex-wrap: nowrap; padding: 0.3rem 0.6rem; border-left: var(--bw) solid var(--border); }
+/* A brief row has room for the signs only. The words stay for screen readers. */
+li > .sync-actions { flex: none; flex-wrap: nowrap; gap: 0.25rem; margin-left: auto; align-self: center; }
+li .sync-btn { min-width: 2rem; justify-content: center; padding: 0.1rem 0.3rem; }
+li .sync-btn span, .ticker .sync-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.is-viewed > :not(.pad, .sync-actions), .is-viewed > .pad > :not(.sync-actions) { opacity: 0.5; }
+a.entry-viewed::before { content: "✓ "; }
+a.entry-shelved::after { content: " ★"; }
 """
 
 JS = """
@@ -1155,6 +1212,197 @@ for (const button of buttons) button.addEventListener("click", () => {
   }
   schedule();
 });
+
+// Sync with the reader's changelorg. Sign-in happens on changelorg, and its session cookie stays there; this site stores nothing.
+// A block is an element with data-entries: the URLs of the items that it is based on. Item ids differ per account,
+// so the script finds the reader's own items by URL. Buttons on a block change every item of the block.
+const syncConfig = document.getElementById("changelorg-sync");
+if (syncConfig) startSync(JSON.parse(syncConfig.textContent));
+
+function startSync({ origin, since, until, shares }) {
+  const bar = document.querySelector("[data-sync]");
+  const blocks = [...document.querySelectorAll("[data-entries]")].map((el) => ({ el, urls: JSON.parse(el.dataset.entries) }));
+  const pageUrls = new Set(blocks.flatMap((block) => block.urls));
+  const back = encodeURIComponent(location.href.split("#")[0]);
+  const BUTTONS = [["dismissed", "✓", "Viewed", "Mark as viewed in your changelorg"], ["saved", "★", "Shelved", "Put on your changelorg shelf"]];
+  let account = null;
+  let byUrl = new Map();
+  let loaded = false;
+  let writes = 0;
+
+  const el = (tag, props = {}, ...children) => {
+    const node = Object.assign(document.createElement(tag), props);
+    node.append(...children);
+    return node;
+  };
+
+  async function api(path, init = {}) {
+    const headers = { ...init.headers, ...(account ? { "X-Changelorg-Owner": account.id } : {}) };
+    const response = await fetch(origin + path, { ...init, headers, credentials: "include" });
+    if (!response.ok) throw Object.assign(new Error(`changelorg answered ${response.status}`), { status: response.status });
+    return response.json();
+  }
+
+  // A full page means a cut window, so split it in halves. Below one second, keep the cut page: the bar then shows less.
+  async function changes(start, end) {
+    const query = new URLSearchParams({ since: start.toISOString(), until: end.toISOString(), include_dismissed: "true", limit: "500" });
+    const rows = await api(`/changes?${query}`);
+    if (rows.length < 500 || end - start <= 1000) return rows;
+    const middle = new Date((start.getTime() + end.getTime()) / 2);
+    return [...(await changes(start, middle)), ...(await changes(middle, end))];
+  }
+
+  async function load() {
+    const next = new Map();
+    const ids = new Set();
+    for (const row of await changes(new Date(since), new Date(until))) {
+      if (!row.url || !pageUrls.has(row.url) || ids.has(row.id)) continue;
+      ids.add(row.id);
+      next.set(row.url, [...(next.get(row.url) ?? []), row]);
+    }
+    byUrl = next;
+    loaded = true;
+  }
+
+  const matched = (block) => block.urls.flatMap((url) => byUrl.get(url) ?? []);
+  const actionsOf = (block) => block.el.querySelector(":scope > .sync-actions, :scope > .pad > .sync-actions");
+
+  function addActions(block) {
+    const group = el("div", { className: "sync-actions" });
+    group.setAttribute("role", "group");
+    group.setAttribute("aria-label", "Your changelorg");
+    for (const [field, sign, label, title] of BUTTONS) {
+      const button = el("button", { type: "button", className: "sync-btn", title }, sign, " ", el("span", {}, label));
+      button.dataset.field = field;
+      button.setAttribute("aria-label", label);
+      button.addEventListener("click", () => toggle(block, field));
+      group.append(button);
+    }
+    (block.el.querySelector(":scope > .pad") ?? block.el).append(group);
+    return group;
+  }
+
+  function paint() {
+    let resized = false;
+    for (const block of blocks) {
+      const rows = matched(block);
+      let group = actionsOf(block);
+      if (rows.length && !group) {
+        group = addActions(block);
+        resized = true;
+      } else if (!rows.length && group) {
+        group.remove();
+        group = null;
+        resized = true;
+      }
+      block.el.classList.toggle("is-viewed", rows.length > 0 && rows.every((row) => row.dismissed));
+      block.el.classList.toggle("is-shelved", rows.length > 0 && rows.every((row) => row.saved));
+      for (const button of group?.querySelectorAll("button") ?? []) {
+        button.setAttribute("aria-pressed", String(rows.every((row) => row[button.dataset.field])));
+      }
+      for (const link of block.el.querySelectorAll("a[href]")) {
+        const own = byUrl.get(link.getAttribute("href")) ?? [];
+        link.classList.toggle("entry-viewed", own.length > 0 && own.every((row) => row.dismissed));
+        link.classList.toggle("entry-shelved", own.some((row) => row.saved));
+      }
+    }
+    if (resized) schedule();
+  }
+
+  function show(...children) {
+    bar.replaceChildren(...children);
+    bar.hidden = false;
+  }
+
+  function signedOut(note) {
+    account = null;
+    byUrl = new Map();
+    loaded = false;
+    paint();
+    show(...(note ? [el("span", { className: "sticker warn" }, note)] : []),
+      el("span", {}, "Read these desks in changelorg?"),
+      el("a", { className: "get-desk", href: `${origin}/auth/start?rd=${back}` }, "Sign in with GitHub"),
+      el("span", { className: "hint" }, "to see what you viewed and shelved, and to mark it here."));
+  }
+
+  function signedIn() {
+    const inFeed = [...pageUrls].filter((url) => byUrl.has(url)).length;
+    const imports = Object.entries(shares ?? {}).flatMap(([name, url], index) => [index ? " · " : "", el("a", { href: url }, name)]);
+    const reach = inFeed
+      ? el("span", {}, `${inFeed} of ${pageUrls.size} items on this page are in your feeds`)
+      : el("span", {}, "None of the items on this page are in your feeds.", ...(imports.length ? [" Import the sources: ", ...imports] : []));
+    show(el("span", {}, "Synced with changelorg as ", el("b", {}, `@${account.login}`)), ...(loaded ? [reach] : []),
+      el("a", { href: `${origin}/auth/sign_out?rd=${back}` }, "Sign out"));
+  }
+
+  function problem(error) {
+    if (error?.status === 401) return signedOut("Your changelorg session ended.");
+    signedIn();
+    const note = error?.status === 412 ? "Your changelorg account changed. Reload the page." : "changelorg did not answer. Try again.";
+    bar.prepend(el("span", { className: "sticker warn" }, note));
+  }
+
+  async function toggle(block, field) {
+    const rows = matched(block);
+    const group = actionsOf(block);
+    if (!rows.length || !group) return;
+    const value = !rows.every((row) => row[field]);
+    const before = rows.map((row) => row[field]);
+    for (const row of rows) row[field] = value;
+    paint();
+    writes += 1;
+    for (const button of group.querySelectorAll("button")) button.disabled = true;
+    const results = await Promise.allSettled(rows.map((row) => api(`/changes/${row.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "X-Changelorg-Request": "1" },
+      body: JSON.stringify({ [field]: value }),
+    })));
+    writes -= 1;
+    for (const button of group.querySelectorAll("button")) button.disabled = false;
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") Object.assign(rows[index], result.value);
+      else rows[index][field] = before[index];
+    });
+    paint();
+    const failed = results.find((result) => result.status === "rejected");
+    if (failed) problem(failed.reason);
+    else signedIn();
+  }
+
+  // Live state: read again when the tab comes back, and every minute while it is open. Never during a write.
+  async function refresh() {
+    if (!account || writes || document.hidden) return;
+    try {
+      await load();
+      paint();
+      signedIn();
+    } catch (error) {
+      problem(error);
+    }
+  }
+
+  (async () => {
+    let me;
+    try {
+      me = await api("/me");
+    } catch (error) {
+      // Without an answer, changelorg does not accept this site yet, so the page stays as it is.
+      if (error.status === 401) signedOut();
+      return;
+    }
+    if (!me.authenticated) return signedOut();
+    account = { id: me.id, login: me.login };
+    try {
+      await load();
+    } catch (error) {
+      return problem(error);
+    }
+    paint();
+    signedIn();
+    document.addEventListener("visibilitychange", refresh);
+    setInterval(refresh, 60000);
+  })();
+}
 """
 
 
