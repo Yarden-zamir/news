@@ -560,6 +560,7 @@ function startSync({ origin, since, until, shares }) {
     paint();
     writes += 1;
     for (const button of group.querySelectorAll("button")) button.disabled = true;
+    // One PATCH per item. The release ticker can hold 40 or more items. If such writes feel slow, add a bulk route to changelorg.
     const results = await Promise.allSettled(rows.map((row) => api(`/changes/${row.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "X-Changelorg-Request": "1" },
