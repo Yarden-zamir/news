@@ -1,13 +1,13 @@
 # Weekly issue
 
 A T3 Code scheduled task runs these steps every Sunday at 09:00 local time.
-The task prompt is one line: "Weekly Gazette: in ~/Github/news/main, run `git pull --ff-only`, then read site/schedule.md and do its steps."
+The task prompt is one line: "Weekly Riffle: in ~/Github/news/main, run `git pull --ff-only`, then read site/schedule.md and do its steps."
 To change the weekly run, change this file.
 
 ## Steps
 
-Make this week's issue of the changelorg Gazette and publish it on https://news.yarden-zamir.com. The site is public.
-Use the `newspaper` skill (its steps, rules, images and Check) and the `changelorg` skill.
+Make this week's issue of The Riffle and publish it on https://news.yarden-zamir.com. The site is public.
+Use the `newspaper` skill (its steps, rules, images and Check) and the `riffle` skill.
 
 Paths: `REPO=~/Github/news/main`, `SITE=$REPO/site`, `SKILL=$REPO/skills/newspaper`.
 Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`.
@@ -15,9 +15,9 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
 1. If `git pull --ff-only` failed, or `git status` shows changes, stop. Reply with the output.
 2. Set `DATE` to today's local date as `YYYY-MM-DD`. Run:
    ```sh
-   changelorg_items.py $SITE/desk/$DATE/items.json --profiles dev,games --days 8
+   riffle_items.py $SITE/desk/$DATE/items.json --profiles dev,games --days 8
    ```
-   If changelorg needs a sign-in, run the login of the `changelorg` skill with `--write`, because the user keeps write access.
+   If Riffle needs a sign-in, run the login of the `riffle` skill with `--write`, because the user keeps write access.
    Post the link and the code in this thread. Run the login at most three times.
    If the user does not approve, stop, and reply that the issue is skipped because the sign-in was not approved.
 3. Read `$SITE/public/issues/*/covered.json`: every item that earlier issues showed. No item from these files may appear again.
@@ -39,7 +39,7 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
    ```
 8. Build the site files:
    ```sh
-   gazette.py site $SITE/public --site https://news.yarden-zamir.com --title "The changelorg Gazette" \
+   gazette.py site $SITE/public --site https://news.yarden-zamir.com --title "The Riffle" \
      --description "A weekly paper about developer tools, AI agents and games, edited by an AI agent from open feeds. Every story links to its source."
    ```
 9. Do the Check steps of the `newspaper` skill in the T3 browser preview. Fix problems, then do steps 7 and 8 again.
@@ -59,4 +59,4 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
 14. Reply in a few lines: the link, the lead headline of each edition, the developments and what they follow, the bonus stories,
     the duplicate check line from the build output ("checked against N earlier issues"), and anything that failed.
 
-Do not change changelorg data in this run: no saves and no dismissals.
+Do not change Riffle data in this run: no saves and no dismissals.

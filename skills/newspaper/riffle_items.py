@@ -1,14 +1,14 @@
-"""Write a newspaper items file from changelorg, through the changelorg CLI and its agent access.
+"""Write a newspaper items file from Riffle, through the Riffle CLI and its agent access.
 
-Usage: changelorg_items.py OUT.json --profiles dev,games [--days 7]
+Usage: riffle_items.py OUT.json --profiles dev,games [--days 7]
 
 Each listed profile becomes one section. A page can be public, so profiles are opt-in: profiles that are not
 listed stay out, and the script names them. A listed profile with a share link gets that link in "shares", so the
-page can offer its sources to readers. The CLI must be signed in: run `changelorg auth login` first.
+page can offer its sources to readers. The CLI must be signed in: run `riffle auth login` first.
 
 Environment:
-  CHANGELORG_SERVER  origin of the changelorg server (default https://changelorg.yarden-zamir.com)
-  CHANGELORG_CLI     pip spec of the CLI for uvx --from (default: the pinned commit below)
+  RIFFLE_SERVER  origin of the Riffle server (default https://riffle.yarden-zamir.com)
+  RIFFLE_CLI     pip spec of the CLI for uvx --from (default: the pinned commit below)
 """
 
 import argparse
@@ -20,25 +20,25 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import quote
 
-# A pinned CLI keeps the weekly run stable when changelorg main moves. Bump it when the API changes.
-CLI_SPEC = os.environ.get("CHANGELORG_CLI", "git+https://github.com/Yarden-zamir/changeLorg@53274e9636e91bd915656fc32d843160b247b453")
-SERVER = os.environ.get("CHANGELORG_SERVER", "https://changelorg.yarden-zamir.com").rstrip("/")
+# A pinned CLI keeps the weekly run stable when Riffle main moves. Bump it when the API changes.
+CLI_SPEC = os.environ.get("RIFFLE_CLI", "git+https://github.com/Yarden-zamir/riffle@8da103912562316a8178bbe7e706f9b4bc288b2d")
+SERVER = os.environ.get("RIFFLE_SERVER", "https://riffle.yarden-zamir.com").rstrip("/")
 LIMIT = 500
 MIN_WINDOW = timedelta(seconds=1)
 
 
 def fail(message: str) -> None:
-    sys.exit(f"changelorg_items: {message}")
+    sys.exit(f"riffle_items: {message}")
 
 
 def api(path: str) -> object:
-    result = subprocess.run(["uvx", "--from", CLI_SPEC, "changelorg", "api", path], capture_output=True, text=True)
+    result = subprocess.run(["uvx", "--from", CLI_SPEC, "riffle", "api", path], capture_output=True, text=True)
     if result.returncode != 0:
-        fail(f"changelorg api {path} failed: {result.stderr.strip() or result.stdout.strip()}")
+        fail(f"riffle api {path} failed: {result.stderr.strip() or result.stdout.strip()}")
     try:
         return json.loads(result.stdout)
     except json.JSONDecodeError:
-        fail(f"changelorg api {path} did not return JSON")
+        fail(f"riffle api {path} did not return JSON")
 
 
 def window(profile: str, start: datetime, end: datetime) -> list[dict]:
@@ -56,7 +56,7 @@ def window(profile: str, start: datetime, end: datetime) -> list[dict]:
 
 
 def kind(source_name: str) -> str:
-    # changelorg has no source type field, so the source name decides. Revisit when sources get a type,
+    # Riffle has no source type field, so the source name decides. Revisit when sources get a type,
     # or when a release feed or a status page does not follow the "... Releases" or "... Status" name.
     if source_name.endswith("Releases"):
         return "release"
@@ -68,7 +68,7 @@ def kind(source_name: str) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
     parser.add_argument("out", type=Path)
-    parser.add_argument("--profiles", required=True, help="comma-separated changelorg profiles to publish, in edition order")
+    parser.add_argument("--profiles", required=True, help="comma-separated Riffle profiles to publish, in edition order")
     parser.add_argument("--days", type=int, default=7)
     args = parser.parse_args()
     if args.days < 1:

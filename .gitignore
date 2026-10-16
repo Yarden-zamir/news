@@ -1,4 +1,4 @@
-# Raw feed data: third-party feed text, fetched again from changelorg for each issue. The picks and the pages are committed.
+# Raw feed data: third-party feed text, fetched again from Riffle for each issue. The picks and the pages are committed.
 site/desk/*/items.json
 site/desk/*/out/
 # Local-only files from _shared/ (linked by the post-checkout hook).

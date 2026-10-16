@@ -22,6 +22,7 @@ import json
 import shutil
 import sys
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, tzinfo
 from html.parser import HTMLParser
@@ -441,6 +442,13 @@ def a(item: Item, label: str, cls: str = "", note: str | None = None) -> str:
     return f'<a{klass} href="{e(item.url)}" title="{e(note or tip(item))}">{e(label)}</a>'
 
 
+def entries(items: Iterable[Item]) -> str:
+    """The data-entries attribute of a block: the URLs of the items that it is based on.
+    The page script finds the reader's own Riffle items by URL, because item ids differ per account."""
+    urls = list(dict.fromkeys(item.url for item in items if item.url))
+    return f' data-entries="{e(json.dumps(urls))}"' if urls else ""
+
+
 def clean_title(item: Item) -> str:
     """Release feeds often prefix titles with the repository name: 'uv - uv 0.13.0 ...'."""
     prefix, sep, rest = item.title.partition(" - ")
@@ -570,23 +578,24 @@ class Paper:
         return (f'<figure class="photo"><img src="{e(url)}" alt="{e(alt or "")}" loading="lazy" decoding="async" '
                 f'referrerpolicy="no-referrer"><figcaption>Image: {e(item.source)}</figcaption></figure>')
 
-    def also(self, story: Story, main: Item) -> str:
+    def extras(self, story: Story) -> list[Item]:
+        return [self.use(extra_id) for extra_id in story.also]
+
+    @staticmethod
+    def also(extras: list[Item], main: Item) -> str:
         """Extra sources of a story. Name the source, or a short title when the source repeats."""
-        parts = []
-        for extra_id in story.also:
-            item = self.use(extra_id)
-            parts.append(f' · {a(item, item.source if item.source != main.source else short_title(item))}')
-        return "".join(parts)
+        return "".join(f' · {a(item, item.source if item.source != main.source else short_title(item))}' for item in extras)
 
     def card(self, story: Story) -> str:
         item, story_anchor = self.story_use(story)
+        extras = self.extras(story)
         tag = f'<span class="sticker warn">{e(story.tag)}</span>' if story.tag else ""
         sticker, follows = self.development(story)
-        return f"""<article class="card story" id="{e(story_anchor)}">{self.figure(item, story.image, story.alt)}
+        return f"""<article class="card story" id="{e(story_anchor)}"{entries([item, *extras])}>{self.figure(item, story.image, story.alt)}
           <div class="pad"><div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{tag}{self.marks(item)}</div>
           <h3>{a(item, story.headline or clean_title(item))}</h3>
           {f'<p class="deck">{e(story.deck)}</p>' if story.deck else ""}{follows}
-          <p class="src">{e(item.source)}{self.also(story, item)}</p></div></article>"""
+          <p class="src">{e(item.source)}{self.also(extras, item)}</p></div></article>"""
 
     @staticmethod
     def box_head(box: Box) -> str:
@@ -602,40 +611,45 @@ class Paper:
                 f'<span class="bar" style="--w:{count / peak:.3f}"></span><b>{count}</b></li>'
                 for name, count in counts)
             return f'<section class="card box prolific">{self.box_head(box)}<ol>{rows}</ol></section>'
+        lines = [(line, self.use(line.item)) for line in box.rows]
         rows = "".join(
             f'<li><span class="{"sticker wait" if box.kind == "classifieds" else "label"}">{e(line.head)}</span> '
-            f'{a(self.use(line.item), line.text)}</li>'
-            for line in box.rows)
-        return f'<section class="card box {e(box.kind)}">{self.box_head(box)}<ul>{rows}</ul></section>'
+            f'{a(item, line.text)}</li>'
+            for line, item in lines)
+        return f'<section class="card box {e(box.kind)}"{entries(item for _, item in lines)}>{self.box_head(box)}<ul>{rows}</ul></section>'
 
     def lead(self, edition: Edition) -> str:
         story = edition.lead.story
         item, story_anchor = self.story_use(story)
+        extras = self.extras(story)
         self.leads.append({"section": edition.section, "headline": story.headline or clean_title(item), "anchor": story_anchor})
         sticker, follows = self.development(story)
-        return f"""<article class="card lead" id="{e(story_anchor)}">{self.figure(item, story.image, story.alt)}
+        return f"""<article class="card lead" id="{e(story_anchor)}"{entries([item, *extras])}>{self.figure(item, story.image, story.alt)}
           <div class="pad"><span class="stamp extra" title="The biggest story of the edition, as picked by the agent">Extra!</span>
           <div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{self.marks(item)}</div>
           <h3>{a(item, story.headline or clean_title(item))}</h3>
           {f'<p class="deck">{e(story.deck)}</p>' if story.deck else ""}{follows}<p class="body">{e(edition.lead.body)}</p>
-          <p class="jump">{a(item, "Continued at " + item.source + " →")}{self.also(story, item)}</p></div></article>"""
+          <p class="jump">{a(item, "Continued at " + item.source + " →")}{self.also(extras, item)}</p></div></article>"""
 
     def side(self, edition: Edition) -> str:
         parts = []
         for story in edition.side:
             item, story_anchor = self.story_use(story)
+            extras = self.extras(story)
             sticker, follows = self.development(story)
-            parts.append(f"""<article class="card side-story" id="{e(story_anchor)}"><div class="pad">
+            parts.append(f"""<article class="card side-story" id="{e(story_anchor)}"{entries([item, *extras])}><div class="pad">
               <div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{self.marks(item)}</div>
               <h3>{a(item, story.headline or clean_title(item))}</h3><p class="deck">{e(story.deck or "")}</p>{follows}
-              <p class="src">{e(item.source)}{self.also(story, item)}</p></div></article>""")
+              <p class="src">{e(item.source)}{self.also(extras, item)}</p></div></article>""")
         if edition.quote:
-            parts.append(f'<figure class="card quote"><blockquote>“{e(edition.quote.head)}”</blockquote>'
-                         f'<figcaption>{a(self.use(edition.quote.item), edition.quote.text)}</figcaption></figure>')
+            quoted = self.use(edition.quote.item)
+            parts.append(f'<figure class="card quote"{entries([quoted])}><blockquote>“{e(edition.quote.head)}”</blockquote>'
+                         f'<figcaption>{a(quoted, edition.quote.text)}</figcaption></figure>')
         if edition.dates:
-            rows = "".join(f'<li><span class="sticker wait">{e(line.head)}</span>{a(self.use(line.item), line.text)}</li>'
-                           for line in edition.dates)
-            parts.append(f'<section class="card box coming"><header><h2>Save the date</h2></header><ul>{rows}</ul></section>')
+            dated = [(line, self.use(line.item)) for line in edition.dates]
+            rows = "".join(f'<li><span class="sticker wait">{e(line.head)}</span>{a(item, line.text)}</li>' for line, item in dated)
+            parts.append(f'<section class="card box coming"{entries(item for _, item in dated)}><header><h2>Save the date</h2></header>'
+                         f'<ul>{rows}</ul></section>')
         return "".join(parts)
 
     def release_log(self, section: str) -> str:
@@ -652,20 +666,21 @@ class Paper:
         # A source that a story already covers stays out of the ticker. Releases never reach In brief.
         covered = {item.source for item in releases if item.id in self.used}
         self.used.update(item.id for item in releases)
-        cells, total = "", 0
+        cells, counted = "", []
         for name, items in sorted(groups.items(), key=lambda pair: (-len(pair[1]), pair[0].lower())):
             if name in covered:
                 continue
             latest = items[0]
             self.shown[latest.id] = (short_title(latest), None)
             project = name.removesuffix(" Releases")
-            total += len(items)
+            counted += items
             cells += (f'<li><span class="name">{e(project)}</span>'
                       f'{a(latest, short_title(latest), "ver", f"{project}: newest of {len(items)} releases in {self.days} days")}'
                       f'<span class="label">{len(items)}× · {latest.published_at:%d %b}</span></li>')
         if not cells:
             return ""
-        return f"""<section class="card ticker" aria-label="Also shipped"><span class="ticker-label">Also shipped · {total}</span>
+        # The ticker counts every release of a project, so it is based on all of them, not only on the newest one.
+        return f"""<section class="card ticker" aria-label="Also shipped"{entries(counted)}><span class="ticker-label">Also shipped · {len(counted)}</span>
           <ul>{cells}</ul></section>"""
 
     def brief(self, section: str, limit: int = 14) -> str:
@@ -684,7 +699,8 @@ class Paper:
             return ""
         for item in rest[:limit]:
             self.shown[item.id] = (clean_title(item), None)
-        rows = "".join(f'<li>{self.date(item)}<span>{a(item, clean_title(item))} '
+        # The page script deals each row into a column on its own, so each row is a block.
+        rows = "".join(f'<li{entries([item])}>{self.date(item)}<span>{a(item, clean_title(item))} '
                        f'<span class="label">{e(item.source)}</span>{self.marks(item)}</span></li>'
                        for item in rest[:limit])
         more = len(rest) - min(limit, len(rest))
@@ -701,15 +717,15 @@ class Paper:
             return ""
         rows = "".join(f'<li>{a(self.use(item.id), item.title)} <span class="label">{e(item.source)}</span>{self.marks(item)}</li>'
                        for item in items)
-        return (f'<section class="card box shelf"><header><h2>On your shelf</h2><p class="note">Saved for later. Later is now.</p>'
+        return (f'<section class="card box shelf"{entries(items)}><header><h2>On your shelf</h2><p class="note">Saved for later. Later is now.</p>'
                 f'</header><ul>{rows}</ul></section>')
 
     def get_desk(self, section: str, label: str = "Start a feed with these sources →") -> str:
-        """A link that copies the sources of a section into the reader's own changelorg."""
+        """A link that copies the sources of a section into the reader's own Riffle."""
         url = self.feed.shares.get(section)
         if url is None:
             return ""
-        note = f"Import the {section} sources into your own changelorg feed. No account needed."
+        note = f"Import the {section} sources into your own Riffle feed. No account needed."
         return f'<a class="get-desk" href="{e(url)}" title="{e(note)}">{e(label)}</a>'
 
     def edition(self, edition: Edition) -> str:
@@ -762,7 +778,7 @@ class Paper:
 
     def footer(self) -> str:
         picks = self.picks
-        shared = [f'<a href="{e(self.feed.shares[ed.section])}" title="Import the {e(ed.section)} sources into your own changelorg feed">'
+        shared = [f'<a href="{e(self.feed.shares[ed.section])}" title="Import the {e(ed.section)} sources into your own Riffle feed">'
                   f'{e(ed.section)}</a>' for ed in picks.editions if ed.section in self.feed.shares]
         links = [f'<a href="{e(picks.previous)}">← Previous issue</a>' if picks.previous else "",
                  f'<a href="{e(picks.archive)}">All issues</a>' if picks.archive else "",
@@ -770,7 +786,7 @@ class Paper:
                  f'<a href="{e(picks.contact)}">Report a mistake</a>' if picks.contact else ""]
         lines = [e(picks.colophon)]
         if shared:
-            lines.append(f"Want these desks? Copy their sources into your own changelorg: {', '.join(shared)}.")
+            lines.append(f"Want these desks? Copy their sources into your own Riffle: {', '.join(shared)}.")
         lines.append("Images load from the publishers' websites. Each image credits its source.")
         if nav := " · ".join(part for part in links if part):
             lines.append(nav)
@@ -784,6 +800,20 @@ class Paper:
                           "published_at": item.published_at.isoformat(), "headline": headline, "anchor": story_anchor})
         return {"issue": self.picks.issue, "page": self.picks.page, "date": f"{self.fetched:%Y-%m-%d}", "built": self.fetched.isoformat(),
                 "title": self.picks.title, "description": self.description(), "leads": self.leads, "items": items}
+
+    def sync_config(self) -> str:
+        """Settings of the page script that shows and changes the viewed and shelved state in the reader's Riffle.
+        Without a Riffle home in the items file, the page has no sync."""
+        if self.feed.home is None:
+            return ""
+        home = urlsplit(self.feed.home)
+        config = {"origin": f"{home.scheme}://{home.netloc}",
+                  "since": (self.fetched - timedelta(days=self.days + 1)).isoformat(),
+                  "until": (self.fetched + timedelta(days=1)).isoformat(),
+                  "shares": self.feed.shares}
+        # "<" never appears raw, so the JSON cannot close the script element.
+        data = json.dumps(config).replace("<", "\\u003c")
+        return f'<script type="application/json" id="riffle-sync">{data}</script>'
 
     def description(self) -> str:
         if self.picks.description:
@@ -823,13 +853,14 @@ class Paper:
   <p class="motto">{e(picks.motto)}</p>
   <div class="rule">{buttons}<span class="stamp big" title="Every story links to the item that it comes from">✓ Every story sourced</span></div>
 </header>
+<section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
 <main id="main" class="page-main">
 {self.numbers(first)}
 {self.about()}
 {body}
 </main>
 {self.footer()}
-</div><script>{JS}</script></body></html>"""
+</div>{self.sync_config()}<script>{JS}</script></body></html>"""
 
 
 # ---------- site ----------
@@ -908,7 +939,7 @@ CSS = """
   --ink: #000000; --muted: #3D3D5C; --border: #000000; --shadow-ink: #000000;
   --accent: #6C5CE7; --accent-fg: #FFFFFF; --select: #FFE14D; --select-fg: #000000;
   --info: #00B3FF; --warning: #FFB347; --warning-surface: #FFF6D1; --error: #FF5277;
-  --green: #7CFF8A; --yellow: #FFE14D; --pink: #FF9EB0; --stamp: #8250DF;
+  --green: #7CFF8A; --yellow: #FFE14D; --pink: #FF9EB0; --stamp: #8250DF; --highlight: #FFE14D;
   --radius: 0.25rem; --bw: 2px; --shadow: 4px 4px 0 0 var(--shadow-ink); --gap: 1.1rem;
   --sans: "Bricolage Grotesque", system-ui, sans-serif;
   --mono: "JetBrainsMono Nerd Font Mono", "JetBrains Mono", monospace;
@@ -918,7 +949,7 @@ CSS = """
     color-scheme: dark;
     --canvas: #15122B; --dots: #F3F0FF22; --surface: #262147; --raised: #1D1938;
     --ink: #F3F0FF; --muted: #BDB6E6; --border: #F3F0FF; --shadow-ink: #B9A8FF;
-    --select: #6C5CE7; --select-fg: #FFFFFF; --warning-surface: #3A3018; --stamp: #A371F7;
+    --select: #6C5CE7; --select-fg: #FFFFFF; --warning-surface: #3A3018; --stamp: #A371F7; --highlight: #7A6410;
   }
 }
 * { box-sizing: border-box; }
@@ -1097,6 +1128,63 @@ footer p { margin: 0; }
 .missing { max-width: 40rem; margin: 3rem auto; }
 .missing h1 { font-size: 2rem; margin-top: 0.6rem; }
 .missing .stamp { justify-self: start; }
+
+/* Sync with the reader's Riffle. The page script fills the bar, and adds the buttons and the sheet after sign-in. */
+.sync-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.35rem 0.8rem; padding: 0.45rem 0.9rem;
+  font-size: 0.8rem; font-weight: 600; text-align: center; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.sync-bar .sticker { font-size: 0.72rem; }
+.sync-bar .hint { color: var(--muted); }
+.sync-bar .who { display: inline-flex; align-items: center; gap: 0.4rem; }
+.sync-bar .avatar { width: 1.5rem; height: 1.5rem; border: var(--bw) solid var(--border); border-radius: 50%; background: var(--surface); }
+
+/* The buttons of a block sit in its top right corner. They show while the pointer is on the block, or while a button has keyboard focus.
+   They float over the block, so they never change its height or the columns. */
+[data-entries] { position: relative; }
+.sync-actions { position: absolute; top: 0.4rem; right: 0.4rem; z-index: 3; display: flex; gap: 0.3rem;
+  opacity: 0; pointer-events: none; transition: opacity 120ms; }
+.sync-actions:focus-within { opacity: 1; pointer-events: auto; }
+@media (hover: hover) {
+  [data-entries]:hover > .sync-actions { opacity: 1; pointer-events: auto; }
+  .is-viewed:hover > :not(.sync-actions) { opacity: 0.85; }
+}
+li > .sync-actions, .ticker > .sync-actions { top: 0; bottom: 0; align-items: center; }
+li > .sync-actions { right: 0; }
+.sync-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-width: 1.75rem; height: 1.75rem; padding: 0 0.3rem;
+  font: inherit; font-weight: 800; cursor: pointer; color: var(--ink); background: var(--surface); border: var(--bw) solid var(--border);
+  border-radius: var(--radius); box-shadow: 2px 2px 0 0 var(--shadow-ink); transition: transform 80ms, box-shadow 80ms; }
+li .sync-btn { min-width: 1.6rem; height: 1.6rem; }
+.sync-btn svg { flex: none; width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.sync-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--shadow-ink); }
+.sync-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+.sync-btn[aria-pressed="true"][data-field="dismissed"] { background: var(--green); color: #000000; }
+.sync-btn[aria-pressed="true"][data-field="saved"] { background: var(--yellow); color: #000000; }
+.sync-btn:disabled { cursor: progress; opacity: 0.6; }
+
+/* State. A viewed block fades, a viewed link fades, and a shelved link gets a highlighter mark. No state changes the layout. */
+.is-viewed > :not(.sync-actions) { opacity: 0.5; transition: opacity 120ms; }
+a.entry-viewed { opacity: 0.55; }
+.is-viewed a.entry-viewed { opacity: 1; }
+a.entry-shelved { background: linear-gradient(transparent 55%, var(--highlight) 55%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+/* Touch screens have no hover: a long press on a block opens its buttons in a sheet, and the block sinks while the finger holds it.
+   Limit: readers cannot select text in such a block on a touch screen. If readers ask for that, show the buttons on touch screens instead. */
+@media (hover: none) {
+  [data-entries]:has(> .sync-actions) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+}
+.card.holding { transform: translate(3px, 3px); box-shadow: none; transition: transform 250ms 150ms, box-shadow 250ms 150ms; }
+li.holding { background: var(--raised); transition: background-color 250ms 150ms; }
+.sync-sheet { inset: auto 0 0; width: min(100%, 30rem); max-width: none; margin: 0 auto; padding: 0; color: var(--ink); background: var(--surface);
+  border: var(--bw) solid var(--border); border-bottom: 0; border-radius: 0.6rem 0.6rem 0 0; box-shadow: 0 -4px 0 0 var(--shadow-ink); }
+.sync-sheet::backdrop { background: #00000059; }
+.sync-sheet[open] { animation: sheet-in 160ms ease-out; }
+@keyframes sheet-in { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .sync-sheet[open] { animation: none; } }
+.sheet-body { display: grid; gap: 0.7rem; padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom)); }
+.sheet-body p { margin: 0; }
+.sheet-title { font-size: 1.05rem; font-weight: 800; line-height: 1.2; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.sheet-actions .sync-btn { height: 3rem; }
+.sheet-close { padding: 0.4rem; font: inherit; font-weight: 700; color: var(--muted); background: none; border: 0; cursor: pointer; }
 """
 
 JS = """
@@ -1155,6 +1243,280 @@ for (const button of buttons) button.addEventListener("click", () => {
   }
   schedule();
 });
+
+// Sync with the reader's Riffle. Sign-in happens on Riffle, and its session cookie stays there; this site stores nothing.
+// A block is an element with data-entries: the URLs of the items that it is based on. Item ids differ per account,
+// so the script finds the reader's own items by URL. Buttons on a block change every item of the block.
+const syncConfig = document.getElementById("riffle-sync");
+if (syncConfig) startSync(JSON.parse(syncConfig.textContent));
+
+function startSync({ origin, since, until, shares }) {
+  const bar = document.querySelector("[data-sync]");
+  const blocks = [...document.querySelectorAll("[data-entries]")].map((el) => ({ el, urls: JSON.parse(el.dataset.entries) }));
+  const blockOf = new Map(blocks.map((block) => [block.el, block]));
+  const pageUrls = new Set(blocks.flatMap((block) => block.urls));
+  const back = encodeURIComponent(location.href.split("#")[0]);
+  const hoverable = matchMedia("(hover: hover)").matches;
+  // Icons from Lucide (https://lucide.dev, ISC license), the same icons that Riffle shows.
+  const icon = (...paths) => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join("")}</svg>`;
+  const BOOKMARK = "M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z";
+  const ACTIONS = {
+    dismissed: { label: "Viewed", mark: "Mark as viewed", unmark: "Mark as not viewed", icon: icon("M20 6 9 17l-5-5") },
+    saved: { label: "Shelved", mark: "Put on your shelf", unmark: "Take off your shelf",
+      icon: icon(BOOKMARK, "M12 7v6", "M15 10H9"), pressedIcon: icon(BOOKMARK, "m9 10 2 2 4-4") },
+  };
+  let account = null;
+  let byUrl = new Map();
+  let loaded = false;
+  let writes = 0;
+
+  const el = (tag, props = {}, ...children) => {
+    const node = Object.assign(document.createElement(tag), props);
+    node.append(...children);
+    return node;
+  };
+
+  async function api(path, init = {}) {
+    const headers = { ...init.headers, ...(account ? { "X-Riffle-Owner": account.id } : {}) };
+    const response = await fetch(origin + path, { ...init, headers, credentials: "include" });
+    if (!response.ok) throw Object.assign(new Error(`Riffle answered ${response.status}`), { status: response.status });
+    return response.json();
+  }
+
+  // A full page means a cut window, so split it in halves. Below one second, keep the cut page: the bar then shows less.
+  async function changes(start, end) {
+    const query = new URLSearchParams({ since: start.toISOString(), until: end.toISOString(), include_dismissed: "true", limit: "500" });
+    const rows = await api(`/changes?${query}`);
+    if (rows.length < 500 || end - start <= 1000) return rows;
+    const middle = new Date((start.getTime() + end.getTime()) / 2);
+    return [...(await changes(start, middle)), ...(await changes(middle, end))];
+  }
+
+  async function load() {
+    const next = new Map();
+    const ids = new Set();
+    for (const row of await changes(new Date(since), new Date(until))) {
+      if (!row.url || !pageUrls.has(row.url) || ids.has(row.id)) continue;
+      ids.add(row.id);
+      next.set(row.url, [...(next.get(row.url) ?? []), row]);
+    }
+    byUrl = next;
+    loaded = true;
+  }
+
+  const matched = (block) => block.urls.flatMap((url) => byUrl.get(url) ?? []);
+  const actionsOf = (block) => block.el.querySelector(":scope > .sync-actions");
+
+  // The corner buttons show the icon only. The sheet buttons show the icon and the label.
+  function syncButton(block, field, inSheet) {
+    const button = el("button", { type: "button", className: "sync-btn" }, ...(inSheet ? [el("span", {}, ACTIONS[field].label)] : []));
+    button.dataset.field = field;
+    if (!inSheet) button.setAttribute("aria-label", ACTIONS[field].label);
+    button.addEventListener("click", () => {
+      if (inSheet) sheet.close();
+      toggle(block, field);
+    });
+    press(button, matched(block).every((row) => row[field]));
+    return button;
+  }
+
+  function press(button, on) {
+    if (button.getAttribute("aria-pressed") === String(on)) return;
+    const action = ACTIONS[button.dataset.field];
+    button.setAttribute("aria-pressed", String(on));
+    button.title = on ? action.unmark : action.mark;
+    button.querySelector("svg")?.remove();
+    button.insertAdjacentHTML("afterbegin", (on && action.pressedIcon) || action.icon);
+  }
+
+  function addActions(block) {
+    const group = el("div", { className: "sync-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, false)));
+    group.setAttribute("role", "group");
+    group.setAttribute("aria-label", "Your Riffle");
+    block.el.append(group);
+    return group;
+  }
+
+  function paint() {
+    for (const block of blocks) {
+      const rows = matched(block);
+      let group = actionsOf(block);
+      if (rows.length && !group) group = addActions(block);
+      if (!rows.length && group) {
+        group.remove();
+        group = null;
+      }
+      block.el.classList.toggle("is-viewed", rows.length > 0 && rows.every((row) => row.dismissed));
+      for (const button of group?.querySelectorAll("button") ?? []) press(button, rows.every((row) => row[button.dataset.field]));
+      for (const link of block.el.querySelectorAll("a[href]")) {
+        const own = byUrl.get(link.getAttribute("href")) ?? [];
+        link.classList.toggle("entry-viewed", own.length > 0 && own.every((row) => row.dismissed));
+        link.classList.toggle("entry-shelved", own.some((row) => row.saved));
+      }
+    }
+  }
+
+  // Touch screens have no hover. A long press on a block opens its buttons in a sheet at the bottom of the screen.
+  const sheet = el("dialog", { className: "sync-sheet" });
+  sheet.setAttribute("aria-label", "Your Riffle");
+  sheet.addEventListener("click", (event) => {
+    if (event.target === sheet) sheet.close();
+  });
+  document.body.append(sheet);
+
+  function openSheet(block) {
+    const count = block.urls.filter((url) => byUrl.has(url)).length;
+    const title = ["h3", "h2", "blockquote", ".ticker-label", "a"].map((selector) => block.el.querySelector(selector)).find(Boolean);
+    sheet.replaceChildren(el("div", { className: "sheet-body" },
+      el("p", { className: "label" }, count > 1 ? `Your Riffle · ${count} items` : "Your Riffle"),
+      el("p", { className: "sheet-title" }, title?.textContent.trim() ?? ""),
+      el("div", { className: "sheet-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, true))),
+      el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Cancel")));
+    sheet.showModal();
+  }
+
+  const HOLD_MS = 450;
+  let hold = null;
+  // After a long press, the next click is the lifted finger. It must not follow a link, or close the sheet through the backdrop.
+  let held = false;
+  function endHold() {
+    if (!hold) return;
+    clearTimeout(hold.timer);
+    hold.block.el.classList.remove("holding");
+    hold = null;
+  }
+  addEventListener("pointerdown", (event) => {
+    endHold();
+    held = false;
+    const block = blockOf.get(event.target.closest("[data-entries]"));
+    if (event.pointerType !== "touch" || !block || !actionsOf(block)) return;
+    block.el.classList.add("holding");
+    hold = { block, x: event.clientX, y: event.clientY, timer: setTimeout(() => {
+      endHold();
+      held = true;
+      navigator.vibrate?.(10);
+      openSheet(block);
+    }, HOLD_MS) };
+  });
+  // A finger that moves scrolls the page. The browser then also sends pointercancel.
+  addEventListener("pointermove", (event) => {
+    if (hold && Math.hypot(event.clientX - hold.x, event.clientY - hold.y) > 10) endHold();
+  });
+  addEventListener("pointerup", endHold);
+  addEventListener("pointercancel", endHold);
+  addEventListener("keydown", () => { held = false; });
+  addEventListener("contextmenu", (event) => {
+    if (hold || held) event.preventDefault();
+  });
+  addEventListener("click", (event) => {
+    if (!held) return;
+    held = false;
+    event.preventDefault();
+    event.stopPropagation();
+  }, true);
+
+  function show(...children) {
+    bar.replaceChildren(...children);
+    bar.hidden = false;
+  }
+
+  function signedOut(note) {
+    account = null;
+    byUrl = new Map();
+    loaded = false;
+    paint();
+    show(...(note ? [el("span", { className: "sticker warn" }, note)] : []),
+      el("span", {}, "Read these desks in Riffle?"),
+      el("a", { className: "get-desk", href: `${origin}/auth/start?rd=${back}` }, "Sign in with GitHub"),
+      el("span", { className: "hint" }, "to see what you viewed and shelved, and to mark it here."));
+  }
+
+  function signedIn() {
+    const inFeed = [...pageUrls].filter((url) => byUrl.has(url)).length;
+    const imports = Object.entries(shares ?? {}).flatMap(([name, url], index) => [index ? " · " : "", el("a", { href: url }, name)]);
+    const reach = inFeed
+      ? [el("span", {}, `${inFeed} of ${pageUrls.size} items on this page are in your feeds.`),
+        el("span", { className: "hint" }, `${hoverable ? "Point at" : "Press and hold"} a story to mark it as viewed or shelved.`)]
+      : [el("span", {}, "None of the items on this page are in your feeds.", ...(imports.length ? [" Import the sources: ", ...imports] : []))];
+    const who = el("span", { className: "who" }, "Synced as ", el("b", {}, `@${account.login}`));
+    // Owner ids of GitHub accounts are "github:<numeric id>". The avatar host sets no cookies.
+    if (account.id.startsWith("github:")) {
+      const avatar = el("img", { className: "avatar", alt: "", src: `https://avatars.githubusercontent.com/u/${account.id.slice(7)}?s=64` });
+      avatar.addEventListener("error", () => avatar.remove());
+      who.prepend(avatar);
+    }
+    show(who, ...(loaded ? reach : []), el("a", { href: `${origin}/auth/sign_out?rd=${back}` }, "Sign out"));
+  }
+
+  function problem(error) {
+    if (error?.status === 401) return signedOut("Your Riffle session ended.");
+    signedIn();
+    const note = error?.status === 412 ? "Your Riffle account changed. Reload the page." : "Riffle did not answer. Try again.";
+    bar.prepend(el("span", { className: "sticker warn" }, note));
+  }
+
+  async function toggle(block, field) {
+    const rows = matched(block);
+    const group = actionsOf(block);
+    if (!rows.length || !group) return;
+    const value = !rows.every((row) => row[field]);
+    const before = rows.map((row) => row[field]);
+    for (const row of rows) row[field] = value;
+    paint();
+    writes += 1;
+    for (const button of group.querySelectorAll("button")) button.disabled = true;
+    // One PATCH per item. The release ticker can hold 40 or more items. If such writes feel slow, add a bulk route to Riffle.
+    const results = await Promise.allSettled(rows.map((row) => api(`/changes/${row.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "X-Riffle-Request": "1" },
+      body: JSON.stringify({ [field]: value }),
+    })));
+    writes -= 1;
+    for (const button of group.querySelectorAll("button")) button.disabled = false;
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") Object.assign(rows[index], result.value);
+      else rows[index][field] = before[index];
+    });
+    paint();
+    const failed = results.find((result) => result.status === "rejected");
+    if (failed) problem(failed.reason);
+    else signedIn();
+  }
+
+  // Live state: read again when the tab comes back, and every minute while it is open. Never during a write.
+  async function refresh() {
+    if (!account || writes || document.hidden) return;
+    try {
+      await load();
+      paint();
+      signedIn();
+    } catch (error) {
+      problem(error);
+    }
+  }
+
+  (async () => {
+    let me;
+    try {
+      me = await api("/me");
+    } catch (error) {
+      // Without an answer, Riffle does not accept this site yet, so the page stays as it is.
+      if (error.status === 401) signedOut();
+      return;
+    }
+    if (!me.authenticated) return signedOut();
+    account = { id: me.id, login: me.login };
+    try {
+      await load();
+    } catch (error) {
+      return problem(error);
+    }
+    paint();
+    signedIn();
+    document.addEventListener("visibilitychange", refresh);
+    setInterval(refresh, 60000);
+  })();
+}
 """
 
 
