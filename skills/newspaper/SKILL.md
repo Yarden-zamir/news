@@ -1,17 +1,17 @@
 ---
 name: newspaper
-description: Build a newspaper site (the Gazette) from changelorg profiles or other news items, in the tick3d neo-brutalism style. Each issue has a lead story, ranked cards, press boxes and a note on every link. The site has an archive, a feed and no repeats across issues. Use when the user asks for a news page, a digest, a newspaper, an edition or the Gazette, or asks to publish the weekly issue.
+description: Build a newspaper site (the Gazette) from Riffle profiles or other news items, in the tick3d neo-brutalism style. Each issue has a lead story, ranked cards, press boxes and a note on every link. The site has an archive, a feed and no repeats across issues. Use when the user asks for a news page, a digest, a newspaper, an edition or the Gazette, or asks to publish the weekly issue.
 license: MIT
 ---
 
 # Newspaper
 
 You collect news items, act as the editor, and render one issue of a static news site.
-One changelorg profile becomes one edition of the paper.
+One Riffle profile becomes one edition of the paper.
 
 Files in this folder:
 
-- `changelorg_items.py`: writes an items file from changelorg profiles, through the changelorg CLI.
+- `riffle_items.py`: writes an items file from Riffle profiles, through the Riffle CLI.
 - `gazette.py render`: renders one issue from an items file and a picks file. It writes `covered.json` next to the page.
 - `gazette.py site`: builds the home page, the archive, `feed.xml`, `sitemap.xml`, `404.html` and the fonts from all issues.
 - `page_images.py`: prints the share image of each page URL, then every image in the article with its caption.
@@ -21,35 +21,35 @@ Files in this folder:
 Run each script with `uv run --no-project --python 3.12 python -I <script> <arguments>`.
 The scripts use only the standard library. This file calls them by name.
 
-## Setup: a changelorg connection
+## Setup: a Riffle connection
 
 Do these steps once for each person who makes a paper.
 
-1. Open https://changelorg.yarden-zamir.com and sign in with GitHub. CLI access needs a GitHub account.
+1. Open https://riffle.yarden-zamir.com and sign in with GitHub. CLI access needs a GitHub account.
 2. Add sources. Each profile becomes one edition, so group the sources into profiles such as `dev` and `games`.
    - To add your own sources, use the source editor on the site.
    - To start from the sources of another paper, open its share link and import the sources into a new profile.
-     The links of news.yarden-zamir.com are [dev](https://changelorg.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg) and [games](https://changelorg.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg).
+     The links of news.yarden-zamir.com are [dev](https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg) and [games](https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg).
 3. Sign in the CLI. Run it in the background, because it waits up to 10 minutes for the approval:
    ```sh
-   uvx --from git+https://github.com/Yarden-zamir/changeLorg changelorg auth login --name "newspaper on <machine>"
+   uvx --from git+https://github.com/Yarden-zamir/riffle riffle auth login --name "newspaper on <machine>"
    ```
    It prints a link and a code. Send them to the user. The user opens the link, compares the code and approves.
    Read access is enough for the paper. Add `--write` only when you also want to make share links.
 4. Check the connection. Take profile names from the output, and do not guess them:
    ```sh
-   uvx --from git+https://github.com/Yarden-zamir/changeLorg changelorg auth status
-   uvx --from git+https://github.com/Yarden-zamir/changeLorg changelorg api /profiles
+   uvx --from git+https://github.com/Yarden-zamir/riffle riffle auth status
+   uvx --from git+https://github.com/Yarden-zamir/riffle riffle api /profiles
    ```
 5. Optional: share the sources of each published profile, so that readers can start their own feed. This needs `--write` access:
    ```sh
-   uvx --from git+https://github.com/Yarden-zamir/changeLorg changelorg api -X POST /shares -d '{"profile": "dev"}'
+   uvx --from git+https://github.com/Yarden-zamir/riffle riffle api -X POST /shares -d '{"profile": "dev"}'
    ```
-   `changelorg_items.py` then puts the share link in the items file, and the page offers it to readers.
+   `riffle_items.py` then puts the share link in the items file, and the page offers it to readers.
    Anyone with the link sees and imports the enabled sources of the profile. `DELETE /shares/<token>` stops the share.
 
-For a different changelorg server, set `CHANGELORG_SERVER` to its origin. The CLI and `changelorg_items.py` both read it.
-Never print the token in `~/.config/changelorg/credentials.json`, and never copy it into files, chats or commits.
+For a different Riffle server, set `RIFFLE_SERVER` to its origin. The CLI and `riffle_items.py` both read it.
+Never print the token in `~/.config/riffle/credentials.json`, and never copy it into files, chats or commits.
 
 ## Setup: a site folder
 
@@ -75,7 +75,7 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 
 1. Write the items file. List the profiles to publish in edition order. A page can be public, so profiles are opt-in:
    ```sh
-   changelorg_items.py $SITE/desk/$DATE/items.json --profiles dev,games --days 8
+   riffle_items.py $SITE/desk/$DATE/items.json --profiles dev,games --days 8
    ```
    For other sources, write the items yourself from feeds, pages or web search results. See "Items file".
 2. Read the candidate items. Before you write about an item, read its full text: the item summary, or the page.
@@ -91,7 +91,7 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
    ```
 9. Build the site files:
    ```sh
-   gazette.py site $SITE/public --site https://news.example.com --title "The changelorg Gazette" --description "<one sentence about the paper>"
+   gazette.py site $SITE/public --site https://news.example.com --title "The Riffle" --description "<one sentence about the paper>"
    ```
 10. Do the steps of "Check".
 11. Optional: publish. See "Publish".
@@ -103,8 +103,8 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 {
   "fetched": "2026-10-13T21:37:22+03:00",
   "days": 8,
-  "home": "https://changelorg.yarden-zamir.com/",
-  "shares": {"dev": "https://changelorg.yarden-zamir.com/share/…"},
+  "home": "https://riffle.yarden-zamir.com/",
+  "shares": {"dev": "https://riffle.yarden-zamir.com/share/…"},
   "items": [
     {"id": "577653", "section": "dev", "title": "Redesigning source control at Anthropic",
      "url": "https://www.anthropic.com/engineering/redesigning-source-control", "summary": "As our merges per day grew…",
@@ -119,16 +119,16 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 - `kind` is `article`, `release` or `status`. Release items without a story go into the "Also shipped" ticker. Status items go only into a weather box.
 - `read`, `saved`, `bonus`, `home` and `shares` are optional.
 - `shares` maps a section to the share link of its profile. The edition banner, the "What is this?" box and the footer then offer readers these sources.
-- `changelorg_items.py` sets `kind` from the source name: a name that ends in "Releases" or "Status".
+- `riffle_items.py` sets `kind` from the source name: a name that ends in "Releases" or "Status".
 
 ## Picks file
 
 ```json
 {
-  "title": "The changelorg Gazette", "issue": "Vol. 1 · No. 2",
+  "title": "The Riffle", "issue": "Vol. 1 · No. 2",
   "motto": "All the feed that fits · eight days of the dev and games desks",
   "word": "agent",
-  "colophon": "Built 18 October 2026 from changelorg. An AI agent picked the stories and wrote the headlines; every story links to its source.",
+  "colophon": "Built 18 October 2026 from Riffle. An AI agent picked the stories and wrote the headlines; every story links to its source.",
   "audience": "public",
   "site": "https://news.example.com",
   "page": "/issues/2026-10-18/",
@@ -184,13 +184,13 @@ Box kinds for `flow`:
 
 ```json
 {"issue": "Vol. 1 · No. 1", "page": "/issues/2026-10-14/", "date": "2026-10-14", "built": "2026-10-14T21:37:22+03:00",
- "title": "The changelorg Gazette", "description": "…", "leads": [{"section": "dev", "headline": "…", "anchor": "…"}],
+ "title": "The Riffle", "description": "…", "leads": [{"section": "dev", "headline": "…", "anchor": "…"}],
  "items": [{"url": "…", "title": "…", "kind": "article", "source": "…", "published_at": "…", "headline": "…", "anchor": "…"}]}
 ```
 
 ## Reader sync
 
-If the items file has `home`, readers can sign in to changelorg from the page. The page then shows and changes their own state.
+If the items file has `home`, readers can sign in to Riffle from the page. The page then shows and changes their own state.
 
 - Each block lists the items that it is based on in `data-entries`: the item URLs.
   The blocks are the lead, side stories, cards, the quote, boxes, the release ticker and each In brief row.
@@ -201,14 +201,14 @@ If the items file has `home`, readers can sign in to changelorg from the page. T
 - On a screen with a pointer, the buttons show in the top right corner of a block while the pointer is on it, or while a button has keyboard focus.
   On a touch screen, a long press on a block opens its buttons in a sheet at the bottom of the screen.
 - The page reads the state again when the tab comes back, and every minute while it is open.
-- Sign-in and sign-out run on changelorg (`/auth/start?rd=<page>` and `/auth/sign_out?rd=<page>`). The site stores no data and sets no cookie.
-- If changelorg does not answer, the page shows no sync bar.
+- Sign-in and sign-out run on Riffle (`/auth/start?rd=<page>` and `/auth/sign_out?rd=<page>`). The site stores no data and sets no cookie.
+- If Riffle does not answer, the page shows no sync bar.
 
-The changelorg server must allow the site:
+The Riffle server must allow the site:
 
-- `CHANGELORG_CORS_ORIGINS` lists the origin of the site.
+- `RIFFLE_CORS_ORIGINS` lists the origin of the site.
 - oauth2-proxy has `--whitelist-domain=<site host>`, so that sign-in can return to the page.
-- The site and changelorg share a registrable domain, such as `news.example.com` and `changelorg.example.com`. The session cookie is `SameSite=Lax`, so browsers do not send it from another site.
+- The site and Riffle share a registrable domain, such as `news.example.com` and `riffle.example.com`. The session cookie is `SameSite=Lax`, so browsers do not send it from another site.
 
 ## Editorial rules
 

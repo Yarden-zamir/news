@@ -5,5 +5,9 @@
   "compatibility_date": "2026-10-13",
   "assets": { "directory": "./public", "not_found_handling": "404-page" },
   "preview_urls": false,
-  "routes": [{ "pattern": "news.yarden-zamir.com", "custom_domain": true }]
+  // news is the canonical host. the-riffle carries the name of the paper and serves the same files.
+  "routes": [
+    { "pattern": "news.yarden-zamir.com", "custom_domain": true },
+    { "pattern": "the-riffle.yarden-zamir.com", "custom_domain": true }
+  ]
 }

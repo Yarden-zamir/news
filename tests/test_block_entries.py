@@ -25,7 +25,7 @@ class Blocks(HTMLParser):
         named = dict(attrs)
         if "data-entries" in named:
             self.blocks.append(sorted(json.loads(named["data-entries"] or "")))
-        self.in_config = named.get("id") == "changelorg-sync"
+        self.in_config = named.get("id") == "riffle-sync"
 
     def handle_data(self, data: str) -> None:
         if self.in_config:
@@ -36,7 +36,7 @@ class Blocks(HTMLParser):
 def render(tmp_path: Path) -> Blocks:
     items = [item(n) for n in range(1, 10)] + [item(10, "release"), item(11, "release")]
     (tmp_path / "items.json").write_text(json.dumps({
-        "fetched": "2026-10-14T12:00:00+00:00", "days": 8, "home": "https://changelorg.example.com/", "items": items}))
+        "fetched": "2026-10-14T12:00:00+00:00", "days": 8, "home": "https://riffle.example.com/", "items": items}))
     (tmp_path / "picks.json").write_text(json.dumps({
         "title": "Test", "issue": "No. 1", "motto": "m", "colophon": "c",
         "editions": [{"section": "dev", "title": "Dev", "banner": "b",
@@ -68,7 +68,7 @@ def test_blocks_list_the_urls_of_their_items(tmp_path: Path) -> None:
     assert len(blocks) == 8
 
 
-def test_sync_config_names_the_changelorg_origin(tmp_path: Path) -> None:
+def test_sync_config_names_the_riffle_origin(tmp_path: Path) -> None:
     config = render(tmp_path).config
     assert config is not None
-    assert json.loads(config)["origin"] == "https://changelorg.example.com"
+    assert json.loads(config)["origin"] == "https://riffle.example.com"

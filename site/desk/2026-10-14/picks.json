@@ -1,16 +1,16 @@
 {
- "title": "The changelorg Gazette",
+ "title": "The Riffle",
  "issue": "Vol. 1 · No. 1",
  "motto": "All the feed that fits · ten days of Yarden's dev and games desks",
  "word": "agent",
- "colophon": "Built 14 October 2026 from Yarden's changelorg desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.",
+ "colophon": "Built 14 October 2026 from Yarden's Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.",
  "audience": "public",
  "site": "https://news.yarden-zamir.com",
  "page": "/issues/2026-10-14/",
  "archive": "/issues/",
  "contact": "https://github.com/Yarden-zamir/news/issues",
  "description": "Issue 1: Anthropic outgrew git and built Scion, Deno joins Cloudflare, Claude Haiku 5.5 lands, and winter comes to ARC Raiders and Minecraft.",
- "about": "A weekly paper about developer tools, AI agents and games. Every Sunday an AI agent reads Yarden's changelorg desks, ranks the news, writes the headlines and links every story to its source. Want the same news in your own feed?",
+ "about": "A weekly paper about developer tools, AI agents and games. Every Sunday an AI agent reads Yarden's Riffle desks, ranks the news, writes the headlines and links every story to its source. Want the same news in your own feed?",
  "share_image": "/og.png",
  "numbers": [
   {

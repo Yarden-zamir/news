@@ -1,12 +1,13 @@
 # news
 
-The changelorg Gazette at https://news.yarden-zamir.com: a weekly newspaper that an AI agent edits from [changelorg](https://changelorg.yarden-zamir.com) feeds.
+The Riffle is a weekly newspaper that an AI agent edits from [Riffle](https://riffle.yarden-zamir.com) feeds.
+It runs at https://news.yarden-zamir.com and at https://the-riffle.yarden-zamir.com.
 This repository holds the renderer, the agent skill, and the site with every issue.
 
 ## How it works
 
-1. [changelorg](https://github.com/Yarden-zamir/changeLorg) collects news from feeds, release pages and status pages into profiles, such as `dev` and `games`.
-2. `changelorg_items.py` reads the profiles through the changelorg CLI and writes an items file.
+1. [Riffle](https://github.com/Yarden-zamir/riffle) collects news from feeds, release pages and status pages into profiles, such as `dev` and `games`.
+2. `riffle_items.py` reads the profiles through the Riffle CLI and writes an items file.
 3. An AI agent reads the items, ranks them, and writes a picks file: the lead, headlines, decks, images and boxes.
 4. `gazette.py render` checks the picks and renders one static HTML issue.
    It writes `covered.json` next to the issue, the list of every item that the issue shows.
@@ -16,18 +17,18 @@ This repository holds the renderer, the agent skill, and the site with every iss
 
 Each story links to its source. Images load from the publishers' websites and credit them. The site sets no cookies.
 
-Readers can sign in to changelorg with GitHub from the page. The page then marks what they viewed and shelved in their own changelorg.
-To mark the items of a block as viewed or shelved, point at the block, or press and hold it on a phone. The changes go straight to changelorg.
+Readers can sign in to Riffle with GitHub from the page. The page then marks what they viewed and shelved in their own Riffle.
+To mark the items of a block as viewed or shelved, point at the block, or press and hold it on a phone. The changes go straight to Riffle.
 [`SKILL.md`](skills/newspaper/SKILL.md#reader-sync) describes how a block finds its items.
 
 ## Make your own paper
 
 You need [uv](https://docs.astral.sh/uv/), Node.js for the deploy, and an agent that reads skills, such as Claude Code.
 
-1. Open https://changelorg.yarden-zamir.com and sign in with GitHub.
+1. Open https://riffle.yarden-zamir.com and sign in with GitHub.
 2. Add sources in the source editor. One profile becomes one edition of the paper.
    To start from the sources of this paper, open a share link and import the sources into a new profile:
-   [dev](https://changelorg.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg), [games](https://changelorg.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg).
+   [dev](https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg), [games](https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg).
 3. Clone this repository and give the skill to your agent:
    ```sh
    git clone https://github.com/Yarden-zamir/news.git
@@ -37,8 +38,8 @@ You need [uv](https://docs.astral.sh/uv/), Node.js for the deploy, and an agent 
    ```sh
    mkdir -p ~/my-paper/public/issues ~/my-paper/desk && git -C ~/my-paper init
    ```
-5. Ask the agent: "Make an issue of the Gazette in ~/my-paper from my changelorg profiles dev and games."
-   The skill signs the changelorg CLI in, writes the items and picks, renders the issue and checks it.
+5. Ask the agent: "Make an issue of the Gazette in ~/my-paper from my Riffle profiles dev and games."
+   The skill signs the Riffle CLI in, writes the items and picks, renders the issue and checks it.
    The first sign-in prints a link and a code. Open the link and approve.
 
 [`skills/newspaper/SKILL.md`](skills/newspaper/SKILL.md) describes the setup, the steps, the file formats and the editorial rules.
@@ -48,7 +49,7 @@ You need [uv](https://docs.astral.sh/uv/), Node.js for the deploy, and an agent 
 ```text
 skills/newspaper/          the agent skill
 ├── SKILL.md               steps, file formats, editorial rules and checks
-├── changelorg_items.py    changelorg profiles → items file
+├── riffle_items.py    Riffle profiles → items file
 ├── gazette.py             items file + picks file → issue; issues → site files
 ├── page_images.py         lists the images of an article, to pick one
 ├── example-picks.json     the picks of issue 1
@@ -67,11 +68,11 @@ The deny list holds words that must never appear on the public page.
 
 The site is a Cloudflare Worker with static assets only. It runs no Worker code.
 
-- Worker name: `news-site`. Custom domain: `news.yarden-zamir.com`. Settings: [`site/wrangler.jsonc`](site/wrangler.jsonc).
+- Worker name: `news-site`. Custom domains: `news.yarden-zamir.com` (canonical) and `the-riffle.yarden-zamir.com`. Settings: [`site/wrangler.jsonc`](site/wrangler.jsonc).
 - `not_found_handling` is `404-page`, so a missing page returns `public/404.html` with status 404.
 - `preview_urls` is off. The Worker has no preview URLs.
 - Cloudflare Web Analytics counts visits. Cloudflare adds its script at the edge. It sets no cookies.
-- Reader sync needs the changelorg deployment to allow this site: `https://news.yarden-zamir.com` in its CORS origins, and in the `--whitelist-domain` of its oauth2-proxy. The `compose.yml` of [changeLorg](https://github.com/Yarden-zamir/changeLorg) sets both.
+- Reader sync needs the Riffle deployment to allow both hosts: in its CORS origins, and in the `--whitelist-domain` of its oauth2-proxy. The `compose.yml` of [Riffle](https://github.com/Yarden-zamir/riffle) sets both.
 
 To deploy, run this from the repository root:
 

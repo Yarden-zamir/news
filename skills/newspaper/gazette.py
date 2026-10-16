@@ -444,7 +444,7 @@ def a(item: Item, label: str, cls: str = "", note: str | None = None) -> str:
 
 def entries(items: Iterable[Item]) -> str:
     """The data-entries attribute of a block: the URLs of the items that it is based on.
-    The page script finds the reader's own changelorg items by URL, because item ids differ per account."""
+    The page script finds the reader's own Riffle items by URL, because item ids differ per account."""
     urls = list(dict.fromkeys(item.url for item in items if item.url))
     return f' data-entries="{e(json.dumps(urls))}"' if urls else ""
 
@@ -721,11 +721,11 @@ class Paper:
                 f'</header><ul>{rows}</ul></section>')
 
     def get_desk(self, section: str, label: str = "Start a feed with these sources →") -> str:
-        """A link that copies the sources of a section into the reader's own changelorg."""
+        """A link that copies the sources of a section into the reader's own Riffle."""
         url = self.feed.shares.get(section)
         if url is None:
             return ""
-        note = f"Import the {section} sources into your own changelorg feed. No account needed."
+        note = f"Import the {section} sources into your own Riffle feed. No account needed."
         return f'<a class="get-desk" href="{e(url)}" title="{e(note)}">{e(label)}</a>'
 
     def edition(self, edition: Edition) -> str:
@@ -778,7 +778,7 @@ class Paper:
 
     def footer(self) -> str:
         picks = self.picks
-        shared = [f'<a href="{e(self.feed.shares[ed.section])}" title="Import the {e(ed.section)} sources into your own changelorg feed">'
+        shared = [f'<a href="{e(self.feed.shares[ed.section])}" title="Import the {e(ed.section)} sources into your own Riffle feed">'
                   f'{e(ed.section)}</a>' for ed in picks.editions if ed.section in self.feed.shares]
         links = [f'<a href="{e(picks.previous)}">← Previous issue</a>' if picks.previous else "",
                  f'<a href="{e(picks.archive)}">All issues</a>' if picks.archive else "",
@@ -786,7 +786,7 @@ class Paper:
                  f'<a href="{e(picks.contact)}">Report a mistake</a>' if picks.contact else ""]
         lines = [e(picks.colophon)]
         if shared:
-            lines.append(f"Want these desks? Copy their sources into your own changelorg: {', '.join(shared)}.")
+            lines.append(f"Want these desks? Copy their sources into your own Riffle: {', '.join(shared)}.")
         lines.append("Images load from the publishers' websites. Each image credits its source.")
         if nav := " · ".join(part for part in links if part):
             lines.append(nav)
@@ -802,8 +802,8 @@ class Paper:
                 "title": self.picks.title, "description": self.description(), "leads": self.leads, "items": items}
 
     def sync_config(self) -> str:
-        """Settings of the page script that shows and changes the viewed and shelved state in the reader's changelorg.
-        Without a changelorg home in the items file, the page has no sync."""
+        """Settings of the page script that shows and changes the viewed and shelved state in the reader's Riffle.
+        Without a Riffle home in the items file, the page has no sync."""
         if self.feed.home is None:
             return ""
         home = urlsplit(self.feed.home)
@@ -813,7 +813,7 @@ class Paper:
                   "shares": self.feed.shares}
         # "<" never appears raw, so the JSON cannot close the script element.
         data = json.dumps(config).replace("<", "\\u003c")
-        return f'<script type="application/json" id="changelorg-sync">{data}</script>'
+        return f'<script type="application/json" id="riffle-sync">{data}</script>'
 
     def description(self) -> str:
         if self.picks.description:
@@ -853,7 +853,7 @@ class Paper:
   <p class="motto">{e(picks.motto)}</p>
   <div class="rule">{buttons}<span class="stamp big" title="Every story links to the item that it comes from">✓ Every story sourced</span></div>
 </header>
-<section class="sync-bar" data-sync aria-label="Your changelorg" aria-live="polite" hidden></section>
+<section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
 <main id="main" class="page-main">
 {self.numbers(first)}
 {self.about()}
@@ -1129,7 +1129,7 @@ footer p { margin: 0; }
 .missing h1 { font-size: 2rem; margin-top: 0.6rem; }
 .missing .stamp { justify-self: start; }
 
-/* Sync with the reader's changelorg. The page script fills the bar, and adds the buttons and the sheet after sign-in. */
+/* Sync with the reader's Riffle. The page script fills the bar, and adds the buttons and the sheet after sign-in. */
 .sync-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.35rem 0.8rem; padding: 0.45rem 0.9rem;
   font-size: 0.8rem; font-weight: 600; text-align: center; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
 .sync-bar .sticker { font-size: 0.72rem; }
@@ -1244,10 +1244,10 @@ for (const button of buttons) button.addEventListener("click", () => {
   schedule();
 });
 
-// Sync with the reader's changelorg. Sign-in happens on changelorg, and its session cookie stays there; this site stores nothing.
+// Sync with the reader's Riffle. Sign-in happens on Riffle, and its session cookie stays there; this site stores nothing.
 // A block is an element with data-entries: the URLs of the items that it is based on. Item ids differ per account,
 // so the script finds the reader's own items by URL. Buttons on a block change every item of the block.
-const syncConfig = document.getElementById("changelorg-sync");
+const syncConfig = document.getElementById("riffle-sync");
 if (syncConfig) startSync(JSON.parse(syncConfig.textContent));
 
 function startSync({ origin, since, until, shares }) {
@@ -1257,7 +1257,7 @@ function startSync({ origin, since, until, shares }) {
   const pageUrls = new Set(blocks.flatMap((block) => block.urls));
   const back = encodeURIComponent(location.href.split("#")[0]);
   const hoverable = matchMedia("(hover: hover)").matches;
-  // Icons from Lucide (https://lucide.dev, ISC license), the same icons that changelorg shows.
+  // Icons from Lucide (https://lucide.dev, ISC license), the same icons that Riffle shows.
   const icon = (...paths) => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join("")}</svg>`;
   const BOOKMARK = "M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z";
   const ACTIONS = {
@@ -1277,9 +1277,9 @@ function startSync({ origin, since, until, shares }) {
   };
 
   async function api(path, init = {}) {
-    const headers = { ...init.headers, ...(account ? { "X-Changelorg-Owner": account.id } : {}) };
+    const headers = { ...init.headers, ...(account ? { "X-Riffle-Owner": account.id } : {}) };
     const response = await fetch(origin + path, { ...init, headers, credentials: "include" });
-    if (!response.ok) throw Object.assign(new Error(`changelorg answered ${response.status}`), { status: response.status });
+    if (!response.ok) throw Object.assign(new Error(`Riffle answered ${response.status}`), { status: response.status });
     return response.json();
   }
 
@@ -1332,7 +1332,7 @@ function startSync({ origin, since, until, shares }) {
   function addActions(block) {
     const group = el("div", { className: "sync-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, false)));
     group.setAttribute("role", "group");
-    group.setAttribute("aria-label", "Your changelorg");
+    group.setAttribute("aria-label", "Your Riffle");
     block.el.append(group);
     return group;
   }
@@ -1358,7 +1358,7 @@ function startSync({ origin, since, until, shares }) {
 
   // Touch screens have no hover. A long press on a block opens its buttons in a sheet at the bottom of the screen.
   const sheet = el("dialog", { className: "sync-sheet" });
-  sheet.setAttribute("aria-label", "Your changelorg");
+  sheet.setAttribute("aria-label", "Your Riffle");
   sheet.addEventListener("click", (event) => {
     if (event.target === sheet) sheet.close();
   });
@@ -1368,7 +1368,7 @@ function startSync({ origin, since, until, shares }) {
     const count = block.urls.filter((url) => byUrl.has(url)).length;
     const title = ["h3", "h2", "blockquote", ".ticker-label", "a"].map((selector) => block.el.querySelector(selector)).find(Boolean);
     sheet.replaceChildren(el("div", { className: "sheet-body" },
-      el("p", { className: "label" }, count > 1 ? `Your changelorg · ${count} items` : "Your changelorg"),
+      el("p", { className: "label" }, count > 1 ? `Your Riffle · ${count} items` : "Your Riffle"),
       el("p", { className: "sheet-title" }, title?.textContent.trim() ?? ""),
       el("div", { className: "sheet-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, true))),
       el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Cancel")));
@@ -1426,7 +1426,7 @@ function startSync({ origin, since, until, shares }) {
     loaded = false;
     paint();
     show(...(note ? [el("span", { className: "sticker warn" }, note)] : []),
-      el("span", {}, "Read these desks in changelorg?"),
+      el("span", {}, "Read these desks in Riffle?"),
       el("a", { className: "get-desk", href: `${origin}/auth/start?rd=${back}` }, "Sign in with GitHub"),
       el("span", { className: "hint" }, "to see what you viewed and shelved, and to mark it here."));
   }
@@ -1449,9 +1449,9 @@ function startSync({ origin, since, until, shares }) {
   }
 
   function problem(error) {
-    if (error?.status === 401) return signedOut("Your changelorg session ended.");
+    if (error?.status === 401) return signedOut("Your Riffle session ended.");
     signedIn();
-    const note = error?.status === 412 ? "Your changelorg account changed. Reload the page." : "changelorg did not answer. Try again.";
+    const note = error?.status === 412 ? "Your Riffle account changed. Reload the page." : "Riffle did not answer. Try again.";
     bar.prepend(el("span", { className: "sticker warn" }, note));
   }
 
@@ -1465,10 +1465,10 @@ function startSync({ origin, since, until, shares }) {
     paint();
     writes += 1;
     for (const button of group.querySelectorAll("button")) button.disabled = true;
-    // One PATCH per item. The release ticker can hold 40 or more items. If such writes feel slow, add a bulk route to changelorg.
+    // One PATCH per item. The release ticker can hold 40 or more items. If such writes feel slow, add a bulk route to Riffle.
     const results = await Promise.allSettled(rows.map((row) => api(`/changes/${row.id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", "X-Changelorg-Request": "1" },
+      headers: { "Content-Type": "application/json", "X-Riffle-Request": "1" },
       body: JSON.stringify({ [field]: value }),
     })));
     writes -= 1;
@@ -1500,7 +1500,7 @@ function startSync({ origin, since, until, shares }) {
     try {
       me = await api("/me");
     } catch (error) {
-      // Without an answer, changelorg does not accept this site yet, so the page stays as it is.
+      // Without an answer, Riffle does not accept this site yet, so the page stays as it is.
       if (error.status === 401) signedOut();
       return;
     }
