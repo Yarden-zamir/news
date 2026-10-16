@@ -196,8 +196,10 @@ If the items file has `home`, readers can sign in to changelorg from the page. T
   The blocks are the lead, side stories, cards, the quote, boxes, the release ticker and each In brief row.
   A block without items, such as the numbers or the prolific chart, gets no buttons.
 - The page reads the reader's items of the issue window from `/changes`, and matches them by URL. Item ids differ per account.
-- A block shows as viewed when all of its items are dismissed, and as shelved when all of them are saved.
-  Its Viewed and Shelved buttons change every item of the block. Links of dismissed items get a ✓, and links of saved items get a ★.
+- A block fades when all of its items are dismissed. Its Viewed and Shelved buttons change every item of the block.
+  Links of dismissed items fade, and links of saved items get a highlighter mark. No mark changes the layout.
+- On a screen with a pointer, the buttons show in the top right corner of a block while the pointer is on it, or while a button has keyboard focus.
+  On a touch screen, a long press on a block opens its buttons in a sheet at the bottom of the screen.
 - The page reads the state again when the tab comes back, and every minute while it is open.
 - Sign-in and sign-out run on changelorg (`/auth/start?rd=<page>` and `/auth/sign_out?rd=<page>`). The site stores no data and sets no cookie.
 - If changelorg does not answer, the page shows no sync bar.

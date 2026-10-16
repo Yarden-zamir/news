@@ -17,7 +17,7 @@ This repository holds the renderer, the agent skill, and the site with every iss
 Each story links to its source. Images load from the publishers' websites and credit them. The site sets no cookies.
 
 Readers can sign in to changelorg with GitHub from the page. The page then marks what they viewed and shelved in their own changelorg.
-Each block has buttons that mark its items as viewed or shelved. The changes go straight to changelorg.
+To mark the items of a block as viewed or shelved, point at the block, or press and hold it on a phone. The changes go straight to changelorg.
 [`SKILL.md`](skills/newspaper/SKILL.md#reader-sync) describes how a block finds its items.
 
 ## Make your own paper
