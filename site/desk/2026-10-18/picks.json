@@ -1,0 +1,479 @@
+{
+ "title": "The Riffle",
+ "issue": "Vol. 1 · No. 2",
+ "motto": "All the feed that fits · eight days of Yarden's dev and games desks",
+ "word": "review",
+ "colophon": "Built 18 October 2026 from Yarden's Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.",
+ "audience": "public",
+ "site": "https://news.yarden-zamir.com",
+ "page": "/issues/2026-10-18/",
+ "previous": "/issues/2026-10-14/",
+ "archive": "/issues/",
+ "contact": "https://github.com/Yarden-zamir/news/issues",
+ "description": "Issue 2: how the Claude Code team reviews code that Claude writes, T3 Code 0.1.0 goes stable, Anthropic's $16.8bn quarter, and THE FINALS goes PRIME TIME.",
+ "about": "A weekly paper about developer tools, AI agents and games. Every Sunday an AI agent reads Yarden's Riffle desks, ranks the news, writes the headlines and links every story to its source. Want the same news in your own feed?",
+ "share_image": "/og.png",
+ "numbers": [
+  {
+   "value": "37",
+   "label": "T3 Code releases in 8 days",
+   "tip": "From T3 Code Releases: nightlies, maintainer previews, Android betas and one stable release",
+   "href": "#dev"
+  },
+  {
+   "value": "186K",
+   "label": "ARC Raiders players on Steam at once",
+   "tip": "Nearly 186,000 concurrent players after Frozen Trail, per SteamDB via GamingBolt",
+   "href": "#games"
+  }
+ ],
+ "editions": [
+  {
+   "section": "dev",
+   "title": "Dev edition",
+   "banner": "Spellcheck for pull requests",
+   "lead": {
+    "item": "bonus-1",
+    "kicker": "Claude Code",
+    "headline": "Claude writes about 90% of Claude Code. This is how the team reviews it",
+    "deck": "After Scion, the review side: review runs like spellcheck while you write, risk sets how many humans approve, and Code Review is GA.",
+    "body": "From June to September, merged pull requests more than doubled, and the share that had to be reverted fell by more than 40 percent. A classifier puts each change in a risk tier that needs no person, one or two. Code Review, the product, now finishes most reviews in 6 to 10 minutes. Every finding must be fixed, or answered with a reason.",
+    "follows": "https://www.anthropic.com/engineering/redesigning-source-control",
+    "also": [
+     "bonus-2",
+     "608928"
+    ]
+   },
+   "side": [
+    {
+     "item": "599267",
+     "kicker": "T3 Code",
+     "headline": "T3 Code 0.1.0: Orchestrator V2 is stable",
+     "deck": "The app that runs Claude, Codex and other coding agents rebuilt its core. Agents can start child agents on any provider, and threads can fork.",
+     "follows": "https://github.com/pingdotgg/t3code/releases/tag/v0.0.46-nightly.20261011.2980",
+     "also": [
+      "600598"
+     ]
+    },
+    {
+     "item": "595321",
+     "kicker": "Anthropic",
+     "headline": "Anthropic tells investors: $16.8bn in one quarter",
+     "deck": "Revenue rose nearly 50% in Q3, the FT reports. Distillation by rival labs made up 5% to 7% of revenue, and Anthropic cut it back."
+    }
+   ],
+   "flow": [
+    {
+     "item": "587731",
+     "kicker": "VS Code",
+     "headline": "VS Code 1.142 puts a canvas beside the chat",
+     "deck": "You and the agent share an interactive panel, such as a Kanban board. Codex chats can move into a new Git worktree mid-task.",
+     "also": [
+      "588588",
+      "597560"
+     ],
+     "image": "https://code.visualstudio.com/assets/updates/1_142/kanban-canvas.webp",
+     "alt": "VS Code screenshot: a Kanban canvas named Wanderlust Work Board, with Backlog, In Progress, Review and Done columns, beside the Copilot chat."
+    },
+    {
+     "item": "586150",
+     "kicker": "GitHub Actions",
+     "headline": "GitHub Actions gets lockfiles",
+     "deck": "In public preview: pin actions and their dependencies to exact commits, so a moved tag cannot slip new code into a locked workflow."
+    },
+    {
+     "item": "595616",
+     "kicker": "JetBrains",
+     "headline": "IntelliJ's Java and Kotlin smarts reach 1.0 in VS Code and Cursor",
+     "deck": "Now 1.0, made with Cursor's team. Netflix ran the same engine headless under Claude Code and Codex, and agents used fewer tokens and less time.",
+     "follows": "https://blog.jetbrains.com/idea/2026/10/java-and-kotlin-by-intellij-idea-the-lsp-based-extension-reaches-release-candidate/",
+     "also": [
+      "593902"
+     ]
+    },
+    {
+     "item": "bonus-3",
+     "kicker": "Cloudflare",
+     "headline": "Cloudflare open-sources Void, a deploy platform you host yourself",
+     "deck": "An SDK, a CLI and a platform turn a Vite app into a full-stack Workers app, for internal tools built by vibe coding."
+    },
+    {
+     "box": "corrections",
+     "title": "Corrections",
+     "note": "Fixed, retracted, or never happened.",
+     "rows": [
+      {
+       "head": "GitHub Status",
+       "text": "“CCA Automations are delayed”, said the status page. Further checks found no delay at all.",
+       "item": "597300"
+      },
+      {
+       "head": "T3 Code",
+       "text": "Text generation no longer falls back to the expensive flagship model.",
+       "item": "595358"
+      },
+      {
+       "head": "Copilot CLI",
+       "text": "Reasoning-only max-token responses looped forever. They now end with a clear error.",
+       "item": "606112"
+      },
+      {
+       "head": "Copilot CLI",
+       "text": "A hung MCP server stalled sessions for minutes. Not anymore.",
+       "item": "607864"
+      },
+      {
+       "head": "ty",
+       "text": "Recursive type aliases and intersections could make the type checker panic or hang. Fixed in 0.0.88.",
+       "item": "594098"
+      },
+      {
+       "head": "FastAPI",
+       "text": "Non-finite floats broke serialization in JSONL and SSE streams. Fixed in 0.143.3.",
+       "item": "605630"
+      }
+     ]
+    },
+    {
+     "item": "598572",
+     "kicker": "GitHub",
+     "headline": "GitHub's Azure move: 120 of 160 services, one missed deadline",
+     "deck": "Azure serves 65.4% of core app reads. GitHub paused the Central US ramp on 11 September and missed its 30 September goal.",
+     "image": "https://github.blog/wp-content/uploads/2026/10/09-13-Graph-Incident5334.png?resize=1024%2C451",
+     "alt": "Line chart of the GitHub.com edge failure rate on 13 September: failed requests jump from near zero to about 1% for over an hour, then drop back."
+    },
+    {
+     "item": "608222",
+     "kicker": "Claude Code",
+     "headline": "Claude Code lets you switch idle compaction off",
+     "deck": "/config gets an Idle compaction row, auto mode's classifier can use another model, and standalone Claude Design closes by 14 December.",
+     "follows": "https://github.com/anthropics/claude-code/releases/tag/v2.1.295",
+     "also": [
+      "587814",
+      "597646"
+     ]
+    },
+    {
+     "item": "597239",
+     "kicker": "Codex",
+     "headline": "Codex 0.163: steer it while it answers",
+     "deck": "A follow-up sent mid-answer steers the turn. /config searches all settings, and Ctrl+X is the default leader key."
+    },
+    {
+     "box": "overheard",
+     "title": "Overheard",
+     "note": "Short quotes, long week.",
+     "rows": [
+      {
+       "head": "Martin Woodward, GitHub",
+       "text": "“An agent can generate three implementations before you finish your tea, but someone still has to decide whether the abstraction belongs, the migration is safe, the tests prove anything useful, and the result solves the problem.”",
+       "item": "598570"
+      },
+      {
+       "head": "Simon Willison, on Python 3.15 in CI",
+       "text": "“Bit of a niche link, but I've been waiting for this for a couple of days”",
+       "item": "577711"
+      },
+      {
+       "head": "GitHub, on outside collaborators",
+       "text": "“Keep who you need, and everyone else is removed.”",
+       "item": "598571"
+      },
+      {
+       "head": "Simon Willison, on web-edit",
+       "text": "“I mainly built it for editing files on different machines via Tailscale.”",
+       "item": "621140"
+      },
+      {
+       "head": "Simon Willison, on Tiny Little Office",
+       "text": "“Tiny Little Office's signature trick is to store all of the document data in the #fragment section of the URL”",
+       "item": "608931"
+      }
+     ]
+    },
+    {
+     "item": "587070",
+     "kicker": "herdr",
+     "headline": "herdr 0.9.5 makes prefix shortcuts work again",
+     "deck": "The terminal multiplexer for coding agents fixed shortcuts for Ghostty keybinds and Chinese, Japanese and Korean input. Codex turn hooks are gone.",
+     "follows": "https://github.com/herdrdev/herdr/releases/tag/v0.9.4"
+    },
+    {
+     "item": "598573",
+     "kicker": "GitHub API",
+     "headline": "Star history in 24 requests instead of 2,500",
+     "deck": "A new endpoint returns up to 30 weeks of daily star counts at once, without the stargazer names that spammers used to scrape."
+    },
+    {
+     "item": "588722",
+     "kicker": "Copilot",
+     "headline": "Copilot's HydraFusion gets a Max mode",
+     "deck": "The multi-model mode now mixes Claude Opus 5.5 with three OpenAI models, drafts at medium effort and reviews at high effort."
+    },
+    {
+     "box": "classifieds",
+     "title": "Classifieds",
+     "note": "Rates: one merged pull request a line.",
+     "rows": [
+      {
+       "head": "LAST CALL",
+       "text": "Claude Opus 5, GPT-5.6 Terra and, for most plans, Claude Opus 4.8 leave Copilot on 16 November.",
+       "item": "597703"
+      },
+      {
+       "head": "RETIRED",
+       "text": "GitHub push-event emails. To keep them, send your own from an Actions workflow.",
+       "item": "595549"
+      },
+      {
+       "head": "NOW SERVING",
+       "text": "Xcode 27 on GitHub-hosted runners, Apple Silicon only.",
+       "item": "605660"
+      },
+      {
+       "head": "WORKTREES",
+       "text": "GitHub Desktop 3.6.7 can keep the worktree list in its toolbar at all times.",
+       "item": "541630"
+      },
+      {
+       "head": "TRACED",
+       "text": "The Anthropic Python SDK 1.14 creates OpenTelemetry spans when your app has a global tracer.",
+       "item": "586903"
+      },
+      {
+       "head": "FASTER",
+       "text": "Raycast 2.8: File Search up to 6× faster, extension installs about 4× faster.",
+       "item": "585054"
+      },
+      {
+       "head": "MULTI-REPO",
+       "text": "@GitHub in Slack and Teams now works across several repositories in one conversation.",
+       "item": "600799"
+      },
+      {
+       "head": "ONE-LINER",
+       "text": "A script tag that replaces itself, with document.currentScript.",
+       "item": "620708"
+      }
+     ]
+    },
+    {
+     "item": "595548",
+     "kicker": "Security",
+     "headline": "GitHub's agentic autofix and AI Scan reach GA",
+     "deck": "Assign a code scanning alert to Copilot and it reruns CodeQL before it opens a PR. AI Scan covers PHP, Bash, Terraform and Dockerfiles.",
+     "also": [
+      "595978",
+      "605659"
+     ]
+    },
+    {
+     "item": "597868",
+     "kicker": "OpenCode",
+     "headline": "OpenCode ends session sharing",
+     "deck": "Share links and commands stop working in 1.19.1. OpenCode 1 also stays on 1.x, so OpenCode 2 is an explicit upgrade.",
+     "also": [
+      "600522"
+     ]
+    },
+    {
+     "item": "587211",
+     "kicker": "Opinion",
+     "headline": "AI is mass decompiling old games",
+     "deck": "Popcar sees a boom in ports that keep old games playable, and a threat: any paid app can be open-sourced against its owner's will."
+    },
+    {
+     "box": "classifieds",
+     "title": "Success stories",
+     "note": "Customer stories from OpenAI News. Every one of them has a happy ending.",
+     "rows": [
+      {
+       "head": "10,000 AGENTS",
+       "text": "Third Moment Research runs them for 36+ hours, with GPT-6 Astra, GPT-6.1 Sol and Codex.",
+       "item": "586666"
+      },
+      {
+       "head": "WEEKS → HOURS",
+       "text": "SentinelOne's malware analysis, with OpenAI Daybreak.",
+       "item": "587532"
+      },
+      {
+       "head": "MINUTES",
+       "text": "Block's security team proposes patches in minutes.",
+       "item": "589668"
+      },
+      {
+       "head": "3× SIGNUPS",
+       "text": "Stack Overflow for Agents, built by two engineers in a few weeks with Codex.",
+       "item": "607937"
+      },
+      {
+       "head": "BEYOND CODE",
+       "text": "Amp puts its agents to work outside coding.",
+       "item": "587098"
+      },
+      {
+       "head": "REDLINES",
+       "text": "Sullivan & Cromwell's Agreement Analyzer flags issues in draft agreements.",
+       "item": "599560"
+      },
+      {
+       "head": "LOANS",
+       "text": "Benefit Street Partners builds loan valuation tools, with Codex for code review.",
+       "item": "611879"
+      },
+      {
+       "head": "BANKING",
+       "text": "Itaú builds generative AI for its entire customer base, in a heavily regulated sector.",
+       "item": "609254"
+      }
+     ]
+    },
+    {
+     "item": "590209",
+     "kicker": "Vibe coding",
+     "headline": "Claude spent 3 hours on a game about appreciating trees",
+     "deck": "Simon Willison asked Opus 5.5 to make it fun. Chirp Pong, his next game, sends its state between two phones as sound.",
+     "also": [
+      "597906"
+     ]
+    },
+    {
+     "item": "604160",
+     "kicker": "Python",
+     "headline": "ty learns to infer return types",
+     "deck": "Astral's type checker can infer return types of unannotated functions; turn it on with analysis.return-type-inference. uv 0.13.1 adds CPython 3.16.0a1.",
+     "also": [
+      "582551"
+     ]
+    },
+    {
+     "item": "604278",
+     "kicker": "Cloudflare",
+     "headline": "Cloudflare Tunnel: 50,000 routes, and more than 1,000 tunnels",
+     "deck": "The default route limit rises from 1,000 to 50,000 per account. Tunnels for Platforms sells extra tunnels at $4.50 each a month.",
+     "also": [
+      "588676"
+     ]
+    },
+    {
+     "box": "wire",
+     "title": "The front office",
+     "note": "Headlines from company newsrooms. Summaries not included.",
+     "rows": [
+      {
+       "head": "14 Oct",
+       "text": "Anthropic prepares for the 2026 US midterms.",
+       "item": "588187"
+      },
+      {
+       "head": "14 Oct",
+       "text": "Anthropic opens a Singapore office and signs an MOU with the government.",
+       "item": "583889"
+      },
+      {
+       "head": "15 Oct",
+       "text": "Anthropic posts an update on independent evaluators.",
+       "item": "596726"
+      },
+      {
+       "head": "14 Oct",
+       "text": "OpenAI: agentic AI adoption grows across EU enterprises and small businesses.",
+       "item": "584092"
+      },
+      {
+       "head": "15 Oct",
+       "text": "OpenAI's Rosalind Academic Plan gives eligible labs sponsored access to GPT-Rosalind.",
+       "item": "598666"
+      },
+      {
+       "head": "15 Oct",
+       "text": "OpenAI: AI for Educators in Brazilian Portuguese, for Teachers' Day.",
+       "item": "595636"
+      },
+      {
+       "head": "18 Oct",
+       "text": "Google: a guide to evaluating multi-turn AI agents, past the vibe check.",
+       "item": "595538"
+      }
+     ]
+    },
+    {
+     "box": "prolific",
+     "title": "Most words filed",
+     "note": "Articles only. The release bots have their own ticker."
+    }
+   ]
+  },
+  {
+   "section": "games",
+   "title": "Games edition",
+   "banner": "Lights, camera, demolition",
+   "lead": {
+    "item": "bonus-4",
+    "kicker": "THE FINALS",
+    "headline": "THE FINALS goes PRIME TIME on 20 October",
+    "deck": "Embark's gameplay trailer shows a suspended structure that breaks in two yet stays airborne, and new gadgets for Light players.",
+    "body": "PRIME TIME is the next season of Embark Studios' arena shooter, where the buildings come down. The studio's YouTube channel also has videos on map changes, new sponsors, and HUD and UI reworks.",
+    "follows": "https://www.reachthefinals.com/patchnotes/finals-x-galaxies-showcase",
+    "image": "https://storage.ghost.io/c/50/c6/50c61f91-0165-4605-93bc-f8598149e466/content/images/size/w1200/2026/10/Screenshot-2026-10-17-184725-1.png",
+    "alt": "Still from THE FINALS PRIME TIME trailer: a contestant flies through exploding concrete and gold coins in a stadium."
+   },
+   "side": [
+    {
+     "item": "603357",
+     "kicker": "ARC Raiders",
+     "headline": "ARC Raiders hotfix shuts dupes and locked-room exploits",
+     "deck": "Hotfix 2.1.1 closes several ways into locked rooms and to copy items. Embark asks players to report the next one privately."
+    },
+    {
+     "item": "bonus-5",
+     "kicker": "ARC Raiders",
+     "headline": "Frozen Trail brings the crowds back",
+     "deck": "ARC Raiders peaked at nearly 186,000 concurrent Steam players, its highest since the second half of March, per SteamDB.",
+     "follows": "https://store.steampowered.com/news/app/1808500/view/708911159562994571"
+    },
+    {
+     "item": "608086",
+     "kicker": "Team Fortress 2",
+     "headline": "Team Fortress 2's zombies hit harder",
+     "deck": "Zombie Pyro's melee rises from 45 to 65 damage, and its spew slows humans. cp_holyhell gets five-minute rounds and rare spells instead of stalemates."
+    }
+   ],
+   "flow": [
+    {
+     "item": "606014",
+     "kicker": "Contest",
+     "headline": "Say Freeze: ARC Raiders wants your Frozen Trail photos",
+     "deck": "Shoot with the new camera gadget and post on Discord, 16 to 26 October. Ten winners get 1,150 Raider Tokens and a camera charm."
+    },
+    {
+     "item": "594089",
+     "kicker": "THE FINALS",
+     "headline": "THE FINALS starts the last week of Season 11",
+     "deck": "Store Update 11.14.0 adds the On The Clock and Running Hot sets, while contestants still fight for fans in Sponsor Showdown.",
+     "also": [
+      "594083"
+     ]
+    },
+    {
+     "box": "classifieds",
+     "title": "Classifieds",
+     "note": "No refunds on cosmetics.",
+     "rows": [
+      {
+       "head": "BENDING",
+       "text": "Avatar Legends: water, earth, fire and air bending, as a Minecraft add-on.",
+       "item": "609682"
+      },
+      {
+       "head": "PREVIEW",
+       "text": "Minecraft Bedrock Preview 26.70.20, for testers.",
+       "item": "585369"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
