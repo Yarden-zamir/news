@@ -13,7 +13,7 @@ Files in this folder:
 
 - `riffle_items.py`: writes an items file from Riffle profiles, through the Riffle CLI.
 - `gazette.py render`: renders one issue from an items file and a picks file. It writes `covered.json` next to the page.
-- `gazette.py site`: builds the home page, the archive, `feed.xml`, `sitemap.xml`, `404.html` and the fonts from all issues.
+- `gazette.py site`: builds the home page, the archive, `issues/index.json`, `feed.xml`, `sitemap.xml`, `404.html` and the fonts from all issues.
 - `page_images.py`: prints the share image of each page URL, then every image in the article with its caption.
 - `example-picks.json`: the picks file of a real issue. Read it for the tone and for the use of each box.
 - `assets/fonts/`: Bricolage Grotesque and JetBrains Mono under the SIL Open Font License. The site serves them itself.
@@ -161,6 +161,7 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 - `audience` is `public` (the default) or `private`. A private page also shows read marks and an "On your shelf" box of saved items.
 - `site` is the origin of the site, without a slash at the end. With `page`, it makes the canonical link and the share tags.
 - `page` is the path of this issue. `previous` is the path of the issue before it. `archive` is the path of the archive page.
+  The page links them at the top and the bottom. The page script adds a link to the next issue from `issues/index.json`.
 - `contact` is a link where readers report a mistake.
 - `share_image` is the path of the share card. Without `description`, link previews use the lead deck.
 - `also` lists other items about the same story. The card links them by source name.

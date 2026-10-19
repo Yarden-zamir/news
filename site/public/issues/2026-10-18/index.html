@@ -95,11 +95,15 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .edition + .edition { border-top: 4px double var(--border); padding-top: 1.3rem; }
 .banner { display: grid; gap: 0.1rem; }
 .banner-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 1rem; }
-.get-desk { display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 800; text-decoration: none;
+.get-desk, .issue-nav a { display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 800; text-decoration: none;
   color: var(--accent-fg); background: var(--accent); border: var(--bw) solid var(--border); border-radius: var(--radius);
   box-shadow: 3px 3px 0 0 var(--shadow-ink); transition: transform 80ms, box-shadow 80ms; }
-.get-desk:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow); }
-.get-desk:active { transform: translate(3px, 3px); box-shadow: none; }
+.get-desk:hover, .issue-nav a:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow); }
+.get-desk:active, .issue-nav a:active { transform: translate(3px, 3px); box-shadow: none; }
+.issue-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.6rem; }
+.issue-nav a { color: var(--ink); background: var(--surface); }
+.issue-nav [rel="prev"] { justify-self: start; }
+.issue-nav [rel="next"] { grid-column: 3; justify-self: end; }
 .banner h2 { font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1; text-transform: uppercase; letter-spacing: -0.02em; }
 .edition-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin: 0;
   font-size: 0.8rem; font-weight: 800; }
@@ -275,10 +279,9 @@ li.holding { background: var(--raised); transition: background-color 250ms 150ms
   <p class="motto">All the feed that fits · eight days of Yarden&#x27;s dev and games desks</p>
   <div class="rule"><div class="seg" role="group" aria-label="Show edition"><button aria-pressed="true" data-show="all">All editions</button><button aria-pressed="false" data-show="dev">Dev</button><button aria-pressed="false" data-show="games">Games</button></div><span class="stamp big" title="Every story links to the item that it comes from">✓ Every story sourced</span></div>
 </header>
-<section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
+<nav class="issue-nav" aria-label="Issues" data-page="/issues/2026-10-18/"><a rel="prev" href="/issues/2026-10-14/" title="Previous issue">← Previous</a><a href="/issues/">All issues</a><a rel="next" hidden>Next →</a></nav>
 <main id="main" class="page-main">
 <section class="numbers" aria-label="By the numbers"><a class="card num" href="#about" title="Items published in these desks from 10 Oct to 18 Oct"><b>234</b><span>items · 216 dev, 18 games</span></a><a class="card num" href="#about" title="Sources with at least one item in the window"><b>47</b><span>sources with news</span></a><a class="card num" href="#dev" title="From T3 Code Releases: nightlies, maintainer previews, Android betas and one stable release"><b>37</b><span>T3 Code releases in 8 days</span></a><a class="card num" href="#games" title="Nearly 186,000 concurrent players after Frozen Trail, per SteamDB via GamingBolt"><b>186K</b><span>ARC Raiders players on Steam at once</span></a></section>
-<section class="card about" id="about" aria-labelledby="about-title"><h2 id="about-title">What is this?</h2><p>A weekly paper about developer tools, AI agents and games. Every Sunday an AI agent reads Yarden&#x27;s Riffle desks, ranks the news, writes the headlines and links every story to its source. Want the same news in your own feed?</p><div class=about-links><a class="get-desk" href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed. No account needed.">Start a feed with the dev sources →</a><a class="get-desk" href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed. No account needed.">Start a feed with the games sources →</a></div></section>
 <section class="edition" id="dev" data-section="dev" aria-labelledby="dev-title">
           <div class="banner"><div class="banner-top"><span class="label">Dev edition · 216 items · 39 sources</span><a class="get-desk" href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed. No account needed.">Start a feed with these sources →</a></div>
             <h2 id="dev-title">Spellcheck for pull requests</h2></div>
@@ -388,8 +391,11 @@ li.holding { background: var(--raised); transition: background-color 250ms 150ms
           <p class="src">THE FINALS Patch Notes · <a href="https://store.steampowered.com/news/app/2073850/view/686393161428241895" title="THE FINALS News: Store Update 11.14.0">THE FINALS News</a></p></div></article><section class="card box classifieds" data-entries="[&quot;https://www.minecraft.net/en-us/article/avatar-legends-add-on&quot;, &quot;https://www.minecraft.net/en-us/article/minecraft-preview-26-70-20&quot;]"><header><h2>Classifieds</h2><p class="note">No refunds on cosmetics.</p></header><ul><li><span class="sticker wait">BENDING</span> <a href="https://www.minecraft.net/en-us/article/avatar-legends-add-on" title="Minecraft News: Master the elements of your worlds with Avatar Legends">Avatar Legends: water, earth, fire and air bending, as a Minecraft add-on.</a></li><li><span class="sticker wait">PREVIEW</span> <a href="https://www.minecraft.net/en-us/article/minecraft-preview-26-70-20" title="Minecraft News: Minecraft Preview 26.70.20">Minecraft Bedrock Preview 26.70.20, for testers.</a></li></ul></section></div>
           <p class="edition-end"><a href="#top">↑ Back to top</a><a class="get-desk" href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed. No account needed.">Start a feed with these sources →</a></p>
         </section>
+<section class="card about" id="about" aria-labelledby="about-title"><h2 id="about-title">What is this?</h2><p>A weekly paper about developer tools, AI agents and games. Every Sunday an AI agent reads Yarden&#x27;s Riffle desks, ranks the news, writes the headlines and links every story to its source. Want the same news in your own feed?</p><div class=about-links><a class="get-desk" href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed. No account needed.">Start a feed with the dev sources →</a><a class="get-desk" href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed. No account needed.">Start a feed with the games sources →</a></div></section>
 </main>
-<footer><p>Built 18 October 2026 from Yarden&#x27;s Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.</p><p>Want these desks? Copy their sources into your own Riffle: <a href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed">dev</a>, <a href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed">games</a>.</p><p>Images load from the publishers' websites. Each image credits its source.</p><p><a href="/issues/2026-10-14/">← Previous issue</a> · <a href="/issues/">All issues</a> · <a href="/feed.xml">Feed</a> · <a href="https://github.com/Yarden-zamir/news/issues">Report a mistake</a></p></footer>
+<section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
+<nav class="issue-nav" aria-label="Issues" data-page="/issues/2026-10-18/"><a rel="prev" href="/issues/2026-10-14/" title="Previous issue">← Previous</a><a href="/issues/">All issues</a><a rel="next" hidden>Next →</a></nav>
+<footer><p>Built 18 October 2026 from Yarden&#x27;s Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.</p><p>Want these desks? Copy their sources into your own Riffle: <a href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed">dev</a>, <a href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed">games</a>.</p><p>Images load from the publishers' websites. Each image credits its source.</p><p><a href="/feed.xml">Feed</a> · <a href="https://github.com/Yarden-zamir/news/issues">Report a mistake</a></p></footer>
 </div><script type="application/json" id="riffle-sync">{"origin": "https://riffle.yarden-zamir.com", "since": "2026-10-09T11:54:15.785341+03:00", "until": "2026-10-19T11:54:15.785341+03:00", "shares": {"dev": "https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg", "games": "https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg"}}</script><script>
 // Masonry: deal cards in rank order into the shortest column, so the top row holds the best stories.
 // In brief starts as one visible box after the flow. The script deals its items into the columns instead.
@@ -445,6 +451,24 @@ for (const button of buttons) button.addEventListener("click", () => {
     section.hidden = button.dataset.show !== "all" && section.dataset.section !== button.dataset.show;
   }
   schedule();
+});
+
+// The next issue does not exist when a page is built, so the page reads it from the list of issues that the site build writes.
+const issueNavs = document.querySelectorAll(".issue-nav[data-page]");
+if (issueNavs.length) fetch("/issues/index.json").then((response) => {
+  if (!response.ok) throw new Error(`/issues/index.json: status ${response.status}`);
+  return response.json();
+}).then((issues) => {
+  if (!Array.isArray(issues)) throw new Error("/issues/index.json is not a list");
+  for (const nav of issueNavs) {
+    const at = issues.findIndex((issue) => issue.page === nav.dataset.page);
+    const next = at < 0 ? undefined : issues[at + 1];
+    const link = nav.querySelector('[rel="next"]');
+    if (!next || !link) continue;
+    link.href = next.page;
+    link.title = `${next.issue} · ${next.date}`;
+    link.hidden = false;
+  }
 });
 
 // Sync with the reader's Riffle. Sign-in happens on Riffle, and its session cookie stays there; this site stores nothing.

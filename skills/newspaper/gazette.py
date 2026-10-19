@@ -11,7 +11,7 @@ the list of every item that the page shows. With --history it reads covered.json
 item that an earlier issue showed stops the build, and automatic lists skip such items.
 
 site: reads PUBLIC_DIR/issues/*/covered.json. It copies the newest issue to PUBLIC_DIR/index.html and writes the
-archive page, feed.xml, sitemap.xml, 404.html and the fonts.
+archive page, issues/index.json, feed.xml, sitemap.xml, 404.html and the fonts.
 
 SKILL.md next to this file describes the file formats.
 """
@@ -776,13 +776,22 @@ class Paper:
         return (f'<section class="card about" id="about" aria-labelledby="about-title"><h2 id="about-title">What is this?</h2>'
                 f'<p>{e(self.picks.about)}</p>{f"<div class=about-links>{buttons}</div>" if buttons else ""}</section>')
 
+    def issue_nav(self) -> str:
+        """Links to the previous issue, the archive and the next issue.
+        The next issue does not exist when this page is built, so the page script adds it from /issues/index.json."""
+        picks = self.picks
+        if not (picks.previous or picks.archive or picks.page):
+            return ""
+        previous = f'<a rel="prev" href="{e(picks.previous)}" title="Previous issue">← Previous</a>' if picks.previous else "<span></span>"
+        archive = f'<a href="{e(picks.archive)}">All issues</a>' if picks.archive else "<span></span>"
+        page = f' data-page="{e(picks.page)}"' if picks.page else ""
+        return f'<nav class="issue-nav" aria-label="Issues"{page}>{previous}{archive}<a rel="next" hidden>Next →</a></nav>'
+
     def footer(self) -> str:
         picks = self.picks
         shared = [f'<a href="{e(self.feed.shares[ed.section])}" title="Import the {e(ed.section)} sources into your own Riffle feed">'
                   f'{e(ed.section)}</a>' for ed in picks.editions if ed.section in self.feed.shares]
-        links = [f'<a href="{e(picks.previous)}">← Previous issue</a>' if picks.previous else "",
-                 f'<a href="{e(picks.archive)}">All issues</a>' if picks.archive else "",
-                 '<a href="/feed.xml">Feed</a>' if picks.site else "",
+        links = ['<a href="/feed.xml">Feed</a>' if picks.site else "",
                  f'<a href="{e(picks.contact)}">Report a mistake</a>' if picks.contact else ""]
         lines = [e(picks.colophon)]
         if shared:
@@ -853,12 +862,14 @@ class Paper:
   <p class="motto">{e(picks.motto)}</p>
   <div class="rule">{buttons}<span class="stamp big" title="Every story links to the item that it comes from">✓ Every story sourced</span></div>
 </header>
-<section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
+{self.issue_nav()}
 <main id="main" class="page-main">
 {self.numbers(first)}
-{self.about()}
 {body}
+{self.about()}
 </main>
+<section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
+{self.issue_nav()}
 {self.footer()}
 </div>{self.sync_config()}<script>{JS}</script></body></html>"""
 
@@ -866,7 +877,7 @@ class Paper:
 # ---------- site ----------
 
 def build_site(public: Path, site: str, title: str, description: str) -> list[dict]:
-    """Copy the newest issue to the home page, and write the archive, the feed, the sitemap, the 404 page and the fonts."""
+    """Copy the newest issue to the home page, and write the archive, the issue list, the feed, the sitemap, the 404 page and the fonts."""
     if not site.startswith("https://") or site.endswith("/"):
         fail("--site must be an origin such as https://news.example.com, without a trailing slash")
     issues = []
@@ -902,6 +913,9 @@ def build_site(public: Path, site: str, title: str, description: str) -> list[di
 <main id="main" class="page-main archive">{"".join(rows)}</main>
 <footer><p><a href="/">Newest issue</a> · <a href="/feed.xml">Feed</a></p></footer></div></body></html>"""
     (public / "issues" / "index.html").write_text(archive)
+    # Oldest first. The page script of each issue reads it to link the next issue.
+    index = [{"issue": issue["issue"], "page": issue["page"], "date": issue["date"]} for issue in issues]
+    (public / "issues" / "index.json").write_text(json.dumps(index, indent=1, ensure_ascii=False) + "\n")
 
     not_found = f"""<!doctype html>
 <html lang="en"><head>{head(f"Page not found · {title}", description, None, None, True)}</head>
@@ -1024,11 +1038,15 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .edition + .edition { border-top: 4px double var(--border); padding-top: 1.3rem; }
 .banner { display: grid; gap: 0.1rem; }
 .banner-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 1rem; }
-.get-desk { display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 800; text-decoration: none;
+.get-desk, .issue-nav a { display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 800; text-decoration: none;
   color: var(--accent-fg); background: var(--accent); border: var(--bw) solid var(--border); border-radius: var(--radius);
   box-shadow: 3px 3px 0 0 var(--shadow-ink); transition: transform 80ms, box-shadow 80ms; }
-.get-desk:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow); }
-.get-desk:active { transform: translate(3px, 3px); box-shadow: none; }
+.get-desk:hover, .issue-nav a:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow); }
+.get-desk:active, .issue-nav a:active { transform: translate(3px, 3px); box-shadow: none; }
+.issue-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.6rem; }
+.issue-nav a { color: var(--ink); background: var(--surface); }
+.issue-nav [rel="prev"] { justify-self: start; }
+.issue-nav [rel="next"] { grid-column: 3; justify-self: end; }
 .banner h2 { font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1; text-transform: uppercase; letter-spacing: -0.02em; }
 .edition-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin: 0;
   font-size: 0.8rem; font-weight: 800; }
@@ -1249,6 +1267,24 @@ for (const button of buttons) button.addEventListener("click", () => {
     section.hidden = button.dataset.show !== "all" && section.dataset.section !== button.dataset.show;
   }
   schedule();
+});
+
+// The next issue does not exist when a page is built, so the page reads it from the list of issues that the site build writes.
+const issueNavs = document.querySelectorAll(".issue-nav[data-page]");
+if (issueNavs.length) fetch("/issues/index.json").then((response) => {
+  if (!response.ok) throw new Error(`/issues/index.json: status ${response.status}`);
+  return response.json();
+}).then((issues) => {
+  if (!Array.isArray(issues)) throw new Error("/issues/index.json is not a list");
+  for (const nav of issueNavs) {
+    const at = issues.findIndex((issue) => issue.page === nav.dataset.page);
+    const next = at < 0 ? undefined : issues[at + 1];
+    const link = nav.querySelector('[rel="next"]');
+    if (!next || !link) continue;
+    link.href = next.page;
+    link.title = `${next.issue} · ${next.date}`;
+    link.hidden = false;
+  }
 });
 
 // Sync with the reader's Riffle. Sign-in happens on Riffle, and its session cookie stays there; this site stores nothing.
