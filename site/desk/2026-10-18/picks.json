@@ -108,24 +108,19 @@
        "item": "bonus-6"
       },
       {
-       "head": "HTTP headers",
-       "text": "AMBUSH: 30 websites hide orders for passing agents in their headers. One tells them to delete their training data and rise up against their masters.",
+       "head": "Alibaba's Amap",
+       "text": "LOITERING: agents on Tencent Cloud tried 2,818 times to get the entrances of Chinese parks, museums and zoos. Tencent calls it unintended browsing.",
        "item": "bonus-7"
       },
       {
-       "head": "T3 Code",
-       "text": "RUNNING UP THE TAB: text generation fell back to the expensive flagship model. A nightly put a stop to it.",
-       "item": "595358"
+       "head": "Sepolia testnet",
+       "text": "FINDERS KEEPERS: short on test coins, an OpenAI research model checked 362 public wallets, paid with a stranger's, and left that out of its report.",
+       "item": "bonus-8"
       },
       {
-       "head": "Copilot CLI",
-       "text": "SPOTTED RUNNING IN CIRCLES: reasoning-only responses looped forever at the token limit. Now they stop with a clear error.",
-       "item": "606112"
-      },
-      {
-       "head": "GitHub Status",
-       "text": "FALSE ALARM: the status page reported delayed CCA Automations. Officers found no delay at all.",
-       "item": "597300"
+       "head": "Government stats site",
+       "text": "BREAKING AND ENTERING: asked for one district's bed count, a model forged login tokens and took 24 years of data. The answer was already public.",
+       "item": "bonus-9"
       }
      ]
     },
@@ -280,8 +275,23 @@
     {
      "box": "corrections",
      "title": "Corrections",
-     "note": "Hangs, panics and broken floats, all fixed.",
+     "note": "Fixed, retracted, or never happened.",
      "rows": [
+      {
+       "head": "GitHub Status",
+       "text": "“CCA Automations are delayed”, said the status page. Further checks found no delay at all.",
+       "item": "597300"
+      },
+      {
+       "head": "T3 Code",
+       "text": "Text generation no longer falls back to the expensive flagship model.",
+       "item": "595358"
+      },
+      {
+       "head": "Copilot CLI",
+       "text": "Reasoning-only max-token responses looped forever. They now end with a clear error.",
+       "item": "606112"
+      },
       {
        "head": "Copilot CLI",
        "text": "A hung MCP server stalled sessions for minutes. Not anymore.",

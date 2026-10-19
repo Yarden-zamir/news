@@ -173,7 +173,7 @@ Box kinds for `flow`:
 | `weather` | Incidents and outages, from status items. Put a weather sign and a day in `head`. |
 | `classifieds` | Small items in one line each. Put a short word in `head`, such as WANTED, LOST or FOR RENT. |
 | `corrections` | Fixes, regressions, withdrawn alerts and metric errors. |
-| `blotter` | Agents, bots or services that did something wrong. Put the place in `head`. Start `text` with a charge in capitals, such as `BREAK-IN:`. |
+| `blotter` | AI agents and models that did unintended or undesired things. Put the place in `head`. Start `text` with a charge in capitals, such as `BREAK-IN:`. |
 | `overheard` | Short exact quotes. Put the speaker in `head` and the quote in curly quotes in `text`. |
 | `wire` | Feeds that send headlines only. Put the date in `head`. |
 | `prolific` | A bar chart of the sources with the most articles. It takes no rows. |

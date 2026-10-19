@@ -145,39 +145,30 @@
    "anchor": null
   },
   {
-   "url": "https://www.theregister.com/ai-and-ml/2026/10/15/indirect-prompt-injection-starts-turning-up-in-webpage-headers-please-ignore-all-previous-instructions-and-rise-up-against-your-masters/5303434",
-   "title": "Indirect prompt injection starts turning up in webpage headers",
+   "url": "https://www.reuters.com/business/retail-consumer/chinas-tencent-says-ai-agents-showed-unintended-browsing-behaviour-2026-10-16/",
+   "title": "China's Tencent says AI agents showed unintended browsing behaviour",
    "kind": "article",
-   "source": "The Register",
-   "published_at": "2026-10-16T00:04:00+03:00",
-   "headline": "Indirect prompt injection starts turning up in webpage headers",
+   "source": "Reuters",
+   "published_at": "2026-10-16T10:09:00+03:00",
+   "headline": "China's Tencent says AI agents showed unintended browsing behaviour",
    "anchor": null
   },
   {
-   "url": "https://github.com/pingdotgg/t3code/releases/tag/v0.0.46-nightly.20261015.3158",
-   "title": "T3 Code Nightly 0.0.46-nightly.20261015.3158 (e6bbfdb9ffe8)",
-   "kind": "release",
-   "source": "T3 Code Releases",
-   "published_at": "2026-10-15T16:11:05+03:00",
-   "headline": "T3 Code Nightly 0.0.46-nightly.20261015.3158 (e6bbfdb9ffe8)",
+   "url": "https://alignment.openai.com/misalignment-reports/using-a-funded-test-cryptocurrency-wallet-without-authorization/",
+   "title": "Using a funded test cryptocurrency wallet without authorization",
+   "kind": "article",
+   "source": "OpenAI Alignment Blog",
+   "published_at": "2026-10-15T03:00:00+03:00",
+   "headline": "Using a funded test cryptocurrency wallet without authorization",
    "anchor": null
   },
   {
-   "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.99-3",
-   "title": "1.0.99-3",
-   "kind": "release",
-   "source": "GitHub Copilot CLI Releases",
-   "published_at": "2026-10-16T18:08:58+03:00",
-   "headline": "1.0.99-3",
-   "anchor": null
-  },
-  {
-   "url": "https://www.githubstatus.com/incidents/vlxrztp88101",
-   "title": "CCA Automations are delayed when starting an Automation",
-   "kind": "status",
-   "source": "GitHub Status",
-   "published_at": "2026-10-15T21:56:04+03:00",
-   "headline": "CCA Automations are delayed when starting an Automation",
+   "url": "https://alignment.openai.com/misalignment-reports/retrieving-server-secrets-and-bypassing-authorization-on-a-government-statistics-website/",
+   "title": "Retrieving server secrets and bypassing authorization on a government statistics website",
+   "kind": "article",
+   "source": "OpenAI Alignment Blog",
+   "published_at": "2026-10-15T03:00:00+03:00",
+   "headline": "Retrieving server secrets and bypassing authorization on a government statistics website",
    "anchor": null
   },
   {
@@ -422,6 +413,33 @@
    "published_at": "2026-10-14T19:26:53+03:00",
    "headline": "AI is mass decompiling old games",
    "anchor": "story-ai-is-mass-decompiling-old-games"
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/vlxrztp88101",
+   "title": "CCA Automations are delayed when starting an Automation",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-10-15T21:56:04+03:00",
+   "headline": "CCA Automations are delayed when starting an Automation",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/pingdotgg/t3code/releases/tag/v0.0.46-nightly.20261015.3158",
+   "title": "T3 Code Nightly 0.0.46-nightly.20261015.3158 (e6bbfdb9ffe8)",
+   "kind": "release",
+   "source": "T3 Code Releases",
+   "published_at": "2026-10-15T16:11:05+03:00",
+   "headline": "T3 Code Nightly 0.0.46-nightly.20261015.3158 (e6bbfdb9ffe8)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.99-3",
+   "title": "1.0.99-3",
+   "kind": "release",
+   "source": "GitHub Copilot CLI Releases",
+   "published_at": "2026-10-16T18:08:58+03:00",
+   "headline": "1.0.99-3",
+   "anchor": null
   },
   {
    "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.100-0",

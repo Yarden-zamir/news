@@ -24,7 +24,7 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
 4. Add 2 to 5 bonus stories from outside the feed. Find them with web search: news from this week that the feed does not have and that no earlier issue showed.
    Interests: coding agents and Claude Code, T3 Code, herdr and terminals, git and worktrees, Cloudflare, Python and uv, self-hosting, OpenStreetMap, Minecraft and ARC Raiders.
    Read each page. Append each story to `items.json` with `"bonus": true`, the matching section, a unique id such as `bonus-1`, its real URL and its publish time.
-   For the police blotter of step 6, you can add up to 3 more bonus items in the same way. They do not count toward the 5.
+   Find the rows of the police blotter of step 6 in the same way. They do not count toward the 5.
 5. Find developments: new items that continue a story of an earlier issue. Set `follows` to the URL of the earlier item, and say in the deck what changed.
 6. Write `$SITE/desk/$DATE/picks.json`. Read `$SKILL/example-picks.json` for the tone. Write new banners, notes and jokes, not the ones of earlier issues.
    - `issue`: `Vol. 1 · No. N`, where N is the number of folders in `$SITE/public/issues/` plus 1.
@@ -34,7 +34,7 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
    - `motto`: name eight days and the sections. `colophon`: keep the line about cookies from the previous issue.
    - Each image needs `alt`.
    - Put a `blotter` box with the title `Police blotter` in the dev edition of every issue.
-     Give it 3 to 5 rows about agents, bots or services that did something wrong. If the feed has too few, find more with web search.
+     Give it 3 to 5 rows about AI agents and models that did unintended or undesired things. Do not use other bugs or outages.
      Write the rows alarmed but playful: start each `text` with a charge in capitals, such as `BREAK-IN:` or `FALSE ALARM:`.
 7. Render. If the build stops, fix the picks: pick another item, or make it a development. Then render again.
    ```sh
