@@ -173,7 +173,7 @@ Box kinds for `flow`:
 | `weather` | Incidents and outages, from status items. Put a weather sign and a day in `head`. |
 | `classifieds` | Small items in one line each. Put a short word in `head`, such as WANTED, LOST or FOR RENT. |
 | `corrections` | Fixes, regressions, withdrawn alerts and metric errors. |
-| `blotter` | Agents, bots or services that did something wrong. Put the place in `head`. |
+| `blotter` | Agents, bots or services that did something wrong. Put the place in `head`. Start `text` with a charge in capitals, such as `BREAK-IN:`. |
 | `overheard` | Short exact quotes. Put the speaker in `head` and the quote in curly quotes in `text`. |
 | `wire` | Feeds that send headlines only. Put the date in `head`. |
 | `prolific` | A bar chart of the sources with the most articles. It takes no rows. |
@@ -222,7 +222,7 @@ The Riffle server must allow the site:
 - **Short decks.** Write one or two sentences, at most 25 words. Do not repeat the headline.
 - **True facts.** Take every fact, number and date from the linked item. Copy quotes word for word.
 - **Write for strangers.** On a public page, explain names that a new reader does not know. Do not write about private data.
-- **Light humor.** Put jokes in banners, box titles, box notes and classifieds. Keep facts plain. Write new jokes for each issue.
+- **Light humor.** Put jokes in banners, box titles, box notes, classifieds and blotter charges. Keep facts plain. Write new jokes for each issue.
 - **Small sections.** If an edition has fewer than 8 items, use a lead and side stories only, with an empty `flow`.
 - **Status and releases.** Put status items in a weather box. Leave release items to the ticker, unless a release is a story.
 - **Links.** Write a link only through the picks. Every link gets a note with its source and original headline.

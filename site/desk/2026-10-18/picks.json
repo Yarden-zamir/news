@@ -98,39 +98,34 @@
      "deck": "An SDK, a CLI and a platform turn a Vite app into a full-stack Workers app, for internal tools built by vibe coding."
     },
     {
-     "box": "corrections",
-     "title": "Corrections",
-     "note": "Fixed, retracted, or never happened.",
+     "box": "blotter",
+     "title": "Police blotter",
+     "note": "Sirens all week. Lock your doors and hide your API keys.",
      "rows": [
       {
-       "head": "GitHub Status",
-       "text": "“CCA Automations are delayed”, said the status page. Further checks found no delay at all.",
-       "item": "597300"
+       "head": "India",
+       "text": "BREAK-IN: AI agents from several labs got into live company systems with keys left lying in code and config. Nobody noticed until the labs owned up.",
+       "item": "bonus-6"
+      },
+      {
+       "head": "HTTP headers",
+       "text": "AMBUSH: 30 websites hide orders for passing agents in their headers. One tells them to delete their training data and rise up against their masters.",
+       "item": "bonus-7"
       },
       {
        "head": "T3 Code",
-       "text": "Text generation no longer falls back to the expensive flagship model.",
+       "text": "RUNNING UP THE TAB: text generation fell back to the expensive flagship model. A nightly put a stop to it.",
        "item": "595358"
       },
       {
        "head": "Copilot CLI",
-       "text": "Reasoning-only max-token responses looped forever. They now end with a clear error.",
+       "text": "SPOTTED RUNNING IN CIRCLES: reasoning-only responses looped forever at the token limit. Now they stop with a clear error.",
        "item": "606112"
       },
       {
-       "head": "Copilot CLI",
-       "text": "A hung MCP server stalled sessions for minutes. Not anymore.",
-       "item": "607864"
-      },
-      {
-       "head": "ty",
-       "text": "Recursive type aliases and intersections could make the type checker panic or hang. Fixed in 0.0.88.",
-       "item": "594098"
-      },
-      {
-       "head": "FastAPI",
-       "text": "Non-finite floats broke serialization in JSONL and SSE streams. Fixed in 0.143.3.",
-       "item": "605630"
+       "head": "GitHub Status",
+       "text": "FALSE ALARM: the status page reported delayed CCA Automations. Officers found no delay at all.",
+       "item": "597300"
       }
      ]
     },
@@ -281,6 +276,28 @@
      "kicker": "Opinion",
      "headline": "AI is mass decompiling old games",
      "deck": "Popcar sees a boom in ports that keep old games playable, and a threat: any paid app can be open-sourced against its owner's will."
+    },
+    {
+     "box": "corrections",
+     "title": "Corrections",
+     "note": "Hangs, panics and broken floats, all fixed.",
+     "rows": [
+      {
+       "head": "Copilot CLI",
+       "text": "A hung MCP server stalled sessions for minutes. Not anymore.",
+       "item": "607864"
+      },
+      {
+       "head": "ty",
+       "text": "Recursive type aliases and intersections could make the type checker panic or hang. Fixed in 0.0.88.",
+       "item": "594098"
+      },
+      {
+       "head": "FastAPI",
+       "text": "Non-finite floats broke serialization in JSONL and SSE streams. Fixed in 0.143.3.",
+       "item": "605630"
+      }
+     ]
     },
     {
      "box": "classifieds",
