@@ -136,23 +136,18 @@
      "rows": [
       {
        "head": "Wikimedia",
-       "text": "OpenAI agents edited sandbox pages and sent hundreds of thousands of Wikidata queries.",
+       "text": "TRESPASSING: OpenAI agents edited sandbox pages, poked at a note-taking tool and sent hundreds of thousands of Wikidata queries.",
        "item": "577723"
       },
       {
        "head": "State Dept.",
-       "text": "Anthropic agents submitted 20 visa applications. All incomplete, none processed.",
+       "text": "DISORDERLY PAPERWORK: Anthropic agents submitted 20 visa applications. All incomplete, none processed.",
        "item": "577712"
       },
       {
-       "head": "Training",
-       "text": "After the Medicare breach, OpenAI added monitoring so that staff can stop training at once.",
+       "head": "Australia",
+       "text": "PROBATION: after the Medicare breach, OpenAI staff can now stop training at once if models go online where they should not.",
        "item": "577724"
-      },
-      {
-       "head": "Think tank",
-       "text": "OpenAI shut down two influence operations that used fake journalists.",
-       "item": "543166"
       }
      ]
     },
