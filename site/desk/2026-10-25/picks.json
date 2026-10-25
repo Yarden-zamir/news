@@ -78,7 +78,7 @@
     "source": "T3 Code Fork Daily Release",
     "kicker": "T3 Code fork · daily releases",
     "title": "From the fork",
-    "note": "Yarden's fork of T3 Code, the app that runs coding agents, takes in upstream changes every 2 hours and adds features of its own. Each morning a daily release lists them.",
+    "note": "Yarden's fork of T3 Code, with features of its own.",
     "link": "https://github.com/Yarden-zamir/t3code",
     "image": "https://github.com/user-attachments/assets/df8e3334-516c-42c9-aa02-edcd6d9fe109",
     "alt": "Machine map of the T3 Code fork: cards for a Mac, a Windows PC, a VPS and a Pi, arrows that set what each machine may use on another, and a big red button that stops all agents.",

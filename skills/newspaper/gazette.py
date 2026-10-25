@@ -834,7 +834,9 @@ class Paper:
         if len(items) < SMALL_SECTION and edition.flow:
             fail(f"section {edition.section!r} has only {len(items)} items. Use a lead and side stories only, with an empty flow.")
         sources = len({item.source for item in items})
-        front = f'<div class="front">{self.lead(edition)}<div class="side">{self.side(edition)}</div></div>{self.spotlight(edition)}'
+        front = f'<div class="front">{self.lead(edition)}<div class="side">{self.side(edition)}</div></div>'
+        # The band sits at the end of the edition, but it takes its items first, so that no card, ticker or In brief shows them.
+        band = self.spotlight(edition)
         flow = [self.card(part) if isinstance(part, Story) else self.box(part, edition.section) for part in edition.flow]
         if shelf := self.shelf(edition.section):
             flow.insert(min(3, len(flow)), shelf)
@@ -846,7 +848,7 @@ class Paper:
         return f"""<section class="edition" id="{e(edition.slug)}" data-section="{e(edition.slug)}" aria-labelledby="{e(title_id)}">
           <div class="banner"><div class="banner-top"><span class="label">{e(edition.title)} · {plural(len(items), "item")} · {plural(sources, "source")}</span>{self.get_desk(edition.section)}</div>
             <h2 id="{e(title_id)}">{e(edition.banner)}</h2></div>
-          {front}{ticker}{below}
+          {front}{ticker}{below}{band}
           <p class="edition-end"><a href="#top">↑ Back to top</a>{self.get_desk(edition.section)}</p>
         </section>"""
 
@@ -1201,7 +1203,7 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .quote blockquote { margin: 0; font-size: 1.15rem; font-weight: 800; line-height: 1.22; letter-spacing: -0.01em; }
 .quote figcaption { margin-top: 0.45rem; font-size: 0.72rem; font-weight: 600; }
 
-/* Spotlight: one source in a band of its own under the front page, such as the editor's own project. */
+/* Spotlight: one source in a band of its own at the end of the edition, such as the editor's own project. */
 .spotlight { overflow: hidden; box-shadow: 4px 4px 0 0 var(--accent); }
 .spotlight > header { display: grid; gap: 0.15rem; padding: 0.6rem 0.95rem; color: var(--accent-fg); background: var(--accent);
   border-bottom: var(--bw) solid var(--border); }

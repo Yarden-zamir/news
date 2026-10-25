@@ -168,7 +168,7 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 - `share_image` is the path of the share card. Without `description`, link previews use the lead deck.
 - `also` lists other items about the same story. The card links them by source name.
 - `follow` lists one Riffle source for each bonus story on the page. See "Follow sources".
-- `spotlight` in an edition gives one source a band of its own under the front page. See "Spotlight".
+- `spotlight` in an edition gives one source a band of its own at the end of the edition. See "Spotlight".
 - The page counts items, sources and read items itself. Put only extra numbers in `numbers`, and count them from the items file.
 
 Box kinds for `flow`:
@@ -213,12 +213,12 @@ Signed-in readers add the source to a profile of their own with one click. See "
 
 ## Spotlight
 
-A spotlight is a band for one source, such as the editor's own project. It sits under the lead and the side stories, across the full width.
+A spotlight is a band for one source, such as the editor's own project. It sits at the end of the edition, after the flow, across the full width.
 
 ```json
 "spotlight": {
   "source": "T3 Code Fork Daily Release", "kicker": "T3 Code fork · daily releases", "title": "From the fork",
-  "note": "One or two sentences that say what the project is.", "link": "https://github.com/<owner>/<repo>",
+  "note": "One short sentence that says what the project is.", "link": "https://github.com/<owner>/<repo>",
   "image": "https://… (a screenshot of a feature)", "alt": "…",
   "rows": [{"head": "25 Oct", "text": "What this release brings.", "item": "695777"}],
   "follow": {"name": "T3 Code Fork Daily Release", "plugin": "rss-atom", "config": {"url": "https://github.com/<owner>/<repo>/releases.atom"}}
