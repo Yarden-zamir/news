@@ -41,10 +41,10 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
      Run `follow_check.py $SITE/desk/$DATE/items.json $SITE/desk/$DATE/picks.json`. Fix every MISSED item. Check every UNSURE item in the feed.
      If no Riffle plugin can catch a publication, open a pull request in `~/Github/riffle` that adds the ability, with tests and spec changes.
      Merge it after its checks pass and its review findings are fixed. Wait until https://riffle.yarden-zamir.com runs it, then run `follow_check.py` again.
-7. Render. If the build stops, fix the picks: pick another item, make it a development, or give a bonus item its source. Then render again.
+7. Render. If the build stops, fix the picks: pick another item or image, make it a development, give a bonus item its source, or copy a quote word for word. Then render again.
    ```sh
    gazette.py render $SITE/desk/$DATE/items.json $SITE/desk/$DATE/picks.json $SITE/public/issues/$DATE/index.html \
-     --history $SITE/public/issues --deny $SITE/deny.txt
+     --history $SITE/public/issues --deny $SITE/deny.txt --check-links
    ```
 8. Build the site files:
    ```sh
@@ -62,6 +62,7 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
 12. Check the live site:
     - The title of https://news.yarden-zamir.com/ has the new issue number and date.
     - https://news.yarden-zamir.com/issues/ and https://news.yarden-zamir.com/feed.xml list the new issue.
+    - https://news.yarden-zamir.com/robots.txt has the line `Content-Signal: search=yes, ai-input=yes, ai-train=yes`.
     - https://news.yarden-zamir.com/no-such-page returns status 404.
     - Right after a deploy, new files can return 404 for a short time. If a check fails, wait one minute, then check again once.
 13. Commit with the message `feat(site): issue No. N of $DATE`, and push.

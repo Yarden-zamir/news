@@ -24,8 +24,9 @@
   }
 }
 * { box-sizing: border-box; }
-/* The editor reads the paper at 130% on desktop. The base grows from 18px at a 1108px viewport to 23.4px (130%) at 1440px. */
-html { font-size: clamp(18px, 1.625vw, 23.4px); }
+/* Text is bigger than average. The base is 18px up to a 1108px viewport, then grows with the viewport to 21px at 1292px.
+   The smallest text is 0.68rem, so 12px or more. */
+html { font-size: clamp(18px, 1.625vw, 21px); }
 body { margin: 0; font: 1rem/1.45 var(--sans); color: var(--ink); background-color: var(--canvas);
   background-image: radial-gradient(var(--dots) 1.2px, transparent 1.2px); background-size: 16px 16px; }
 h1, h2, h3 { font-weight: 800; letter-spacing: -0.01em; margin: 0; }
@@ -86,6 +87,16 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .num:active, .ear:active { transform: translate(3px, 3px); box-shadow: none; }
 .num b { font-size: 1.8rem; line-height: 1.05; font-weight: 800; }
 .num span { font-size: 0.72rem; color: var(--muted); }
+.contents { padding: 0.55rem 0.85rem; display: grid; gap: 0.35rem; }
+.contents h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.contents ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
+.contents li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem 0.6rem; }
+.contents li .label { flex: 0 0 8rem; }
+@media (max-width: 44rem) { .contents li .label { flex-basis: 100%; } }
+.contents a { padding: 0.1rem 0.55rem; font-size: 0.85rem; font-weight: 800; text-decoration: none; color: var(--ink); background: var(--raised);
+  border: var(--bw) solid var(--border); border-radius: var(--radius); transition: transform 80ms, box-shadow 80ms; }
+.contents a:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--shadow-ink); }
+.contents a:active { transform: translate(3px, 3px); box-shadow: none; }
 .about { padding: 0.75rem 1rem; display: grid; gap: 0.5rem; }
 .about h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .about p { margin: 0; max-width: 52rem; }
@@ -114,20 +125,18 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 @media (max-width: 54rem) { .front { grid-template-columns: 1fr; } }
 .lead { position: relative; display: flex; flex-direction: column; overflow: hidden; }
 .lead .pad { position: relative; flex: 1 0 auto; display: flex; flex-direction: column; gap: 0.45rem; padding: 0.85rem 1rem 0.9rem; }
-.lead .meta { padding-right: 5.5rem; }
 .lead h3 { font-size: clamp(1.8rem, 3.8vw, 2.7rem); line-height: 1.02; }
 .lead .deck { font-size: 1.05rem; font-weight: 600; color: var(--ink); }
 .lead .body { margin: 0; font-size: 0.92rem; }
 .lead .body::first-letter { float: left; font-size: 2.3rem; line-height: 0.9; font-weight: 800; padding: 0.15rem 0.35rem;
   margin: 0.1rem 0.4rem 0 0; background: var(--select); color: var(--select-fg); border: var(--bw) solid var(--border); border-radius: var(--radius); }
 .jump { margin: auto 0 0; font-size: 0.75rem; font-weight: 800; }
-/* The stamp sits on the text block, never on the image: an image can carry text, such as a chart title. */
-.extra { position: absolute; top: 0.6rem; right: 0.8rem; z-index: 2; font-size: 1.1rem; padding: 0.1rem 0.5rem;
-  background: var(--surface); transform: rotate(8deg); }
+/* The stamp ends the meta row, so it never covers the image or the headline: an image can carry text, such as a chart title. */
+.extra { margin-left: auto; font-size: 1.1rem; padding: 0.1rem 0.5rem; background: var(--surface); transform: rotate(8deg); }
 .photo { margin: 0; position: relative; border-bottom: var(--bw) solid var(--border); background: var(--raised); }
 /* Images keep their own shape: a chart or a screenshot must not lose its edges. A very tall image shrinks to fit. */
 .photo img { display: block; width: 100%; height: auto; max-height: 34rem; object-fit: contain; }
-.photo figcaption { position: absolute; left: 0.5rem; bottom: 0.45rem; padding: 0 0.35rem; font-size: 0.66rem; font-weight: 800;
+.photo figcaption { position: absolute; left: 0.5rem; bottom: 0.45rem; padding: 0 0.35rem; font-size: 0.68rem; font-weight: 800;
   text-transform: uppercase; letter-spacing: 0.04em; color: #000000; background: var(--yellow); border: var(--bw) solid #000000; border-radius: 3px; }
 .side-story { overflow: hidden; display: grid; grid-template-columns: 1fr; }
 .side-story h3, .story h3 { font-size: 1.08rem; line-height: 1.15; }
@@ -149,18 +158,17 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .fold::before, .fold::after { content: ""; flex: 1; border-top: var(--bw) dashed var(--border); }
 .fold span { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 
-/* Masonry: JavaScript deals cards into the shortest column, in rank order. CSS columns are the fallback. */
-.flow { columns: 3 17rem; column-gap: var(--gap); }
-.flow > * { break-inside: avoid; margin-bottom: var(--gap); }
-.flow.packed { columns: auto; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gap); align-items: stretch; }
-.flow.packed > .col { display: flex; flex-direction: column; gap: var(--gap); }
-/* While cards are dealt, columns keep their natural height, so "shortest" means something. */
-.flow.packed.packing { align-items: start; }
-.flow.packed .col > * { margin-bottom: 0; }
-/* The last card of a column takes the leftover height, and the end mark sits at the bottom. */
-.flow.packed .col > :last-child { flex: 1 0 auto; display: flex; flex-direction: column; }
-.flow.packed .col > :last-child::after { content: "— 30 —"; margin: auto auto 0.5rem; padding-top: 0.4rem;
-  font: 800 0.7rem/1 var(--mono); letter-spacing: 0.2em; color: var(--muted); }
+/* Below the fold: a grid in rank order. The HTML, the Tab key and the eye all read it left to right, then top to bottom.
+   gazette.py gives a tall block two or three rows, so short cards fill the rows next to it.
+   Limit: a row stretches a short card to the height of the row. When Chrome and Firefox ship display: grid-lanes, use it instead. */
+.flow { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: var(--gap); }
+.flow > .rows-2 { grid-row: span 2; } .flow > .rows-3 { grid-row: span 3; }
+/* A block that is shorter than its row ends with the end mark at the bottom. */
+.flow > * { display: flex; flex-direction: column; }
+.flow > ::after { content: "— 30 —"; margin: auto auto 0.5rem; padding-top: 0.4rem; font: 800 0.7rem/1 var(--mono); letter-spacing: 0.2em; color: var(--muted); }
+/* One column has no row to fill, so the end mark would only make the page longer. 17rem twice plus the gap is 35.1rem. */
+.flow { container-type: inline-size; }
+@container (width < 35.1rem) { .flow > ::after { display: none; } }
 .story { overflow: hidden; display: flex; flex-direction: column; }
 .story .photo { flex: none; }
 
@@ -195,7 +203,9 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .prolific b { text-align: right; font-size: 0.8rem; }
 .shelf li .stamp { margin-left: 0.4rem; }
 
-.brief li { display: flex; align-items: baseline; gap: 0.5rem; font-weight: 600; }
+/* In brief spans the page. Its list fills columns, and each column reads top to bottom. */
+.brief ul { display: block; columns: 17rem; column-gap: 1.6rem; column-rule: var(--bw) solid var(--raised); }
+.brief li { display: flex; align-items: baseline; gap: 0.5rem; font-weight: 600; break-inside: avoid; }
 .brief .sticker { flex: none; }
 .brief .label { margin-left: 0.25rem; font-size: 0.68rem; }
 .more { margin: 0; padding: 0 0.85rem 0.6rem; font-size: 0.72rem; color: var(--muted); font-style: italic; }
@@ -220,7 +230,7 @@ footer p { margin: 0; }
 .sync-bar .avatar { width: 1.5rem; height: 1.5rem; border: var(--bw) solid var(--border); border-radius: 50%; background: var(--surface); }
 
 /* The buttons of a block sit in its top right corner. They show while the pointer is on the block, or while a button has keyboard focus.
-   They float over the block, so they never change its height or the columns. */
+   They float over the block, so they never change its height or the grid. */
 [data-entries] { position: relative; }
 .sync-actions { position: absolute; top: 0.4rem; right: 0.4rem; z-index: 3; display: flex; gap: 0.3rem;
   opacity: 0; pointer-events: none; transition: opacity 120ms; }

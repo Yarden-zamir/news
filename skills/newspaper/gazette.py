@@ -1,18 +1,19 @@
 """Render a tick3d newspaper page, and build the site files around the issues.
 
 Usage:
-  gazette.py render ITEMS.json PICKS.json OUT.html [--history ISSUES_DIR] [--deny WORDS.txt]
+  gazette.py render ITEMS.json PICKS.json OUT.html [--history ISSUES_DIR] [--deny WORDS.txt] [--check-links]
   gazette.py site PUBLIC_DIR --site https://news.example.com --title TITLE --description TEXT
 
 render: ITEMS holds the raw news items. PICKS holds the editorial choices. Each item appears in one place only.
 The build stops on a duplicate item, an unknown item or key, a generic image, an image without alt text, a deck
-over 25 words, a flow in a small section, an unsafe link, a denied word, or a bonus item without a Riffle source
-to follow. Next to OUT it writes covered.json, the list of every item that the page shows. With --history it reads
+over 25 words, a flow in a small section, an unsafe link, a denied word, a quote that its item does not hold word
+for word, or a bonus item without a Riffle source to follow. With --check-links it also stops on a link or image that
+does not answer. Next to OUT it writes covered.json, the list of every item that the page shows. With --history it reads
 covered.json of every earlier issue, the issues dated before this one: a picked item that an earlier issue showed
 stops the build, and automatic lists skip such items.
 
 site: reads PUBLIC_DIR/issues/*/covered.json. It copies the newest issue to PUBLIC_DIR/index.html and writes the
-archive page, issues/index.json, feed.xml, sitemap.xml, 404.html and the fonts.
+archive page, issues/index.json, feed.xml, sitemap.xml, robots.txt, 404.html and the fonts.
 
 SKILL.md next to this file describes the file formats.
 """
@@ -24,12 +25,16 @@ import shutil
 import sys
 from collections import Counter
 from collections.abc import Iterable
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, tzinfo
 from html.parser import HTMLParser
+from http.client import HTTPException
 from pathlib import Path
 from typing import Literal, NoReturn, get_args
+from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlsplit, urlunsplit
+from urllib.request import Request, urlopen
 
 type Kind = Literal["article", "release", "status"]
 type BoxKind = Literal["weather", "classifieds", "corrections", "blotter", "overheard", "wire", "prolific"]
@@ -38,6 +43,8 @@ type Audience = Literal["public", "private"]
 # Logos, share cards and house illustrations say nothing about a story. A picked image with one of these markers stops the build.
 GENERIC_IMAGE_MARKERS = ("generic-", "social-v3-", "steam_share_image", "arc-raiders-social", "opengraph.githubassets.com", "/og/")
 MAX_DECK_WORDS = 25
+# The height in rem of a short card below the fold, and the gap between rows. See rows().
+ROW_HEIGHT, ROW_GAP = 12.5, 1.1
 # A section with fewer items gets a lead and side stories only, with no flow below the fold.
 SMALL_SECTION = 8
 # Twin feeds post one story under two URLs within hours. A later post with the same title, such as a weekly
@@ -464,6 +471,42 @@ def plain(raw: str) -> str:
     return " ".join(" ".join(parser.parts).split())
 
 
+QUOTE_MARKS = str.maketrans({"‘": "'", "’": "'", "‚": "'", "‛": "'", "“": '"', "”": '"', "„": '"', "‟": '"'})
+
+
+def norm_quote(text: str) -> str:
+    return " ".join(text.translate(QUOTE_MARKS).casefold().split())
+
+
+def quoted(quote: str, item: Item) -> bool:
+    """True when the title or summary of the item holds the quote word for word, apart from whitespace, quote marks and case.
+    An ellipsis marks left-out words, so each part of the quote must appear, in order."""
+    source = norm_quote(f"{item.title} {plain(item.summary)}")
+    at = 0
+    for part in norm_quote(quote).replace("...", "…").split("…"):
+        part = part.strip(' "')
+        if not part:
+            continue
+        found = source.find(part, at)
+        if found < 0:
+            return False
+        at = found + len(part)
+    return True
+
+
+def lines(text: str, per_line: int) -> int:
+    return -(-len(text) // per_line)
+
+
+def rows(estimate: float) -> str:
+    """The grid class of a block below the fold. A block that is about two or three times as tall as a short card spans
+    two or three rows, so short cards fill the rows next to it. `estimate` is the height in rem in a column of about 20rem.
+    Limit: the estimate counts characters, not rendered lines. If blocks often end with a lot of empty space,
+    measure them in the browser instead."""
+    count = min(3, max(1, round((estimate + ROW_GAP) / (ROW_HEIGHT + ROW_GAP))))
+    return f" rows-{count}" if count > 1 else ""
+
+
 def e(value: object) -> str:
     return html.escape(str(value), quote=True)
 
@@ -541,6 +584,15 @@ class Paper:
         self.shown: dict[str, tuple[str, str | None]] = {}
         self.anchors: set[str] = set()
         self.leads: list[dict] = []
+        self.misquotes: list[str] = []
+        self.box_anchors: set[str] = set()
+        # The parts of each edition, in page order, for the contents list: (edition, [(label, anchor), ...]).
+        self.parts: list[tuple[Edition, list[tuple[str, str]]]] = []
+
+    def quote(self, text: str, item: Item, where: str) -> None:
+        """Note a quote that its item does not hold. render() stops the build with the full list."""
+        if not quoted(text, item):
+            self.misquotes.append(f"{where}: {text!r} is not in item {item.id!r} ({item.title})")
 
     def use(self, item_id: str) -> Item:
         """Take an item for one place on the page. A second use, or a second item with the same URL, stops the build."""
@@ -577,6 +629,17 @@ class Paper:
             count += 1
             name = f"{base}-{count}"
         self.anchors.add(name)
+        return name
+
+    def box_anchor(self, section: str, title: str) -> str:
+        """The id of a box that the contents list links. Story anchors start with "story-", so the two never meet."""
+        base = f"{slug(section)}-{slug(title) or 'box'}"
+        name, count = base, 1
+        while name in self.box_anchors:
+            count += 1
+            name = f"{base}-{count}"
+        self.box_anchors.add(name)
+        self.parts[-1][1].append((title, name))
         return name
 
     def story_use(self, story: Story) -> tuple[Item, str]:
@@ -630,7 +693,10 @@ class Paper:
         extras = self.extras(story)
         tag = f'<span class="sticker warn">{e(story.tag)}</span>' if story.tag else ""
         sticker, follows = self.development(story)
-        return f"""<article class="card story" id="{e(story_anchor)}"{entries([item, *extras])}>{self.figure(item, story.image, story.alt)}
+        source = item.source + "".join(f" · {extra.source}" for extra in extras)
+        height = (5 + 1.24 * lines(story.headline or clean_title(item), 30) + 1.23 * lines(story.deck or "", 42)
+                  + lines(source, 48) + (1.2 if follows else 0) + (11 if story.image else 0))
+        return f"""<article class="card story{rows(height)}" id="{e(story_anchor)}"{entries([item, *extras])}>{self.figure(item, story.image, story.alt)}
           <div class="pad"><div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{tag}{self.marks(item)}</div>
           <h3>{a(item, story.headline or clean_title(item))}</h3>
           {f'<p class="deck">{e(story.deck)}</p>' if story.deck else ""}{follows}
@@ -645,17 +711,26 @@ class Paper:
         if box.kind == "prolific":
             counts = Counter(item.source for item in self.sections[section] if item.kind == "article").most_common(6)
             peak = counts[0][1] if counts else 1
-            rows = "".join(
+            bars = "".join(
                 f'<li><span class="name" title="{count} items from {e(name)} in {self.days} days">{e(name)}</span>'
                 f'<span class="bar" style="--w:{count / peak:.3f}"></span><b>{count}</b></li>'
                 for name, count in counts)
-            return f'<section class="card box prolific">{self.box_head(box)}<ol>{rows}</ol></section>'
-        lines = [(line, self.use(line.item)) for line in box.rows]
-        rows = "".join(
+            return f'<section class="card box prolific{rows(2.4 + 1.6 * len(counts))}">{self.box_head(box)}<ol>{bars}</ol></section>'
+        picked = [(line, self.use(line.item)) for line in box.rows]
+        if box.kind == "overheard":
+            for line, item in picked:
+                self.quote(line.text, item, f"{section}: {box.title}: {line.head}")
+        items = "".join(
             f'<li><span class="{"sticker wait" if box.kind == "classifieds" else "label"}">{e(line.head)}</span> '
             f'{a(item, line.text)}</li>'
-            for line, item in lines)
-        return f'<section class="card box {e(box.kind)}"{entries(item for _, item in lines)}>{self.box_head(box)}<ul>{rows}</ul></section>'
+            for line, item in picked)
+        # Some boxes put the head of a row on a line of its own.
+        own_line = box.kind in ("blotter", "overheard", "corrections")
+        height = 2.4 + lines(box.note or "", 50) + sum(
+            0.8 + 1.13 * (1 + lines(line.text, 36) if own_line else lines(f"{line.head} {line.text}", 36)) for line in box.rows)
+        anchor = f' id="{e(self.box_anchor(section, box.title))}"' if box.kind == "blotter" else ""
+        return (f'<section class="card box {e(box.kind)}{rows(height)}"{anchor}{entries(item for _, item in picked)}>'
+                f'{self.box_head(box)}<ul>{items}</ul></section>')
 
     def lead(self, edition: Edition) -> str:
         story = edition.lead.story
@@ -664,8 +739,8 @@ class Paper:
         self.leads.append({"section": edition.section, "headline": story.headline or clean_title(item), "anchor": story_anchor})
         sticker, follows = self.development(story)
         return f"""<article class="card lead" id="{e(story_anchor)}"{entries([item, *extras])}>{self.figure(item, story.image, story.alt)}
-          <div class="pad"><span class="stamp extra" title="The biggest story of the edition, as picked by the agent">Extra!</span>
-          <div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{self.marks(item)}</div>
+          <div class="pad"><div class="meta">{self.date(item)}<span class="label">{e(story.kicker)}</span>{sticker}{self.marks(item)}
+          <span class="stamp extra" title="The biggest story of the edition, as picked by the agent">Extra!</span></div>
           <h3>{a(item, story.headline or clean_title(item))}</h3>
           {f'<p class="deck">{e(story.deck)}</p>' if story.deck else ""}{follows}<p class="body">{e(edition.lead.body)}</p>
           <p class="jump">{a(item, "Continued at " + item.source + " →")}{self.also(extras, item)}</p></div></article>"""
@@ -682,6 +757,7 @@ class Paper:
               <p class="src">{e(item.source)}{self.also(extras, item)}</p></div></article>""")
         if edition.quote:
             quoted = self.use(edition.quote.item)
+            self.quote(edition.quote.head, quoted, f"{edition.section}: quote")
             parts.append(f'<figure class="card quote"{entries([quoted])}><blockquote>“{e(edition.quote.head)}”</blockquote>'
                          f'<figcaption>{a(quoted, edition.quote.text)}</figcaption></figure>')
         if edition.dates:
@@ -722,8 +798,8 @@ class Paper:
         return f"""<section class="card ticker" aria-label="Also shipped"{entries(counted)}><span class="ticker-label">Also shipped · {len(counted)}</span>
           <ul>{cells}</ul></section>"""
 
-    def brief(self, section: str, limit: int = 14) -> str:
-        """In brief: a visible box. With a flow, the page script deals its items into the shortest columns."""
+    def brief(self, section: str, anchor: str, limit: int = 14) -> str:
+        """In brief: a box across the full width, with its list in columns. Each column reads top to bottom."""
         picked = {norm_title(self.by_id[used].title) for used in self.used}
         rest: list[Item] = []
         for item in self.sections[section]:
@@ -738,13 +814,14 @@ class Paper:
             return ""
         for item in rest[:limit]:
             self.shown[item.id] = (clean_title(item), None)
-        # The page script deals each row into a column on its own, so each row is a block.
+        # Each row is a block for reader sync.
         rows = "".join(f'<li{entries([item])}>{self.date(item)}<span>{a(item, clean_title(item))} '
                        f'<span class="label">{e(item.source)}</span>{self.marks(item)}</span></li>'
                        for item in rest[:limit])
         more = len(rest) - min(limit, len(rest))
         note = f'<p class="more">…and {more} more {"item" if more == 1 else "items"} in the feed.</p>' if more else ""
-        return f'<section class="card box brief" data-pool><header><h2>In brief</h2></header><ul>{rows}</ul>{note}</section>'
+        self.parts[-1][1].append(("In brief", anchor))
+        return f'<section class="card box brief" id="{e(anchor)}"><header><h2>In brief</h2></header><ul>{rows}</ul>{note}</section>'
 
     def shelf(self, section: str) -> str:
         """Saved items that no story uses yet. Only a private page shows the shelf."""
@@ -774,13 +851,17 @@ class Paper:
         if len(items) < SMALL_SECTION and edition.flow:
             fail(f"section {edition.section!r} has only {len(items)} items. Use a lead and side stories only, with an empty flow.")
         sources = len({item.source for item in items})
+        self.parts.append((edition, [("Top stories", edition.slug)]))
+        fold = f"{edition.slug}-fold"
+        if edition.flow:
+            self.parts[-1][1].append(("Below the fold", fold))
         front = f'<div class="front">{self.lead(edition)}<div class="side">{self.side(edition)}</div></div>'
         flow = [self.card(part) if isinstance(part, Story) else self.box(part, edition.section) for part in edition.flow]
         if shelf := self.shelf(edition.section):
             flow.insert(min(3, len(flow)), shelf)
         ticker = self.release_log(edition.section)
-        brief = self.brief(edition.section)
-        below = (f'<div class="fold"><span>Below the fold</span></div><div class="flow" data-flow>{"".join(flow)}</div>{brief}'
+        brief = self.brief(edition.section, f"{edition.slug}-brief")
+        below = (f'<div class="fold" id="{e(fold)}"><span>Below the fold</span></div><div class="flow">{"".join(flow)}</div>{brief}'
                  if flow else brief)
         title_id = f"{edition.slug}-title"
         return f"""<section class="edition" id="{e(edition.slug)}" data-section="{e(edition.slug)}" aria-labelledby="{e(title_id)}">
@@ -807,6 +888,15 @@ class Paper:
             f'<a class="card num" href="{e(card.href)}" title="{e(card.tip)}"><b>{e(card.value)}</b><span>{e(card.label)}</span></a>'
             for card in cards) + "</section>"
 
+    def contents(self) -> str:
+        """A short list of contents under the masthead. On a phone an issue is many screens long, so readers jump to a part."""
+        rows = "".join(
+            f'<li><span class="label">{e(edition.title)}</span>'
+            + "".join(f'<a href="#{e(anchor)}">{e(label)}</a>' for label, anchor in parts) + "</li>"
+            for edition, parts in self.parts)
+        about = '<li><a href="#about">What is this?</a></li>' if self.picks.about else ""
+        return f'<nav class="card contents" aria-label="In this issue"><h2>Inside</h2><ul>{rows}{about}</ul></nav>'
+
     def about(self) -> str:
         if not self.picks.about:
             return ""
@@ -832,13 +922,15 @@ class Paper:
                   f'{e(ed.section)}</a>' for ed in picks.editions if ed.section in self.feed.shares]
         links = ['<a href="/feed.xml">Feed</a>' if picks.site else "",
                  f'<a href="{e(picks.contact)}">Report a mistake</a>' if picks.contact else ""]
-        lines = [e(picks.colophon)]
+        paragraphs = [e(picks.colophon)]
         if shared:
-            lines.append(f"Want these desks? Copy their sources into your own Riffle: {', '.join(shared)}.")
-        lines.append("Images load from the publishers' websites. Each image credits its source.")
+            paragraphs.append(f"Want these desks? Copy their sources into your own Riffle: {', '.join(shared)}.")
+        paragraphs.append("Images load from the publishers' websites. Each image credits its source.")
+        paragraphs.append("Search engines and AI may read, quote and train on the writing of this paper. "
+                          "The linked articles, their quotes and their images belong to their publishers.")
         if nav := " · ".join(part for part in links if part):
-            lines.append(nav)
-        return "<footer>" + "".join(f"<p>{line}</p>" for line in lines) + "</footer>"
+            paragraphs.append(nav)
+        return "<footer>" + "".join(f"<p>{line}</p>" for line in paragraphs) + "</footer>"
 
     def covered(self) -> dict:
         items = []
@@ -892,6 +984,9 @@ class Paper:
     def render(self) -> str:
         picks = self.picks
         body = "".join(self.edition(edition) for edition in picks.editions)
+        if self.misquotes:
+            fail("these quotes are not word for word in their items. Copy the exact words, and mark left-out words with …:\n  "
+                 + "\n  ".join(self.misquotes))
         follow = self.follows()
         every = [item for rows in self.sections.values() for item in rows]
         built_day = sum(item.published_at.date() == self.fetched.date() for item in every)
@@ -924,6 +1019,7 @@ class Paper:
 </header>
 {self.issue_nav()}
 <main id="main" class="page-main">
+{self.contents()}
 {self.numbers(first)}
 {body}
 {self.about()}
@@ -937,7 +1033,8 @@ class Paper:
 # ---------- site ----------
 
 def build_site(public: Path, site: str, title: str, description: str) -> list[dict]:
-    """Copy the newest issue to the home page, and write the archive, the issue list, the feed, the sitemap, the 404 page and the fonts."""
+    """Copy the newest issue to the home page, and write the archive, the issue list, the feed, the sitemap, robots.txt,
+    the 404 page and the fonts."""
     if not site.startswith("https://") or site.endswith("/"):
         fail("--site must be an origin such as https://news.example.com, without a trailing slash")
     issues = []
@@ -999,6 +1096,18 @@ def build_site(public: Path, site: str, title: str, description: str) -> list[di
     sitemap = ('<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
                + "".join(f"<url><loc>{e(url)}</loc></url>" for url in urls) + "</urlset>\n")
     (public / "sitemap.xml").write_text(sitemap)
+
+    # Content signals (https://contentsignals.org) cover only the writing of this paper. Cloudflare may add its own lines above them.
+    robots = f"""# {title}: {site}/
+# Search engines and AI may read, quote and train on the writing of this paper: headlines, decks, notes and layout.
+# The paper links to and quotes other publishers. Their articles, quotes and images belong to them: follow their terms.
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+
+Sitemap: {site}/sitemap.xml
+"""
+    (public / "robots.txt").write_text(robots)
     return issues
 
 
@@ -1027,8 +1136,9 @@ CSS = """
   }
 }
 * { box-sizing: border-box; }
-/* The editor reads the paper at 130% on desktop. The base grows from 18px at a 1108px viewport to 23.4px (130%) at 1440px. */
-html { font-size: clamp(18px, 1.625vw, 23.4px); }
+/* Text is bigger than average. The base is 18px up to a 1108px viewport, then grows with the viewport to 21px at 1292px.
+   The smallest text is 0.68rem, so 12px or more. */
+html { font-size: clamp(18px, 1.625vw, 21px); }
 body { margin: 0; font: 1rem/1.45 var(--sans); color: var(--ink); background-color: var(--canvas);
   background-image: radial-gradient(var(--dots) 1.2px, transparent 1.2px); background-size: 16px 16px; }
 h1, h2, h3 { font-weight: 800; letter-spacing: -0.01em; margin: 0; }
@@ -1089,6 +1199,16 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .num:active, .ear:active { transform: translate(3px, 3px); box-shadow: none; }
 .num b { font-size: 1.8rem; line-height: 1.05; font-weight: 800; }
 .num span { font-size: 0.72rem; color: var(--muted); }
+.contents { padding: 0.55rem 0.85rem; display: grid; gap: 0.35rem; }
+.contents h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.contents ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
+.contents li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem 0.6rem; }
+.contents li .label { flex: 0 0 8rem; }
+@media (max-width: 44rem) { .contents li .label { flex-basis: 100%; } }
+.contents a { padding: 0.1rem 0.55rem; font-size: 0.85rem; font-weight: 800; text-decoration: none; color: var(--ink); background: var(--raised);
+  border: var(--bw) solid var(--border); border-radius: var(--radius); transition: transform 80ms, box-shadow 80ms; }
+.contents a:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--shadow-ink); }
+.contents a:active { transform: translate(3px, 3px); box-shadow: none; }
 .about { padding: 0.75rem 1rem; display: grid; gap: 0.5rem; }
 .about h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .about p { margin: 0; max-width: 52rem; }
@@ -1117,20 +1237,18 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 @media (max-width: 54rem) { .front { grid-template-columns: 1fr; } }
 .lead { position: relative; display: flex; flex-direction: column; overflow: hidden; }
 .lead .pad { position: relative; flex: 1 0 auto; display: flex; flex-direction: column; gap: 0.45rem; padding: 0.85rem 1rem 0.9rem; }
-.lead .meta { padding-right: 5.5rem; }
 .lead h3 { font-size: clamp(1.8rem, 3.8vw, 2.7rem); line-height: 1.02; }
 .lead .deck { font-size: 1.05rem; font-weight: 600; color: var(--ink); }
 .lead .body { margin: 0; font-size: 0.92rem; }
 .lead .body::first-letter { float: left; font-size: 2.3rem; line-height: 0.9; font-weight: 800; padding: 0.15rem 0.35rem;
   margin: 0.1rem 0.4rem 0 0; background: var(--select); color: var(--select-fg); border: var(--bw) solid var(--border); border-radius: var(--radius); }
 .jump { margin: auto 0 0; font-size: 0.75rem; font-weight: 800; }
-/* The stamp sits on the text block, never on the image: an image can carry text, such as a chart title. */
-.extra { position: absolute; top: 0.6rem; right: 0.8rem; z-index: 2; font-size: 1.1rem; padding: 0.1rem 0.5rem;
-  background: var(--surface); transform: rotate(8deg); }
+/* The stamp ends the meta row, so it never covers the image or the headline: an image can carry text, such as a chart title. */
+.extra { margin-left: auto; font-size: 1.1rem; padding: 0.1rem 0.5rem; background: var(--surface); transform: rotate(8deg); }
 .photo { margin: 0; position: relative; border-bottom: var(--bw) solid var(--border); background: var(--raised); }
 /* Images keep their own shape: a chart or a screenshot must not lose its edges. A very tall image shrinks to fit. */
 .photo img { display: block; width: 100%; height: auto; max-height: 34rem; object-fit: contain; }
-.photo figcaption { position: absolute; left: 0.5rem; bottom: 0.45rem; padding: 0 0.35rem; font-size: 0.66rem; font-weight: 800;
+.photo figcaption { position: absolute; left: 0.5rem; bottom: 0.45rem; padding: 0 0.35rem; font-size: 0.68rem; font-weight: 800;
   text-transform: uppercase; letter-spacing: 0.04em; color: #000000; background: var(--yellow); border: var(--bw) solid #000000; border-radius: 3px; }
 .side-story { overflow: hidden; display: grid; grid-template-columns: 1fr; }
 .side-story h3, .story h3 { font-size: 1.08rem; line-height: 1.15; }
@@ -1152,18 +1270,17 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .fold::before, .fold::after { content: ""; flex: 1; border-top: var(--bw) dashed var(--border); }
 .fold span { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 
-/* Masonry: JavaScript deals cards into the shortest column, in rank order. CSS columns are the fallback. */
-.flow { columns: 3 17rem; column-gap: var(--gap); }
-.flow > * { break-inside: avoid; margin-bottom: var(--gap); }
-.flow.packed { columns: auto; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gap); align-items: stretch; }
-.flow.packed > .col { display: flex; flex-direction: column; gap: var(--gap); }
-/* While cards are dealt, columns keep their natural height, so "shortest" means something. */
-.flow.packed.packing { align-items: start; }
-.flow.packed .col > * { margin-bottom: 0; }
-/* The last card of a column takes the leftover height, and the end mark sits at the bottom. */
-.flow.packed .col > :last-child { flex: 1 0 auto; display: flex; flex-direction: column; }
-.flow.packed .col > :last-child::after { content: "— 30 —"; margin: auto auto 0.5rem; padding-top: 0.4rem;
-  font: 800 0.7rem/1 var(--mono); letter-spacing: 0.2em; color: var(--muted); }
+/* Below the fold: a grid in rank order. The HTML, the Tab key and the eye all read it left to right, then top to bottom.
+   gazette.py gives a tall block two or three rows, so short cards fill the rows next to it.
+   Limit: a row stretches a short card to the height of the row. When Chrome and Firefox ship display: grid-lanes, use it instead. */
+.flow { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: var(--gap); }
+.flow > .rows-2 { grid-row: span 2; } .flow > .rows-3 { grid-row: span 3; }
+/* A block that is shorter than its row ends with the end mark at the bottom. */
+.flow > * { display: flex; flex-direction: column; }
+.flow > ::after { content: "— 30 —"; margin: auto auto 0.5rem; padding-top: 0.4rem; font: 800 0.7rem/1 var(--mono); letter-spacing: 0.2em; color: var(--muted); }
+/* One column has no row to fill, so the end mark would only make the page longer. 17rem twice plus the gap is 35.1rem. */
+.flow { container-type: inline-size; }
+@container (width < 35.1rem) { .flow > ::after { display: none; } }
 .story { overflow: hidden; display: flex; flex-direction: column; }
 .story .photo { flex: none; }
 
@@ -1198,7 +1315,9 @@ h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); t
 .prolific b { text-align: right; font-size: 0.8rem; }
 .shelf li .stamp { margin-left: 0.4rem; }
 
-.brief li { display: flex; align-items: baseline; gap: 0.5rem; font-weight: 600; }
+/* In brief spans the page. Its list fills columns, and each column reads top to bottom. */
+.brief ul { display: block; columns: 17rem; column-gap: 1.6rem; column-rule: var(--bw) solid var(--raised); }
+.brief li { display: flex; align-items: baseline; gap: 0.5rem; font-weight: 600; break-inside: avoid; }
 .brief .sticker { flex: none; }
 .brief .label { margin-left: 0.25rem; font-size: 0.68rem; }
 .more { margin: 0; padding: 0 0.85rem 0.6rem; font-size: 0.72rem; color: var(--muted); font-style: italic; }
@@ -1223,7 +1342,7 @@ footer p { margin: 0; }
 .sync-bar .avatar { width: 1.5rem; height: 1.5rem; border: var(--bw) solid var(--border); border-radius: 50%; background: var(--surface); }
 
 /* The buttons of a block sit in its top right corner. They show while the pointer is on the block, or while a button has keyboard focus.
-   They float over the block, so they never change its height or the columns. */
+   They float over the block, so they never change its height or the grid. */
 [data-entries] { position: relative; }
 .sync-actions { position: absolute; top: 0.4rem; right: 0.4rem; z-index: 3; display: flex; gap: 0.3rem;
   opacity: 0; pointer-events: none; transition: opacity 120ms; }
@@ -1283,52 +1402,8 @@ li.holding { background: var(--raised); transition: background-color 250ms 150ms
 """
 
 JS = """
-// Masonry: deal cards in rank order into the shortest column, so the top row holds the best stories.
-// In brief starts as one visible box after the flow. The script deals its items into the columns instead.
-const flows = [...document.querySelectorAll("[data-flow]")].map((flow) => {
-  const pool = flow.nextElementSibling?.matches("[data-pool]") ? flow.nextElementSibling : null;
-  const briefs = pool ? [...pool.querySelectorAll("li")] : [];
-  const more = pool?.querySelector(".more") ?? null;
-  pool?.remove();
-  return { flow, cards: [...flow.children], briefs, more };
-});
-const shortest = (cols) => cols.reduce((low, col) => (col.offsetHeight < low.offsetHeight ? col : low));
-function briefBox(title) {
-  const box = Object.assign(document.createElement("section"), { className: "card box brief" });
-  box.innerHTML = `<header><h2>${title}</h2></header><ul></ul>`;
-  return box;
-}
-function pack() {
-  for (const { flow, cards, briefs, more } of flows) {
-    if (flow.closest("[hidden]")) continue;
-    // Sizes are in rem and the base size follows the viewport, so measure it on each pack.
-    const root = getComputedStyle(document.documentElement);
-    const rem = parseFloat(root.fontSize);
-    const gap = parseFloat(root.getPropertyValue("--gap")) * rem;
-    const columns = Math.max(1, Math.floor((flow.clientWidth + gap) / (17 * rem + gap)));
-    const cols = Array.from({ length: columns }, () => Object.assign(document.createElement("div"), { className: "col" }));
-    flow.classList.add("packed", "packing");
-    flow.style.setProperty("--cols", columns);
-    flow.replaceChildren(...cols);
-    for (const card of cards) shortest(cols).append(card);
-    // In brief fills the gaps: one item at a time into the shortest column, each column with its own box.
-    // Three items or fewer stay together in one box, because a box with one item looks empty.
-    const boxes = new Map();
-    for (const item of briefs) {
-      const col = briefs.length <= 3 && boxes.size ? boxes.keys().next().value : shortest(cols);
-      if (!boxes.has(col)) boxes.set(col, col.appendChild(briefBox(boxes.size ? "In brief, continued" : "In brief")));
-      boxes.get(col).querySelector("ul").append(item);
-    }
-    if (more && boxes.size) [...boxes.values()].at(-1).append(more);
-    flow.classList.remove("packing");
-  }
-}
-let pending = 0;
-const schedule = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(pack); };
-addEventListener("resize", schedule);
-document.fonts?.ready.then(() => { schedule(); if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView(); });
-for (const img of document.images) img.addEventListener("error", () => { img.closest(".photo")?.remove(); img.remove(); schedule(); });
-pack();
+// An image that does not load leaves no empty frame.
+for (const img of document.images) img.addEventListener("error", () => { img.closest(".photo")?.remove(); img.remove(); });
 
 const buttons = document.querySelectorAll(".seg button");
 for (const button of buttons) button.addEventListener("click", () => {
@@ -1336,7 +1411,10 @@ for (const button of buttons) button.addEventListener("click", () => {
   for (const section of document.querySelectorAll(".edition")) {
     section.hidden = button.dataset.show !== "all" && section.dataset.section !== button.dataset.show;
   }
-  schedule();
+});
+// A contents link into a hidden edition shows all editions first.
+for (const link of document.querySelectorAll(".contents a")) link.addEventListener("click", () => {
+  if (document.getElementById(link.getAttribute("href").slice(1))?.closest(".edition[hidden]")) document.querySelector('.seg [data-show="all"]')?.click();
 });
 
 // The next issue does not exist when a page is built, so the page reads it from the list of issues that the site build writes.
@@ -1748,6 +1826,65 @@ def deny_check(page: str, path: Path) -> None:
         fail(f"the page contains denied words: {', '.join(found)}. Remove the items or text that hold them.")
 
 
+class _Links(HTMLParser):
+    """The outside URLs of a page: link targets and image sources."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.urls: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        url = dict(attrs).get({"a": "href", "img": "src"}.get(tag, ""))
+        if url and url.startswith(("https://", "http://")):
+            self.urls.append(url)
+
+
+LINK_TIMEOUT = 10  # seconds per request
+# Some publishers, such as minecraft.net, stall a client that does not look like a browser. The check asks as a browser,
+# because it checks what a reader gets.
+LINK_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+# Many publishers refuse scripts with these. A reader with a browser still gets the page, so they only warn.
+LINK_BLOCKED = {401, 403, 429}
+
+
+def probe(url: str) -> int | str:
+    """The HTTP status of a URL, or the text of a DNS, connection or time-out error.
+    It asks with HEAD first. Some servers refuse HEAD, so any HEAD failure asks again with GET, and GET has the last word."""
+    for method in ("HEAD", "GET"):
+        request = Request(url, method=method, headers={"User-Agent": LINK_AGENT, "Accept": "*/*"})
+        try:
+            with urlopen(request, timeout=LINK_TIMEOUT) as response:
+                return response.status
+        except HTTPError as error:
+            result: int | str = error.code
+        except (URLError, OSError, HTTPException, ValueError) as error:
+            result = str(getattr(error, "reason", None) or error) or type(error).__name__
+        if method == "GET":
+            return result
+    raise AssertionError("unreachable")
+
+
+def link_check(page: str) -> tuple[int, int]:
+    """Stop when a link or image of the page does not answer: a DNS or connection error, a time-out, 404, 410 or 5xx.
+    Print 401, 403, 429 and other 4xx answers as warnings. Return the number of URLs that it checked, and of warnings."""
+    parser = _Links()
+    parser.feed(page)
+    urls = list(dict.fromkeys(parser.urls))
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        results = dict(zip(urls, pool.map(probe, urls)))
+    broken, warned = [], []
+    for url, result in results.items():
+        if isinstance(result, str) or result in (404, 410) or result >= 500:
+            broken.append(f"{result} {url}")
+        elif result >= 400:
+            warned.append(f"{result}{' (blocks scripts)' if result in LINK_BLOCKED else ''} {url}")
+    for line in warned:
+        print(f"gazette: warning: {line}", file=sys.stderr)
+    if broken:
+        fail(f"{plural(len(broken), 'link')} of {len(urls)} do not answer. Pick another item or image:\n  " + "\n  ".join(broken))
+    return len(urls), len(warned)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
     commands = parser.add_subparsers(dest="command", required=True)
@@ -1757,7 +1894,8 @@ def main() -> None:
     render.add_argument("out", type=Path)
     render.add_argument("--history", type=Path, help="folder with one subfolder per earlier issue, each with covered.json")
     render.add_argument("--deny", type=Path, help="file with words that must not appear on the page, one per line")
-    site = commands.add_parser("site", help="build the home page, archive, feed, sitemap, 404 page and fonts")
+    render.add_argument("--check-links", action="store_true", help="stop when a link or image of the page does not answer")
+    site = commands.add_parser("site", help="build the home page, archive, feed, sitemap, robots.txt, 404 page and fonts")
     site.add_argument("public", type=Path)
     site.add_argument("--site", required=True, help="origin of the site, such as https://news.example.com")
     site.add_argument("--title", required=True)
@@ -1780,6 +1918,9 @@ def main() -> None:
     page = paper.render()
     if args.deny:
         deny_check(page, args.deny)
+    if args.check_links:
+        checked, warned = link_check(page)
+        print(f"links: {checked} checked, {plural(warned, 'warning')}")
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(page)
     (args.out.parent / "covered.json").write_text(json.dumps(paper.covered(), indent=1, ensure_ascii=False))
