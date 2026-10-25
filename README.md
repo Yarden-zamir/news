@@ -12,7 +12,7 @@ This repository holds the renderer, the agent skill, and the site with every iss
 4. `gazette.py render` checks the picks and renders one static HTML issue.
    It writes `covered.json` next to the issue, the list of every item that the issue shows.
    Later issues read these files, so that no story appears twice.
-5. `gazette.py site` builds the home page, the archive, the Atom feed, the sitemap and the 404 page.
+5. `gazette.py site` builds the home page, the archive, the Atom feed, the sitemap, `robots.txt` and the 404 page.
 6. A Cloudflare Worker serves the static files.
 
 Each story links to its source. Images load from the publishers' websites and credit them. The site sets no cookies.
@@ -58,7 +58,7 @@ skills/newspaper/          the agent skill
 └── assets/fonts/          Bricolage Grotesque and JetBrains Mono (SIL Open Font License)
 site/                      news.yarden-zamir.com
 ├── desk/<date>/picks.json the editorial choices of each issue
-├── public/                the deployed files: issues, archive, feed, sitemap, 404 page, fonts, share card
+├── public/                the deployed files: issues, archive, feed, sitemap, robots.txt, 404 page, fonts, share card
 ├── schedule.md            the steps of the weekly run
 └── wrangler.jsonc         the Cloudflare Worker settings
 ```
@@ -73,6 +73,8 @@ The site is a Cloudflare Worker with static assets only. It runs no Worker code.
 - Worker name: `news-site`. Custom domains: `news.yarden-zamir.com` (canonical) and `the-riffle.yarden-zamir.com`. Settings: [`site/wrangler.jsonc`](site/wrangler.jsonc).
 - `not_found_handling` is `404-page`, so a missing page returns `public/404.html` with status 404.
 - `preview_urls` is off. The Worker has no preview URLs.
+- `robots.txt` comes from `gazette.py site`. Its `Content-Signal` line allows search, AI input and AI training on the writing of the paper.
+  Keep Cloudflare's managed robots.txt off. It puts its own lines above the file, and these lines can block AI crawlers.
 - Cloudflare Web Analytics counts visits. Cloudflare adds its script at the edge. It sets no cookies.
 - Reader sync needs the Riffle deployment to allow both hosts: in its CORS origins, and in the `--whitelist-domain` of its oauth2-proxy. The `compose.yml` of [Riffle](https://github.com/Yarden-zamir/riffle) sets both.
 
@@ -98,4 +100,5 @@ The run renders the issue, checks it in a browser, deploys it, checks the live s
 ## License
 
 The code is under the [MIT License](LICENSE). The fonts are under the SIL Open Font License: see `skills/newspaper/assets/fonts/OFL-*.txt`.
-Headlines and summaries link to their sources. The articles and images belong to their publishers.
+Headlines and summaries link to their sources. The articles, quotes and images belong to their publishers.
+Search engines and AI may use the writing of the paper itself: `robots.txt` and the footer of each issue say so.

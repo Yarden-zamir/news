@@ -13,7 +13,7 @@ Files in this folder:
 
 - `riffle_items.py`: writes an items file from Riffle profiles, through the Riffle CLI.
 - `gazette.py render`: renders one issue from an items file and a picks file. It writes `covered.json` next to the page.
-- `gazette.py site`: builds the home page, the archive, `issues/index.json`, `feed.xml`, `sitemap.xml`, `404.html` and the fonts from all issues.
+- `gazette.py site`: builds the home page, the archive, `issues/index.json`, `feed.xml`, `sitemap.xml`, `robots.txt`, `404.html` and the fonts from all issues.
 - `page_images.py`: prints the share image of each page URL, then every image in the article with its caption.
 - `follow_check.py`: previews the Riffle source of each bonus story, and checks that it catches the story. See "Follow sources".
 - `example-picks.json`: the picks file of a real issue. Read it for the tone and for the use of each box.
@@ -89,8 +89,9 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 8. Render the issue. Fix each error that the build reports, then render again:
    ```sh
    gazette.py render $SITE/desk/$DATE/items.json $SITE/desk/$DATE/picks.json $SITE/public/issues/$DATE/index.html \
-     --history $SITE/public/issues --deny $SITE/deny.txt
+     --history $SITE/public/issues --deny $SITE/deny.txt --check-links
    ```
+   `--check-links` asks each link and image of the page in parallel. It prints 401, 403 and 429 as warnings, because many publishers refuse scripts.
 9. Build the site files:
    ```sh
    gazette.py site $SITE/public --site https://news.example.com --title "The Riffle" --description "<one sentence about the paper>"
@@ -178,7 +179,7 @@ Box kinds for `flow`:
 | `classifieds` | Small items in one line each. Put a short word in `head`, such as WANTED, LOST or FOR RENT. |
 | `corrections` | Fixes, regressions, withdrawn alerts and metric errors. |
 | `blotter` | AI agents and models that did unintended or undesired things. Put the place in `head`. Start `text` with a charge in capitals, such as `BREAK-IN:`. |
-| `overheard` | Short exact quotes. Put the speaker in `head` and the quote in curly quotes in `text`. |
+| `overheard` | Short exact quotes. Put the speaker in `head` and the quote in curly quotes in `text`. Mark left-out words with `…`. |
 | `wire` | Feeds that send headlines only. Put the date in `head`. |
 | `prolific` | A bar chart of the sources with the most articles. It takes no rows. |
 
@@ -248,7 +249,7 @@ The Riffle server must allow the site:
 
 ## Editorial rules
 
-- **Rank.** Put the most interesting story first. The page deals cards into columns in rank order.
+- **Rank.** Put the most interesting story first. The page shows the cards in rank order: left to right, then top to bottom.
 - **One place per item.** Each item appears once. If two sources tell the same story, make one card with `also`.
 - **No repeats across issues.** With `--history`, a picked item that an earlier issue showed stops the build.
   An earlier issue is one dated before this issue, so an old issue renders again the same way after later issues exist.
@@ -257,7 +258,7 @@ The Riffle server must allow the site:
 - **Developments.** When new news continues an earlier story, pick the new item and set `follows` to the URL of the earlier item, from `covered.json`.
   The story gets a Development sticker and a link to the earlier story. Say in the deck what changed. Do not repeat the old facts.
 - **Short decks.** Write one or two sentences, at most 25 words. Do not repeat the headline.
-- **True facts.** Take every fact, number and date from the linked item. Copy quotes word for word.
+- **True facts.** Take every fact, number and date from the linked item. Copy quotes word for word from the title or summary of the item.
 - **Write for strangers.** On a public page, explain names that a new reader does not know. Do not write about private data.
 - **Light humor.** Put jokes in banners, box titles, box notes, classifieds and blotter charges. Keep facts plain. Write new jokes for each issue.
 - **Small sections.** If an edition has fewer than 8 items, use a lead and side stories only, with an empty `flow`.
@@ -283,6 +284,9 @@ The build stops on each of these. Fix the picks, then render again:
 - a `flow` in an edition with fewer than 8 items
 - a link that is not `https://`, a path on the site, or `#anchor`
 - a word from the deny list
+- a quote in `quote` or in an `overheard` box that the title or summary of its item does not hold.
+  The check ignores whitespace, case and the kind of quote marks. `…` or `...` marks left-out words, and the other parts must appear in order.
+- with `--check-links`: a link or image that does not answer, from a DNS or connection error, a time-out, 404, 410 or 5xx
 - a bonus item on the page without a source in `follow`, or a `follow` source that lists another item, or that sets `profile`
 
 ## Check
@@ -291,18 +295,23 @@ Use a browser that you can control, such as the T3 browser preview or Playwright
 
 1. Serve the public folder: `uv run --no-project python -m http.server <port> --bind 127.0.0.1 --directory $SITE/public`. Start it detached, so that it lives after the turn.
 2. Open `http://127.0.0.1:<port>/`. In T3 Code, use `preview_open`.
-3. Measure the columns. Each column total must be close to the others. The lead and the side column must have about the same height:
+3. Measure the empty space at the end of each block below the fold, in pixels. The lead and the side column must have about the same height:
    ```js
-   [...document.querySelectorAll(".edition")].map(ed => [ed.dataset.section,
-     [...ed.querySelectorAll(".flow.packed > .col")].map(c => [...c.children].reduce((s, x) => s + x.scrollHeight, 0)),
-     ed.querySelector(".lead").offsetHeight, ed.querySelector(".side")?.scrollHeight])
+   [...document.querySelectorAll(".edition")].map(ed => {
+     const blocks = [...ed.querySelectorAll(".flow > *")], tall = blocks.map(b => b.offsetHeight);
+     blocks.forEach(b => b.style.alignSelf = "start");
+     const empty = blocks.map((b, i) => tall[i] - b.offsetHeight);
+     blocks.forEach(b => b.style.alignSelf = "");
+     return [ed.dataset.section, empty, ed.querySelector(".lead").offsetHeight, ed.querySelector(".side")?.scrollHeight];
+   })
    ```
    Images load lazily. Do not wait for all of them, because images below the screen never load in a hidden tab.
 4. Look at the front page of each edition and at the end of each flow.
 5. Switch to dark mode and look again. Then switch back to the system setting.
 6. Set the width to a phone, such as 390 pixels. Check that the page does not scroll sideways. Then set it back.
 7. Open `/issues/` and check that the new issue is at the top.
-8. If a box holds one line, or a column ends far above the others, change the picks and render again.
+8. If a box holds one line, or a block ends with more than about 200 pixels of empty space, change the picks and render again.
+   For example, move the block to a rank next to blocks of a similar height.
    If the side column is much taller than the lead, move a side story or the quote into the flow.
 
 ## Publish
@@ -313,4 +322,5 @@ After the deploy, check the live site:
 
 - The home page title has the new issue number and date.
 - `/issues/`, `/feed.xml` and `/sitemap.xml` list the new issue.
+- `/robots.txt` has the `Content-Signal` line.
 - A missing page returns status 404.
