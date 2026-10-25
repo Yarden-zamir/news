@@ -1,0 +1,8 @@
+# The Riffle: https://news.yarden-zamir.com/
+# Search engines and AI may read, quote and train on the writing of this paper: headlines, decks, notes and layout.
+# The paper links to and quotes other publishers. Their articles, quotes and images belong to them: follow their terms.
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+
+Sitemap: https://news.yarden-zamir.com/sitemap.xml
