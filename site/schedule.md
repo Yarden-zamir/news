@@ -37,9 +37,11 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
      Give it 3 to 5 rows about AI agents and models that did unintended or undesired things. Do not use other bugs or outages.
      Write the rows alarmed but playful: start each `text` with a charge in capitals, such as `BREAK-IN:` or `FALSE ALARM:`.
    - `spotlight` in the dev edition: a band for the source `T3 Code Fork Daily Release`, Yarden's fork of T3 Code. Follow "Spotlight" of the `newspaper` skill.
-     Copy `source`, `kicker`, `title`, `note`, `link` and `follow` from the picks of the previous issue.
-     Give each daily release a row. Write the fork changes that it lists, not the upstream changes.
-     Pick a new `image`: a screenshot of a fork feature from a release of the week, without private paths or names.
+     Copy `source`, `title`, `link` and `follow` from the picks of the previous issue. Name the releases of the week in `kicker`.
+     Make two groups, `Fork changes` and `Upstream changes`, from the sections of the same names in each daily release.
+     Give each change a row: its name in `head`, and its sentence from the release notes, word for word, in `text`.
+     Copy the sentences from the release page with a script, not by hand. Quote every daily release at least once.
+     An `image` is optional: a screenshot of a fork change from a release of the week, without private paths or names.
      If a daily release of the window is not in `items.json`, add it from https://github.com/Yarden-zamir/t3code/releases as a bonus item.
    - `follow`: a Riffle source for each bonus item, the blotter rows included. Follow "Follow sources" of the `newspaper` skill.
      Reuse the source of an earlier issue for the same publication: copy it from the picks of that issue.

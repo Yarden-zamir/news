@@ -214,22 +214,27 @@ Signed-in readers add the source to a profile of their own with one click. See "
 ## Spotlight
 
 A spotlight is a band for one source, such as the editor's own project. It sits at the end of the edition, after the flow, across the full width.
+It quotes the changes that the items of the source list, in groups side by side, such as fork changes and upstream changes.
 
 ```json
 "spotlight": {
-  "source": "T3 Code Fork Daily Release", "kicker": "T3 Code fork · daily releases", "title": "From the fork",
-  "note": "One short sentence that says what the project is.", "link": "https://github.com/<owner>/<repo>",
-  "image": "https://… (a screenshot of a feature)", "alt": "…",
-  "rows": [{"head": "25 Oct", "text": "What this release brings.", "item": "695777"}],
+  "source": "T3 Code Fork Daily Release", "kicker": "T3 Code fork · daily release of 25 October", "title": "From the fork",
+  "link": "https://github.com/<owner>/<repo>",
+  "groups": [
+    {"title": "Fork changes", "rows": [{"head": "Terminal threads", "text": "A thread can now be a shell: …", "item": "695777"}]},
+    {"title": "Upstream changes", "rows": [{"head": "Better Cmd+K search", "text": "Cmd+K ranks the right thread first …", "item": "695777"}]}
+  ],
   "follow": {"name": "T3 Code Fork Daily Release", "plugin": "rss-atom", "config": {"url": "https://github.com/<owner>/<repo>/releases.atom"}}
 }
 ```
 
 - `source` is the source name of the items, as the items file has it.
-- `rows` gives each item of the source one row: the day in `head`, and what the item brings in `text`. Write from the item, as for a deck.
-- The band shows every item of the source that no earlier issue showed, and only those items. The build stops otherwise.
+- Each row names one change in `head`, and quotes the item or its page word for word in `text`, without quotation marks. The page adds them.
+  Several rows can quote one item. A band with items of more than one day shows the day of each row.
+- The band quotes every item of the source that no earlier issue showed, and only those items. The build stops otherwise.
 - `follow` is optional: a Riffle source that signed-in readers can follow from the band. It catches the items of the rows, bonus items too.
-- `kicker`, `title` and `note` describe the project for a stranger. Keep them from issue to issue, so that readers know the band.
+- `image` and `alt` are optional: a screenshot of a change, above the groups.
+- Keep `kicker` and `title` from issue to issue, so that readers know the band. The band has no other text.
 
 ## covered.json
 

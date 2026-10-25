@@ -74,7 +74,8 @@ def main() -> None:
     items = {str(item["id"]): item for item in json.loads(args.items.read_text())["items"]}
     picks = json.loads(args.picks.read_text())
     # A spotlight band can offer the source of its items too. It catches the items of its rows.
-    bands = [{**edition["spotlight"]["follow"], "items": [line["item"] for line in edition["spotlight"]["rows"]]}
+    bands = [{**edition["spotlight"]["follow"],
+              "items": list(dict.fromkeys(line["item"] for group in edition["spotlight"]["groups"] for line in group["rows"]))}
              for edition in picks.get("editions", []) if "follow" in edition.get("spotlight", {})]
     sources = [*picks.get("follow", []), *bands]
     if not sources:

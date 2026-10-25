@@ -1,4 +1,4 @@
-"""Contract: a spotlight band shows every item of its source, only items of its source, and can offer that source to follow."""
+"""Contract: a spotlight band quotes every item of its source, only items of its source, and can offer that source to follow."""
 
 import json
 import subprocess
@@ -19,7 +19,10 @@ def render(tmp_path: Path, rows: list[str], follow: dict | None = SOURCE) -> sub
     items = [item(1), item(2), item(3, FORK), item(4, FORK, bonus=True)]
     (tmp_path / "items.json").write_text(json.dumps({
         "fetched": "2026-10-14T12:00:00+00:00", "days": 8, "home": "https://riffle.example.com/", "items": items}))
-    band = {"source": FORK, "kicker": "My fork", "title": "From the fork", "rows": [{"head": "Mon", "text": "news", "item": n} for n in rows]}
+    # The first group quotes each item; a second group quotes the first item again, as a release lists fork and upstream changes.
+    band = {"source": FORK, "kicker": "My fork", "title": "From the fork", "groups": [
+        {"title": "Fork changes", "rows": [{"head": f"Change {n}", "text": "news", "item": n} for n in rows]},
+        {"title": "Upstream changes", "rows": [{"head": "Upstream", "text": "more news", "item": rows[0]}]}]}
     if follow is not None:
         band["follow"] = follow
     (tmp_path / "picks.json").write_text(json.dumps({
