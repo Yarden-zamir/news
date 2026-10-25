@@ -502,5 +502,120 @@
     }
    ]
   }
+ ],
+ "follow": [
+  {
+   "name": "claude.dev Blog",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://claude.dev/rss.xml"
+   },
+   "items": [
+    "bonus-1"
+   ]
+  },
+  {
+   "name": "Claude Blog",
+   "plugin": "html-news",
+   "config": {
+    "url": "https://claude.com/resources/articles",
+    "article_path_prefix": "/resources/articles/",
+    "limit": 20
+   },
+   "items": [
+    "bonus-2"
+   ]
+  },
+  {
+   "name": "Cloudflare Blog",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://blog.cloudflare.com/rss/"
+   },
+   "items": [
+    "bonus-3"
+   ]
+  },
+  {
+   "name": "GamingTrend: Embark games",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://gamingtrend.com/feed/",
+    "include_any": [
+     "ARC Raiders",
+     "The Finals",
+     "Embark Studios"
+    ]
+   },
+   "items": [
+    "bonus-4"
+   ]
+  },
+  {
+   "name": "GamingBolt: Embark games",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://gamingbolt.com/feed",
+    "include_any": [
+     "ARC Raiders",
+     "The Finals",
+     "Embark Studios"
+    ]
+   },
+   "items": [
+    "bonus-5"
+   ]
+  },
+  {
+   "name": "TechCrunch: AI agents",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://techcrunch.com/feed/",
+    "include_any": [
+     "AI agent",
+     "coding agent",
+     "AI coding",
+     "Claude Code",
+     "Codex",
+     "OpenCode",
+     "misalignment"
+    ]
+   },
+   "items": [
+    "bonus-6"
+   ]
+  },
+  {
+   "name": "Reuters: AI agents",
+   "plugin": "news-sitemap",
+   "config": {
+    "url": "https://www.reuters.com/arc/outboundfeeds/news-sitemap-index/?outputType=xml",
+    "include_any": [
+     "AI agent",
+     "coding agent",
+     "AI coding",
+     "Claude Code",
+     "Codex",
+     "OpenCode",
+     "misalignment"
+    ]
+   },
+   "items": [
+    "bonus-7"
+   ]
+  },
+  {
+   "name": "OpenAI misalignment reports",
+   "plugin": "html-news",
+   "config": {
+    "url": "https://alignment.openai.com/misalignment-reports/",
+    "article_path_prefix": "/misalignment-reports/",
+    "limit": 11
+   },
+   "items": [
+    "bonus-8",
+    "bonus-9"
+   ]
+  }
  ]
 }

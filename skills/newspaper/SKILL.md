@@ -15,6 +15,7 @@ Files in this folder:
 - `gazette.py render`: renders one issue from an items file and a picks file. It writes `covered.json` next to the page.
 - `gazette.py site`: builds the home page, the archive, `issues/index.json`, `feed.xml`, `sitemap.xml`, `404.html` and the fonts from all issues.
 - `page_images.py`: prints the share image of each page URL, then every image in the article with its caption.
+- `follow_check.py`: previews the Riffle source of each bonus story, and checks that it catches the story. See "Follow sources".
 - `example-picks.json`: the picks file of a real issue. Read it for the tone and for the use of each box.
 - `assets/fonts/`: Bricolage Grotesque and JetBrains Mono under the SIL Open Font License. The site serves them itself.
 
@@ -81,6 +82,7 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 2. Read the candidate items. Before you write about an item, read its full text: the item summary, or the page.
 3. Read `$SITE/public/issues/*/covered.json`. An item that an earlier issue showed cannot appear again, but news that continues it can. See "Developments".
 4. Optional: add bonus stories from outside the feed. Give each one its real URL and publish time, and set `"bonus": true`. The page marks them.
+   Give each bonus story a Riffle source in `follow` of the picks file, and run `follow_check.py`. See "Follow sources".
 5. Rank the items by interest to the reader.
 6. Write `$SITE/desk/$DATE/picks.json`. Follow "Picks file" and "Editorial rules".
 7. For each story that can get a picture, run `page_images.py <url>`. Look at each image. See "Images".
@@ -165,6 +167,7 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 - `contact` is a link where readers report a mistake.
 - `share_image` is the path of the share card. Without `description`, link previews use the lead deck.
 - `also` lists other items about the same story. The card links them by source name.
+- `follow` lists one Riffle source for each bonus story on the page. See "Follow sources".
 - The page counts items, sources and read items itself. Put only extra numbers in `numbers`, and count them from the items file.
 
 Box kinds for `flow`:
@@ -178,6 +181,34 @@ Box kinds for `flow`:
 | `overheard` | Short exact quotes. Put the speaker in `head` and the quote in curly quotes in `text`. |
 | `wire` | Feeds that send headlines only. Put the date in `head`. |
 | `prolific` | A bar chart of the sources with the most articles. It takes no rows. |
+
+## Follow sources
+
+A bonus story comes from outside the reader's feeds. Each one gets a Riffle source that catches it, and stories like it from the same publication.
+Signed-in readers add the source to a profile of their own with one click. See "Reader sync".
+
+```json
+"follow": [
+  {"name": "TechCrunch: AI agents", "plugin": "rss-atom",
+   "config": {"url": "https://techcrunch.com/feed/", "include_any": ["AI agent", "coding agent", "Claude Code"]},
+   "items": ["bonus-1", "bonus-6"]}
+]
+```
+
+- `name`, `plugin` and `config` make a Riffle source. Leave `profile` out of `config`: the reader picks the profile.
+- `items` lists the bonus items that the source catches. Each bonus item on the page needs exactly one source. Several items can share one.
+- Use the same source for the same publication in every issue, so that readers who follow it once see it as followed later.
+- Find the feed with Riffle's discovery: `riffle api -X POST /sources/discover -d '{"url": "<story or site URL>"}'`.
+  - A feed of the whole publication fits a publication that matches the paper, such as the Cloudflare Blog.
+  - For a general news site, add `include_any` terms that the story and stories like it contain. Name the source `<publication>: <topic>`.
+  - A site without a feed may have a page that lists its articles. Use `html-news`, with `article_path_prefix` set to the path of those articles.
+  - A site that refuses requests may list a news sitemap in robots.txt. Discovery then offers `news-sitemap`.
+- Run `follow_check.py $SITE/desk/$DATE/items.json $SITE/desk/$DATE/picks.json`. Riffle previews each source, and nothing is saved.
+  - Fix every MISSED story: change the source or its terms.
+  - For UNSURE, open the feed and check that it carries stories from that part of the site.
+  - Read the titles that it prints: they show the stories that a reader gets.
+- If no Riffle plugin can catch a publication, add the ability to Riffle (https://github.com/Yarden-zamir/riffle) through a pull request.
+  Only then add the source.
 
 ## covered.json
 
@@ -201,6 +232,10 @@ If the items file has `home`, readers can sign in to Riffle from the page. The p
   Links of dismissed items fade, and links of saved items get a highlighter mark. No mark changes the layout.
 - On a screen with a pointer, the buttons show in the top right corner of a block while the pointer is on it, or while a button has keyboard focus.
   On a touch screen, a long press on a block opens its buttons in a sheet at the bottom of the screen.
+- A block with a bonus story gets a Follow button for signed-in readers, also when none of its items are in their feeds.
+  It opens a sheet with the sources of the block from `follow`. The reader picks a profile, or names a new one, and the page sends
+  `POST /profiles` when needed, then `POST /sources` and `POST /sources/<id>/refresh`.
+  A source that the reader already has, with the same plugin, URL and terms, shows as followed, with a link to it in Riffle.
 - The page reads the state again when the tab comes back, and every minute while it is open.
 - Sign-in and sign-out run on Riffle (`/auth/start?rd=<page>` and `/auth/sign_out?rd=<page>`). The site stores no data and sets no cookie.
 - If Riffle does not answer, the page shows no sync bar.
@@ -216,6 +251,7 @@ The Riffle server must allow the site:
 - **Rank.** Put the most interesting story first. The page deals cards into columns in rank order.
 - **One place per item.** Each item appears once. If two sources tell the same story, make one card with `also`.
 - **No repeats across issues.** With `--history`, a picked item that an earlier issue showed stops the build.
+  An earlier issue is one dated before this issue, so an old issue renders again the same way after later issues exist.
   The match uses the URL. For articles it also uses the title, within 36 hours of the earlier item.
   In brief and the release ticker skip such items without an error. The ticker also skips releases older than the newest release that an earlier issue showed for the same source.
 - **Developments.** When new news continues an earlier story, pick the new item and set `follows` to the URL of the earlier item, from `covered.json`.
@@ -247,6 +283,7 @@ The build stops on each of these. Fix the picks, then render again:
 - a `flow` in an edition with fewer than 8 items
 - a link that is not `https://`, a path on the site, or `#anchor`
 - a word from the deny list
+- a bonus item on the page without a source in `follow`, or a `follow` source that lists another item, or that sets `profile`
 
 ## Check
 

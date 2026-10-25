@@ -19,6 +19,7 @@ Each story links to its source. Images load from the publishers' websites and cr
 
 Readers can sign in to Riffle with GitHub from the page. The page then marks what they viewed and shelved in their own Riffle.
 To mark the items of a block as viewed or shelved, point at the block, or press and hold it on a phone. The changes go straight to Riffle.
+Bonus stories come from outside the feeds. Each one has a Riffle source that catches it and stories like it, and signed-in readers can follow that source in one click.
 [`SKILL.md`](skills/newspaper/SKILL.md#reader-sync) describes how a block finds its items.
 
 ## Make your own paper
@@ -52,6 +53,7 @@ skills/newspaper/          the agent skill
 ├── riffle_items.py    Riffle profiles → items file
 ├── gazette.py             items file + picks file → issue; issues → site files
 ├── page_images.py         lists the images of an article, to pick one
+├── follow_check.py        checks through Riffle that each bonus story's source catches it
 ├── example-picks.json     the picks of issue 1
 └── assets/fonts/          Bricolage Grotesque and JetBrains Mono (SIL Open Font License)
 site/                      news.yarden-zamir.com

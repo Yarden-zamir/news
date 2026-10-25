@@ -36,7 +36,12 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
    - Put a `blotter` box with the title `Police blotter` in the dev edition of every issue.
      Give it 3 to 5 rows about AI agents and models that did unintended or undesired things. Do not use other bugs or outages.
      Write the rows alarmed but playful: start each `text` with a charge in capitals, such as `BREAK-IN:` or `FALSE ALARM:`.
-7. Render. If the build stops, fix the picks: pick another item, or make it a development. Then render again.
+   - `follow`: a Riffle source for each bonus item, the blotter rows included. Follow "Follow sources" of the `newspaper` skill.
+     Reuse the source of an earlier issue for the same publication: copy it from the picks of that issue.
+     Run `follow_check.py $SITE/desk/$DATE/items.json $SITE/desk/$DATE/picks.json`. Fix every MISSED item. Check every UNSURE item in the feed.
+     If no Riffle plugin can catch a publication, open a pull request in `~/Github/riffle` that adds the ability, with tests and spec changes.
+     Merge it after its checks pass and its review findings are fixed. Wait until https://riffle.yarden-zamir.com runs it, then run `follow_check.py` again.
+7. Render. If the build stops, fix the picks: pick another item, make it a development, or give a bonus item its source. Then render again.
    ```sh
    gazette.py render $SITE/desk/$DATE/items.json $SITE/desk/$DATE/picks.json $SITE/public/issues/$DATE/index.html \
      --history $SITE/public/issues --deny $SITE/deny.txt
@@ -60,7 +65,7 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
     - https://news.yarden-zamir.com/no-such-page returns status 404.
     - Right after a deploy, new files can return 404 for a short time. If a check fails, wait one minute, then check again once.
 13. Commit with the message `feat(site): issue No. N of $DATE`, and push.
-14. Reply in a few lines: the link, the lead headline of each edition, the developments and what they follow, the bonus stories,
+14. Reply in a few lines: the link, the lead headline of each edition, the developments and what they follow, the bonus stories and their Riffle sources, any Riffle pull request,
     the duplicate check line from the build output ("checked against N earlier issues"), and anything that failed.
 
 Do not change Riffle data in this run: no saves and no dismissals.

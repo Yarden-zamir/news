@@ -697,5 +697,39 @@
     }
    ]
   }
+ ],
+ "follow": [
+  {
+   "name": "Home Assistant Blog",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://www.home-assistant.io/atom.xml"
+   },
+   "items": [
+    "bonus-1"
+   ]
+  },
+  {
+   "name": "Let's Encrypt Blog",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://letsencrypt.org/feed.xml"
+   },
+   "items": [
+    "bonus-2"
+   ]
+  },
+  {
+   "name": "Cloudflare Blog",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://blog.cloudflare.com/rss/"
+   },
+   "items": [
+    "bonus-3",
+    "bonus-4",
+    "bonus-5"
+   ]
+  }
  ]
 }

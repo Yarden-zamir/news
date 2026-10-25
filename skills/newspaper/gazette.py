@@ -6,9 +6,10 @@ Usage:
 
 render: ITEMS holds the raw news items. PICKS holds the editorial choices. Each item appears in one place only.
 The build stops on a duplicate item, an unknown item or key, a generic image, an image without alt text, a deck
-over 25 words, a flow in a small section, an unsafe link, or a denied word. Next to OUT it writes covered.json,
-the list of every item that the page shows. With --history it reads covered.json of every earlier issue: a picked
-item that an earlier issue showed stops the build, and automatic lists skip such items.
+over 25 words, a flow in a small section, an unsafe link, a denied word, or a bonus item without a Riffle source
+to follow. Next to OUT it writes covered.json, the list of every item that the page shows. With --history it reads
+covered.json of every earlier issue, the issues dated before this one: a picked item that an earlier issue showed
+stops the build, and automatic lists skip such items.
 
 site: reads PUBLIC_DIR/issues/*/covered.json. It copies the newest issue to PUBLIC_DIR/index.html and writes the
 archive page, issues/index.json, feed.xml, sitemap.xml, 404.html and the fonts.
@@ -24,7 +25,7 @@ import sys
 from collections import Counter
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, tzinfo
+from datetime import date, datetime, timedelta, tzinfo
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Literal, NoReturn, get_args
@@ -230,6 +231,16 @@ class Number:
 
 
 @dataclass(frozen=True)
+class Follow:
+    """A Riffle source that catches bonus stories from outside the feed, and stories like them. Signed-in readers can add it."""
+
+    name: str
+    plugin: str  # A Riffle plugin key, such as rss-atom, html-news or news-sitemap.
+    config: dict[str, object]  # Riffle source config without "profile": the reader picks the profile.
+    items: tuple[str, ...]  # The bonus items that the source catches.
+
+
+@dataclass(frozen=True)
 class Picks:
     title: str
     issue: str
@@ -247,6 +258,7 @@ class Picks:
     share_image: str | None
     numbers: tuple[Number, ...]
     editions: tuple[Edition, ...]
+    follow: tuple[Follow, ...]
 
 
 @dataclass(frozen=True)
@@ -324,7 +336,8 @@ def row(raw: object, where: str, head: str, body: str) -> Row:
 
 def load_picks(path: Path) -> Picks:
     data = keys(read_json(path, "picks file"), "picks file", {"title", "issue", "motto", "colophon", "editions"},
-                {"word", "audience", "site", "page", "previous", "archive", "contact", "description", "about", "share_image", "numbers"})
+                {"word", "audience", "site", "page", "previous", "archive", "contact", "description", "about", "share_image", "numbers",
+                 "follow"})
     where = "picks file"
     audience = data.get("audience", "public")
     if audience not in get_args(Audience.__value__):
@@ -372,6 +385,24 @@ def load_picks(path: Path) -> Picks:
         raw = keys(raw, f"numbers[{n}]", {"value", "label", "tip", "href"})
         numbers.append(Number(value=req_text(raw, "value", f"numbers[{n}]"), label=req_text(raw, "label", f"numbers[{n}]"),
                               tip=req_text(raw, "tip", f"numbers[{n}]"), href=link(req_text(raw, "href", f"numbers[{n}]"), f"numbers[{n}].href")))
+    follow, followed = [], set()
+    for n, raw in enumerate(as_list(data, "follow", where)):
+        here = f"follow[{n}]"
+        raw = keys(raw, here, {"name", "plugin", "config", "items"})
+        name, config = req_text(raw, "name", here), raw["config"]
+        if len(name) > 200:
+            fail(f"{here}.name has {len(name)} characters. Riffle takes at most 200.")
+        if not isinstance(config, dict) or "profile" in config:
+            fail(f"{here}.config must be a Riffle source config without \"profile\": the reader picks the profile")
+        if not str(config.get("url", "")).startswith("https://"):
+            fail(f"{here}.config.url must be an https link")
+        items = tuple(item_id(value, f"{here}.items") for value in as_list(raw, "items", here))
+        if not items:
+            fail(f"{here}.items must list the bonus items that the source catches")
+        if twice := followed & set(items):
+            fail(f"{here} lists {sorted(twice)}, which another follow source lists too. Give each bonus item one source.")
+        followed.update(items)
+        follow.append(Follow(name=name, plugin=req_text(raw, "plugin", here), config=config, items=items))
     return Picks(
         title=req_text(data, "title", where), issue=req_text(data, "issue", where), motto=req_text(data, "motto", where),
         word=opt_text(data, "word", where), colophon=req_text(data, "colophon", where), audience=audience, site=site,
@@ -379,17 +410,25 @@ def load_picks(path: Path) -> Picks:
         archive=link(opt_text(data, "archive", where), "archive"), contact=link(opt_text(data, "contact", where), "contact"),
         description=opt_text(data, "description", where), about=opt_text(data, "about", where),
         share_image=link(opt_text(data, "share_image", where), "share_image"), numbers=tuple(numbers), editions=tuple(editions),
+        follow=tuple(follow),
     )
 
 
-def load_history(folder: Path, out: Path, page: str | None) -> History:
-    """Read covered.json of every earlier issue. The issue that is being rendered (same folder or same page) is not history."""
+def load_history(folder: Path, out: Path, page: str | None, before: date) -> History:
+    """Read covered.json of every earlier issue: the issues dated before `before`, the date of the issue that is rendered.
+    A later issue is not history, so an earlier issue renders again the same way. The issue itself (same folder or page) is not history."""
     history = History()
     for manifest in sorted(folder.glob("*/covered.json")):
         if manifest.parent.resolve() == out.parent.resolve():
             continue
         data = keys(read_json(manifest, "covered file"), str(manifest), {"issue", "page", "date", "built", "items"}, {"title", "description", "leads"})
         if page is not None and data["page"] == page:
+            continue
+        try:
+            issued = date.fromisoformat(data["date"])
+        except (TypeError, ValueError):
+            fail(f"{manifest}: date must be YYYY-MM-DD, not {data['date']!r}")
+        if issued >= before:
             continue
         history.issues += 1
         for index, raw in enumerate(as_list(data, "items", str(manifest))):
@@ -810,16 +849,36 @@ class Paper:
         return {"issue": self.picks.issue, "page": self.picks.page, "date": f"{self.fetched:%Y-%m-%d}", "built": self.fetched.isoformat(),
                 "title": self.picks.title, "description": self.description(), "leads": self.leads, "items": items}
 
-    def sync_config(self) -> str:
-        """Settings of the page script that shows and changes the viewed and shelved state in the reader's Riffle.
-        Without a Riffle home in the items file, the page has no sync."""
+    def follows(self) -> list[dict]:
+        """The Riffle sources that readers can follow, each with the URLs of its bonus items on the page.
+        Every bonus item that the page shows needs exactly one source; a source may list only such items."""
+        owner: dict[str, str] = {}
+        for source in self.picks.follow:
+            for listed in source.items:
+                if listed not in self.by_id:
+                    fail(f"follow source {source.name!r} lists item {listed!r}, which is not in the items file")
+                if not self.by_id[listed].bonus:
+                    fail(f"follow source {source.name!r} lists item {listed!r}, which is not a bonus item. Readers follow feed items through the share links.")
+                if listed not in self.shown:
+                    fail(f"follow source {source.name!r} lists item {listed!r}, which the page does not show")
+                owner[listed] = source.name
+        if missing := [shown for shown in self.shown if self.by_id[shown].bonus and shown not in owner]:
+            fail(f"bonus items {missing} have no Riffle source. Add each one to the items of an entry in \"follow\" in the picks file, "
+                 "with a source that catches it and stories like it.")
+        return [{"name": source.name, "plugin": source.plugin, "config": source.config,
+                 "urls": [url for listed in source.items if (url := self.by_id[listed].url)]} for source in self.picks.follow]
+
+    def sync_config(self, follow: list[dict]) -> str:
+        """Settings of the page script that shows and changes the viewed and shelved state in the reader's Riffle,
+        and adds the Riffle sources of bonus stories. Without a Riffle home in the items file, the page has no sync."""
         if self.feed.home is None:
             return ""
         home = urlsplit(self.feed.home)
         config = {"origin": f"{home.scheme}://{home.netloc}",
                   "since": (self.fetched - timedelta(days=self.days + 1)).isoformat(),
                   "until": (self.fetched + timedelta(days=1)).isoformat(),
-                  "shares": self.feed.shares}
+                  "shares": self.feed.shares,
+                  "follow": follow}
         # "<" never appears raw, so the JSON cannot close the script element.
         data = json.dumps(config).replace("<", "\\u003c")
         return f'<script type="application/json" id="riffle-sync">{data}</script>'
@@ -833,6 +892,7 @@ class Paper:
     def render(self) -> str:
         picks = self.picks
         body = "".join(self.edition(edition) for edition in picks.editions)
+        follow = self.follows()
         every = [item for rows in self.sections.values() for item in rows]
         built_day = sum(item.published_at.date() == self.fetched.date() for item in every)
         first = f"#{picks.editions[0].slug}"
@@ -871,7 +931,7 @@ class Paper:
 <section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
 {self.issue_nav()}
 {self.footer()}
-</div>{self.sync_config()}<script>{JS}</script></body></html>"""
+</div>{self.sync_config(follow)}<script>{JS}</script></body></html>"""
 
 
 # ---------- site ----------
@@ -1210,6 +1270,16 @@ li.holding { background: var(--raised); transition: background-color 250ms 150ms
 .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
 .sheet-actions .sync-btn { height: 3rem; }
 .sheet-close { padding: 0.4rem; font: inherit; font-weight: 700; color: var(--muted); background: none; border: 0; cursor: pointer; }
+.sheet-body .hint { color: var(--muted); font-size: 0.8rem; }
+/* Follow the Riffle source of a bonus story: one row per source, each with a profile choice. */
+.follow-list { display: grid; gap: 0.6rem; }
+.follow-source { display: grid; gap: 0.35rem; padding: 0.6rem; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-source .hint { overflow-wrap: anywhere; }
+.follow-form { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.follow-form select, .follow-form input { flex: 1 1 8rem; min-width: 0; height: 2.4rem; padding: 0 0.5rem; font: inherit; color: var(--ink);
+  background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-form .sync-btn { height: 2.4rem; padding: 0 0.8rem; }
+.followed { font-weight: 700; }
 """
 
 JS = """
@@ -1293,7 +1363,7 @@ if (issueNavs.length) fetch("/issues/index.json").then((response) => {
 const syncConfig = document.getElementById("riffle-sync");
 if (syncConfig) startSync(JSON.parse(syncConfig.textContent));
 
-function startSync({ origin, since, until, shares }) {
+function startSync({ origin, since, until, shares, follow = [] }) {
   const bar = document.querySelector("[data-sync]");
   const blocks = [...document.querySelectorAll("[data-entries]")].map((el) => ({ el, urls: JSON.parse(el.dataset.entries) }));
   const blockOf = new Map(blocks.map((block) => [block.el, block]));
@@ -1308,6 +1378,10 @@ function startSync({ origin, since, until, shares }) {
     saved: { label: "Shelved", mark: "Put on your shelf", unmark: "Take off your shelf",
       icon: icon(BOOKMARK, "M12 7v6", "M15 10H9"), pressedIcon: icon(BOOKMARK, "m9 10 2 2 4-4") },
   };
+  const RSS = icon("M4 11a9 9 0 0 1 9 9", "M4 4a16 16 0 0 1 16 16", "M6 19a1 1 0 1 1-2 0 1 1 0 0 1 2 0");
+  const WRITE = { "Content-Type": "application/json", "X-Riffle-Request": "1" };
+  // Bonus stories come from outside the feeds. Each has a Riffle source that catches it and stories like it.
+  const followOf = (block) => follow.filter((source) => source.urls.some((url) => block.urls.includes(url)));
   let account = null;
   let byUrl = new Map();
   let loaded = false;
@@ -1372,8 +1446,20 @@ function startSync({ origin, since, until, shares }) {
     button.insertAdjacentHTML("afterbegin", (on && action.pressedIcon) || action.icon);
   }
 
-  function addActions(block) {
-    const group = el("div", { className: "sync-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, false)));
+  function followButton(block, inSheet) {
+    const button = el("button", { type: "button", className: "sync-btn", title: "Follow the source of this story in your Riffle" },
+      ...(inSheet ? [el("span", {}, "Follow")] : []));
+    if (!inSheet) button.setAttribute("aria-label", "Follow the source");
+    button.insertAdjacentHTML("afterbegin", RSS);
+    button.addEventListener("click", () => openFollow(block));
+    return button;
+  }
+
+  // The buttons of a block: Viewed and Shelved when the reader's feeds hold its items, and Follow when it shows a bonus story.
+  function addActions(block, fields, follows) {
+    const group = el("div", { className: "sync-actions" }, ...fields.map((field) => syncButton(block, field, false)),
+      ...(follows ? [followButton(block, false)] : []));
+    group.dataset.shape = [...fields, ...(follows ? ["follow"] : [])].join(" ");
     group.setAttribute("role", "group");
     group.setAttribute("aria-label", "Your Riffle");
     block.el.append(group);
@@ -1383,14 +1469,17 @@ function startSync({ origin, since, until, shares }) {
   function paint() {
     for (const block of blocks) {
       const rows = matched(block);
+      const fields = rows.length ? Object.keys(ACTIONS) : [];
+      const follows = Boolean(account) && followOf(block).length > 0;
+      const shape = [...fields, ...(follows ? ["follow"] : [])].join(" ");
       let group = actionsOf(block);
-      if (rows.length && !group) group = addActions(block);
-      if (!rows.length && group) {
+      if (group && group.dataset.shape !== shape) {
         group.remove();
         group = null;
       }
+      if (!group && shape) group = addActions(block, fields, follows);
       block.el.classList.toggle("is-viewed", rows.length > 0 && rows.every((row) => row.dismissed));
-      for (const button of group?.querySelectorAll("button") ?? []) press(button, rows.every((row) => row[button.dataset.field]));
+      for (const button of group?.querySelectorAll("button[data-field]") ?? []) press(button, rows.every((row) => row[button.dataset.field]));
       for (const link of block.el.querySelectorAll("a[href]")) {
         const own = byUrl.get(link.getAttribute("href")) ?? [];
         link.classList.toggle("entry-viewed", own.length > 0 && own.every((row) => row.dismissed));
@@ -1408,14 +1497,97 @@ function startSync({ origin, since, until, shares }) {
   document.body.append(sheet);
 
   function openSheet(block) {
+    if (!matched(block).length) return openFollow(block);
     const count = block.urls.filter((url) => byUrl.has(url)).length;
     const title = ["h3", "h2", "blockquote", ".ticker-label", "a"].map((selector) => block.el.querySelector(selector)).find(Boolean);
     sheet.replaceChildren(el("div", { className: "sheet-body" },
       el("p", { className: "label" }, count > 1 ? `Your Riffle · ${count} items` : "Your Riffle"),
       el("p", { className: "sheet-title" }, title?.textContent.trim() ?? ""),
-      el("div", { className: "sheet-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, true))),
+      el("div", { className: "sheet-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, true)),
+        ...(followOf(block).length ? [followButton(block, true)] : [])),
       el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Cancel")));
     sheet.showModal();
+  }
+
+  const failure = (error) => ({ 401: "Your Riffle session ended. Sign in again.", 409: "Riffle refused: the profile exists, or your account is full.",
+    422: "Riffle refused this source." })[error?.status] ?? "Riffle did not answer. Try again.";
+  const terms = (value) => [value ?? []].flat().map((term) => String(term).trim().toLowerCase()).filter(Boolean).sort();
+  // Two sources are the same when they fetch the same things, whatever their name and profile.
+  const fetchKey = ({ plugin, config }) => {
+    const { profile, include_any, exclude_any, ...rest } = config;
+    return JSON.stringify([plugin, terms(include_any), terms(exclude_any), Object.entries(rest).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))]);
+  };
+
+  // The sheet lists the sources of the bonus stories of a block. It reads the reader's profiles and sources each time it opens.
+  async function openFollow(block) {
+    const sources = followOf(block);
+    const section = block.el.closest(".edition")?.dataset.section ?? "news";
+    const list = el("div", { className: "follow-list" }, el("p", { className: "hint" }, "Reading your Riffle…"));
+    sheet.replaceChildren(el("div", { className: "sheet-body" },
+      el("p", { className: "label" }, "Follow in your Riffle"),
+      el("p", {}, sources.length > 1 ? "These sources caught the bonus stories here, and catch more like them."
+        : "This source caught the bonus story here, and catches more like it."),
+      list,
+      el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Close")));
+    if (!sheet.open) sheet.showModal();
+    let riffle;
+    try {
+      const [profiles, own] = await Promise.all([api("/profiles"), api("/sources")]);
+      riffle = { profiles: profiles.map((profile) => profile.name), own };
+    } catch (error) {
+      return list.replaceChildren(el("p", { className: "sticker warn" }, failure(error)));
+    }
+    list.replaceChildren(...sources.map((source) => followRow(source, section, riffle)));
+  }
+
+  function followed(saved) {
+    const where = `${origin}/?${new URLSearchParams({ profile: saved.config.profile, source: String(saved.id) })}`;
+    return el("p", { className: "followed" }, "✓ In your ", el("a", { href: where }, `${saved.config.profile} feed`));
+  }
+
+  function followRow(source, section, riffle, note) {
+    const host = new URL(source.config.url).hostname;
+    const words = [source.config.include_any ?? []].flat();
+    const about = words.length ? `stories with ${words.slice(0, 4).join(", ")}${words.length > 4 ? "…" : ""}` : "every story";
+    const row = el("div", { className: "follow-source" }, el("b", {}, source.name),
+      el("span", { className: "hint" }, `${host.startsWith("www.") ? host.slice(4) : host} · ${about}`));
+    const same = riffle.own.find((own) => fetchKey(own) === fetchKey(source));
+    if (same) {
+      row.append(followed(same));
+      return row;
+    }
+    // A reader without a profile, or who picks "New profile", names one. The edition's name is the first guess.
+    const choice = el("select", {}, ...riffle.profiles.map((name) => el("option", { value: name }, name)),
+      el("option", { value: "" }, "New profile…"));
+    choice.setAttribute("aria-label", "Profile");
+    choice.value = riffle.profiles.includes(section) ? section : (riffle.profiles[0] ?? "");
+    const name = el("input", { value: section, maxLength: 100 });
+    name.setAttribute("aria-label", "New profile name");
+    name.hidden = choice.value !== "";
+    choice.addEventListener("change", () => { name.hidden = choice.value !== ""; });
+    const add = el("button", { type: "button", className: "sync-btn" }, "Follow");
+    add.addEventListener("click", async () => {
+      const fresh = choice.value === "";
+      const profile = fresh ? name.value.trim() : choice.value;
+      if (!profile) return name.focus();
+      add.disabled = true;
+      try {
+        if (fresh) {
+          await api("/profiles", { method: "POST", headers: WRITE, body: JSON.stringify({ name: profile }) });
+          riffle.profiles.push(profile);
+        }
+        const saved = await api("/sources", { method: "POST", headers: WRITE,
+          body: JSON.stringify({ name: source.name, plugin: source.plugin, config: { ...source.config, profile }, enabled: true }) });
+        riffle.own.push(saved);
+        row.replaceWith(followRow(source, section, riffle));
+        // Fetch at once, so that the first stories show in Riffle now. If this fails, Riffle's hourly refresh fetches the source.
+        api(`/sources/${saved.id}/refresh`, { method: "POST", headers: WRITE }).catch(() => {});
+      } catch (error) {
+        row.replaceWith(followRow(source, section, riffle, failure(error)));
+      }
+    });
+    row.append(el("div", { className: "follow-form" }, choice, name, add), ...(note ? [el("p", { className: "sticker warn" }, note)] : []));
+    return row;
   }
 
   const HOLD_MS = 450;
@@ -1477,10 +1649,12 @@ function startSync({ origin, since, until, shares }) {
   function signedIn() {
     const inFeed = [...pageUrls].filter((url) => byUrl.has(url)).length;
     const imports = Object.entries(shares ?? {}).flatMap(([name, url], index) => [index ? " · " : "", el("a", { href: url }, name)]);
+    const point = hoverable ? "Point at" : "Press and hold";
     const reach = inFeed
       ? [el("span", {}, `${inFeed} of ${pageUrls.size} items on this page are in your feeds.`),
-        el("span", { className: "hint" }, `${hoverable ? "Point at" : "Press and hold"} a story to mark it as viewed or shelved.`)]
+        el("span", { className: "hint" }, `${point} a story to mark it as viewed or shelved.`)]
       : [el("span", {}, "None of the items on this page are in your feeds.", ...(imports.length ? [" Import the sources: ", ...imports] : []))];
+    if (follow.length) reach.push(el("span", { className: "hint" }, `${point} a bonus story to follow its source.`));
     const who = el("span", { className: "who" }, "Synced as ", el("b", {}, `@${account.login}`));
     // Owner ids of GitHub accounts are "github:<numeric id>". The avatar host sets no cookies.
     if (account.id.startsWith("github:")) {
@@ -1600,8 +1774,9 @@ def main() -> None:
     if args.history is not None and not args.history.is_dir():
         fail(f"--history {args.history} is not a folder")
     picks = load_picks(args.picks)
-    history = load_history(args.history, args.out, picks.page) if args.history else History()
-    paper = Paper(load_items(args.items), picks, history)
+    feed = load_items(args.items)
+    history = load_history(args.history, args.out, picks.page, feed.fetched.date()) if args.history else History()
+    paper = Paper(feed, picks, history)
     page = paper.render()
     if args.deny:
         deny_check(page, args.deny)

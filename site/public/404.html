@@ -267,6 +267,16 @@ li.holding { background: var(--raised); transition: background-color 250ms 150ms
 .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
 .sheet-actions .sync-btn { height: 3rem; }
 .sheet-close { padding: 0.4rem; font: inherit; font-weight: 700; color: var(--muted); background: none; border: 0; cursor: pointer; }
+.sheet-body .hint { color: var(--muted); font-size: 0.8rem; }
+/* Follow the Riffle source of a bonus story: one row per source, each with a profile choice. */
+.follow-list { display: grid; gap: 0.6rem; }
+.follow-source { display: grid; gap: 0.35rem; padding: 0.6rem; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-source .hint { overflow-wrap: anywhere; }
+.follow-form { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.follow-form select, .follow-form input { flex: 1 1 8rem; min-width: 0; height: 2.4rem; padding: 0 0.5rem; font: inherit; color: var(--ink);
+  background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-form .sync-btn { height: 2.4rem; padding: 0 0.8rem; }
+.followed { font-weight: 700; }
 </style></head>
 <body><div class="page"><main id="main" class="page-main"><section class="card missing"><div class="pad">
 <span class="stamp big">404</span><h1>This page is not in the paper.</h1>

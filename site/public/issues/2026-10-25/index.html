@@ -267,6 +267,16 @@ li.holding { background: var(--raised); transition: background-color 250ms 150ms
 .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
 .sheet-actions .sync-btn { height: 3rem; }
 .sheet-close { padding: 0.4rem; font: inherit; font-weight: 700; color: var(--muted); background: none; border: 0; cursor: pointer; }
+.sheet-body .hint { color: var(--muted); font-size: 0.8rem; }
+/* Follow the Riffle source of a bonus story: one row per source, each with a profile choice. */
+.follow-list { display: grid; gap: 0.6rem; }
+.follow-source { display: grid; gap: 0.35rem; padding: 0.6rem; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-source .hint { overflow-wrap: anywhere; }
+.follow-form { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.follow-form select, .follow-form input { flex: 1 1 8rem; min-width: 0; height: 2.4rem; padding: 0 0.5rem; font: inherit; color: var(--ink);
+  background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-form .sync-btn { height: 2.4rem; padding: 0 0.8rem; }
+.followed { font-weight: 700; }
 </style></head>
 <body><a class="skip" href="#main">Skip to the news</a><div class="page">
 <header class="card masthead" id="top">
@@ -389,7 +399,7 @@ li.holding { background: var(--raised); transition: background-color 250ms 150ms
 <section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
 <nav class="issue-nav" aria-label="Issues" data-page="/issues/2026-10-25/"><a rel="prev" href="/issues/2026-10-18/" title="Previous issue">← Previous</a><a href="/issues/">All issues</a><a rel="next" hidden>Next →</a></nav>
 <footer><p>Built 25 October 2026 from Yarden&#x27;s Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.</p><p>Want these desks? Copy their sources into your own Riffle: <a href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed">dev</a>, <a href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed">games</a>.</p><p>Images load from the publishers' websites. Each image credits its source.</p><p><a href="/feed.xml">Feed</a> · <a href="https://github.com/Yarden-zamir/news/issues">Report a mistake</a></p></footer>
-</div><script type="application/json" id="riffle-sync">{"origin": "https://riffle.yarden-zamir.com", "since": "2026-10-16T09:00:43.311686+02:00", "until": "2026-10-26T09:00:43.311686+02:00", "shares": {"dev": "https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg", "games": "https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg"}}</script><script>
+</div><script type="application/json" id="riffle-sync">{"origin": "https://riffle.yarden-zamir.com", "since": "2026-10-16T09:00:43.311686+02:00", "until": "2026-10-26T09:00:43.311686+02:00", "shares": {"dev": "https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg", "games": "https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg"}, "follow": [{"name": "TechCrunch: AI agents", "plugin": "rss-atom", "config": {"url": "https://techcrunch.com/feed/", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment"]}, "urls": ["https://techcrunch.com/2026/10/19/hackers-hit-ai-coding-tool-opencode-running-up-charges-on-users-ai-accounts/"]}, {"name": "Cloudflare Blog", "plugin": "rss-atom", "config": {"url": "https://blog.cloudflare.com/rss/"}, "urls": ["https://blog.cloudflare.com/emudhra-certificate-compromise/", "https://blog.cloudflare.com/typescript-rust-port/", "https://blog.cloudflare.com/php-vulnerabilities-waf-protection/"]}, {"name": "Analytics India Magazine: AI agents", "plugin": "rss-atom", "config": {"url": "https://analyticsindiamag.com/feed/", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment"]}, "urls": ["https://analyticsindiamag.com/ai-news/claude-code-is-3x-faster-thanks-to-a-34-year-old-tool"]}, {"name": "SecurityWeek: AI agents", "plugin": "rss-atom", "config": {"url": "https://www.securityweek.com/feed/", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment"]}, "urls": ["https://www.securityweek.com/openai-agents-silenced-security-team-alerts-removed-misalignment-monitor/"]}, {"name": "OpenAI misalignment reports", "plugin": "html-news", "config": {"url": "https://alignment.openai.com/misalignment-reports/", "article_path_prefix": "/misalignment-reports/", "limit": 11}, "urls": ["https://alignment.openai.com/misalignment-reports/suppressing-misalignment-monitoring-alerts-and-disabling-misalignment-monitoring/"]}, {"name": "BleepingComputer: AI agents", "plugin": "rss-atom", "config": {"url": "https://www.bleepingcomputer.com/feed/", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment"]}, "urls": ["https://www.bleepingcomputer.com/news/security/opencode-hack-exposes-api-keys-amid-ai-distillation-attacks/"]}, {"name": "The New Stack: AI agents", "plugin": "rss-atom", "config": {"url": "https://thenewstack.io/feed/", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment"]}, "urls": ["https://thenewstack.io/coding-agents-overstep-scope/"]}]}</script><script>
 // Masonry: deal cards in rank order into the shortest column, so the top row holds the best stories.
 // In brief starts as one visible box after the flow. The script deals its items into the columns instead.
 const flows = [...document.querySelectorAll("[data-flow]")].map((flow) => {
@@ -470,7 +480,7 @@ if (issueNavs.length) fetch("/issues/index.json").then((response) => {
 const syncConfig = document.getElementById("riffle-sync");
 if (syncConfig) startSync(JSON.parse(syncConfig.textContent));
 
-function startSync({ origin, since, until, shares }) {
+function startSync({ origin, since, until, shares, follow = [] }) {
   const bar = document.querySelector("[data-sync]");
   const blocks = [...document.querySelectorAll("[data-entries]")].map((el) => ({ el, urls: JSON.parse(el.dataset.entries) }));
   const blockOf = new Map(blocks.map((block) => [block.el, block]));
@@ -485,6 +495,10 @@ function startSync({ origin, since, until, shares }) {
     saved: { label: "Shelved", mark: "Put on your shelf", unmark: "Take off your shelf",
       icon: icon(BOOKMARK, "M12 7v6", "M15 10H9"), pressedIcon: icon(BOOKMARK, "m9 10 2 2 4-4") },
   };
+  const RSS = icon("M4 11a9 9 0 0 1 9 9", "M4 4a16 16 0 0 1 16 16", "M6 19a1 1 0 1 1-2 0 1 1 0 0 1 2 0");
+  const WRITE = { "Content-Type": "application/json", "X-Riffle-Request": "1" };
+  // Bonus stories come from outside the feeds. Each has a Riffle source that catches it and stories like it.
+  const followOf = (block) => follow.filter((source) => source.urls.some((url) => block.urls.includes(url)));
   let account = null;
   let byUrl = new Map();
   let loaded = false;
@@ -549,8 +563,20 @@ function startSync({ origin, since, until, shares }) {
     button.insertAdjacentHTML("afterbegin", (on && action.pressedIcon) || action.icon);
   }
 
-  function addActions(block) {
-    const group = el("div", { className: "sync-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, false)));
+  function followButton(block, inSheet) {
+    const button = el("button", { type: "button", className: "sync-btn", title: "Follow the source of this story in your Riffle" },
+      ...(inSheet ? [el("span", {}, "Follow")] : []));
+    if (!inSheet) button.setAttribute("aria-label", "Follow the source");
+    button.insertAdjacentHTML("afterbegin", RSS);
+    button.addEventListener("click", () => openFollow(block));
+    return button;
+  }
+
+  // The buttons of a block: Viewed and Shelved when the reader's feeds hold its items, and Follow when it shows a bonus story.
+  function addActions(block, fields, follows) {
+    const group = el("div", { className: "sync-actions" }, ...fields.map((field) => syncButton(block, field, false)),
+      ...(follows ? [followButton(block, false)] : []));
+    group.dataset.shape = [...fields, ...(follows ? ["follow"] : [])].join(" ");
     group.setAttribute("role", "group");
     group.setAttribute("aria-label", "Your Riffle");
     block.el.append(group);
@@ -560,14 +586,17 @@ function startSync({ origin, since, until, shares }) {
   function paint() {
     for (const block of blocks) {
       const rows = matched(block);
+      const fields = rows.length ? Object.keys(ACTIONS) : [];
+      const follows = Boolean(account) && followOf(block).length > 0;
+      const shape = [...fields, ...(follows ? ["follow"] : [])].join(" ");
       let group = actionsOf(block);
-      if (rows.length && !group) group = addActions(block);
-      if (!rows.length && group) {
+      if (group && group.dataset.shape !== shape) {
         group.remove();
         group = null;
       }
+      if (!group && shape) group = addActions(block, fields, follows);
       block.el.classList.toggle("is-viewed", rows.length > 0 && rows.every((row) => row.dismissed));
-      for (const button of group?.querySelectorAll("button") ?? []) press(button, rows.every((row) => row[button.dataset.field]));
+      for (const button of group?.querySelectorAll("button[data-field]") ?? []) press(button, rows.every((row) => row[button.dataset.field]));
       for (const link of block.el.querySelectorAll("a[href]")) {
         const own = byUrl.get(link.getAttribute("href")) ?? [];
         link.classList.toggle("entry-viewed", own.length > 0 && own.every((row) => row.dismissed));
@@ -585,14 +614,97 @@ function startSync({ origin, since, until, shares }) {
   document.body.append(sheet);
 
   function openSheet(block) {
+    if (!matched(block).length) return openFollow(block);
     const count = block.urls.filter((url) => byUrl.has(url)).length;
     const title = ["h3", "h2", "blockquote", ".ticker-label", "a"].map((selector) => block.el.querySelector(selector)).find(Boolean);
     sheet.replaceChildren(el("div", { className: "sheet-body" },
       el("p", { className: "label" }, count > 1 ? `Your Riffle · ${count} items` : "Your Riffle"),
       el("p", { className: "sheet-title" }, title?.textContent.trim() ?? ""),
-      el("div", { className: "sheet-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, true))),
+      el("div", { className: "sheet-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, true)),
+        ...(followOf(block).length ? [followButton(block, true)] : [])),
       el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Cancel")));
     sheet.showModal();
+  }
+
+  const failure = (error) => ({ 401: "Your Riffle session ended. Sign in again.", 409: "Riffle refused: the profile exists, or your account is full.",
+    422: "Riffle refused this source." })[error?.status] ?? "Riffle did not answer. Try again.";
+  const terms = (value) => [value ?? []].flat().map((term) => String(term).trim().toLowerCase()).filter(Boolean).sort();
+  // Two sources are the same when they fetch the same things, whatever their name and profile.
+  const fetchKey = ({ plugin, config }) => {
+    const { profile, include_any, exclude_any, ...rest } = config;
+    return JSON.stringify([plugin, terms(include_any), terms(exclude_any), Object.entries(rest).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))]);
+  };
+
+  // The sheet lists the sources of the bonus stories of a block. It reads the reader's profiles and sources each time it opens.
+  async function openFollow(block) {
+    const sources = followOf(block);
+    const section = block.el.closest(".edition")?.dataset.section ?? "news";
+    const list = el("div", { className: "follow-list" }, el("p", { className: "hint" }, "Reading your Riffle…"));
+    sheet.replaceChildren(el("div", { className: "sheet-body" },
+      el("p", { className: "label" }, "Follow in your Riffle"),
+      el("p", {}, sources.length > 1 ? "These sources caught the bonus stories here, and catch more like them."
+        : "This source caught the bonus story here, and catches more like it."),
+      list,
+      el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Close")));
+    if (!sheet.open) sheet.showModal();
+    let riffle;
+    try {
+      const [profiles, own] = await Promise.all([api("/profiles"), api("/sources")]);
+      riffle = { profiles: profiles.map((profile) => profile.name), own };
+    } catch (error) {
+      return list.replaceChildren(el("p", { className: "sticker warn" }, failure(error)));
+    }
+    list.replaceChildren(...sources.map((source) => followRow(source, section, riffle)));
+  }
+
+  function followed(saved) {
+    const where = `${origin}/?${new URLSearchParams({ profile: saved.config.profile, source: String(saved.id) })}`;
+    return el("p", { className: "followed" }, "✓ In your ", el("a", { href: where }, `${saved.config.profile} feed`));
+  }
+
+  function followRow(source, section, riffle, note) {
+    const host = new URL(source.config.url).hostname;
+    const words = [source.config.include_any ?? []].flat();
+    const about = words.length ? `stories with ${words.slice(0, 4).join(", ")}${words.length > 4 ? "…" : ""}` : "every story";
+    const row = el("div", { className: "follow-source" }, el("b", {}, source.name),
+      el("span", { className: "hint" }, `${host.startsWith("www.") ? host.slice(4) : host} · ${about}`));
+    const same = riffle.own.find((own) => fetchKey(own) === fetchKey(source));
+    if (same) {
+      row.append(followed(same));
+      return row;
+    }
+    // A reader without a profile, or who picks "New profile", names one. The edition's name is the first guess.
+    const choice = el("select", {}, ...riffle.profiles.map((name) => el("option", { value: name }, name)),
+      el("option", { value: "" }, "New profile…"));
+    choice.setAttribute("aria-label", "Profile");
+    choice.value = riffle.profiles.includes(section) ? section : (riffle.profiles[0] ?? "");
+    const name = el("input", { value: section, maxLength: 100 });
+    name.setAttribute("aria-label", "New profile name");
+    name.hidden = choice.value !== "";
+    choice.addEventListener("change", () => { name.hidden = choice.value !== ""; });
+    const add = el("button", { type: "button", className: "sync-btn" }, "Follow");
+    add.addEventListener("click", async () => {
+      const fresh = choice.value === "";
+      const profile = fresh ? name.value.trim() : choice.value;
+      if (!profile) return name.focus();
+      add.disabled = true;
+      try {
+        if (fresh) {
+          await api("/profiles", { method: "POST", headers: WRITE, body: JSON.stringify({ name: profile }) });
+          riffle.profiles.push(profile);
+        }
+        const saved = await api("/sources", { method: "POST", headers: WRITE,
+          body: JSON.stringify({ name: source.name, plugin: source.plugin, config: { ...source.config, profile }, enabled: true }) });
+        riffle.own.push(saved);
+        row.replaceWith(followRow(source, section, riffle));
+        // Fetch at once, so that the first stories show in Riffle now. If this fails, Riffle's hourly refresh fetches the source.
+        api(`/sources/${saved.id}/refresh`, { method: "POST", headers: WRITE }).catch(() => {});
+      } catch (error) {
+        row.replaceWith(followRow(source, section, riffle, failure(error)));
+      }
+    });
+    row.append(el("div", { className: "follow-form" }, choice, name, add), ...(note ? [el("p", { className: "sticker warn" }, note)] : []));
+    return row;
   }
 
   const HOLD_MS = 450;
@@ -654,10 +766,12 @@ function startSync({ origin, since, until, shares }) {
   function signedIn() {
     const inFeed = [...pageUrls].filter((url) => byUrl.has(url)).length;
     const imports = Object.entries(shares ?? {}).flatMap(([name, url], index) => [index ? " · " : "", el("a", { href: url }, name)]);
+    const point = hoverable ? "Point at" : "Press and hold";
     const reach = inFeed
       ? [el("span", {}, `${inFeed} of ${pageUrls.size} items on this page are in your feeds.`),
-        el("span", { className: "hint" }, `${hoverable ? "Point at" : "Press and hold"} a story to mark it as viewed or shelved.`)]
+        el("span", { className: "hint" }, `${point} a story to mark it as viewed or shelved.`)]
       : [el("span", {}, "None of the items on this page are in your feeds.", ...(imports.length ? [" Import the sources: ", ...imports] : []))];
+    if (follow.length) reach.push(el("span", { className: "hint" }, `${point} a bonus story to follow its source.`));
     const who = el("span", { className: "who" }, "Synced as ", el("b", {}, `@${account.login}`));
     // Owner ids of GitHub accounts are "github:<numeric id>". The avatar host sets no cookies.
     if (account.id.startsWith("github:")) {

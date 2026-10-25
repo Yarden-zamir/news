@@ -596,5 +596,126 @@
     }
    ]
   }
+ ],
+ "follow": [
+  {
+   "name": "TechCrunch: AI agents",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://techcrunch.com/feed/",
+    "include_any": [
+     "AI agent",
+     "coding agent",
+     "AI coding",
+     "Claude Code",
+     "Codex",
+     "OpenCode",
+     "misalignment"
+    ]
+   },
+   "items": [
+    "bonus-1"
+   ]
+  },
+  {
+   "name": "Cloudflare Blog",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://blog.cloudflare.com/rss/"
+   },
+   "items": [
+    "bonus-2",
+    "bonus-3",
+    "bonus-4"
+   ]
+  },
+  {
+   "name": "Analytics India Magazine: AI agents",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://analyticsindiamag.com/feed/",
+    "include_any": [
+     "AI agent",
+     "coding agent",
+     "AI coding",
+     "Claude Code",
+     "Codex",
+     "OpenCode",
+     "misalignment"
+    ]
+   },
+   "items": [
+    "bonus-5"
+   ]
+  },
+  {
+   "name": "SecurityWeek: AI agents",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://www.securityweek.com/feed/",
+    "include_any": [
+     "AI agent",
+     "coding agent",
+     "AI coding",
+     "Claude Code",
+     "Codex",
+     "OpenCode",
+     "misalignment"
+    ]
+   },
+   "items": [
+    "bonus-6"
+   ]
+  },
+  {
+   "name": "OpenAI misalignment reports",
+   "plugin": "html-news",
+   "config": {
+    "url": "https://alignment.openai.com/misalignment-reports/",
+    "article_path_prefix": "/misalignment-reports/",
+    "limit": 11
+   },
+   "items": [
+    "bonus-7"
+   ]
+  },
+  {
+   "name": "BleepingComputer: AI agents",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://www.bleepingcomputer.com/feed/",
+    "include_any": [
+     "AI agent",
+     "coding agent",
+     "AI coding",
+     "Claude Code",
+     "Codex",
+     "OpenCode",
+     "misalignment"
+    ]
+   },
+   "items": [
+    "bonus-8"
+   ]
+  },
+  {
+   "name": "The New Stack: AI agents",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://thenewstack.io/feed/",
+    "include_any": [
+     "AI agent",
+     "coding agent",
+     "AI coding",
+     "Claude Code",
+     "Codex",
+     "OpenCode",
+     "misalignment"
+    ]
+   },
+   "items": [
+    "bonus-9"
+   ]
+  }
  ]
 }
