@@ -74,6 +74,53 @@
      "item": "666459"
     }
    ],
+   "spotlight": {
+    "source": "T3 Code Fork Daily Release",
+    "kicker": "T3 Code fork · daily releases",
+    "title": "From the fork",
+    "note": "Yarden's fork of T3 Code, the app that runs coding agents, takes in upstream changes every 2 hours and adds features of its own. Each morning a daily release lists them.",
+    "link": "https://github.com/Yarden-zamir/t3code",
+    "image": "https://github.com/user-attachments/assets/df8e3334-516c-42c9-aa02-edcd6d9fe109",
+    "alt": "Machine map of the T3 Code fork: cards for a Mac, a Windows PC, a VPS and a Pi, arrows that set what each machine may use on another, and a big red button that stops all agents.",
+    "rows": [
+     {
+      "head": "21 Oct",
+      "text": "The first daily release sums up the fork: a machine map that links every T3 machine and phone and sets the access between them, a big red button that stops all agents, and installers for servers that update themselves.",
+      "item": "fork-2026-10-21"
+     },
+     {
+      "head": "22 Oct",
+      "text": "Daily releases now come with written notes, which group related changes and show the images of their pull requests.",
+      "item": "fork-2026-10-22"
+     },
+     {
+      "head": "23 Oct",
+      "text": "Agents reach other machines: they run shell commands there with machine_exec, turned on per arrow of the map, and the @ menu lists the threads of other machines.",
+      "item": "fork-2026-10-23"
+     },
+     {
+      "head": "24 Oct",
+      "text": "Agents work on another machine through its arrow, and run piped commands there with t3 machine exec. Back and forward buttons arrive, and access changes show without a reload.",
+      "item": "fork-2026-10-24"
+     },
+     {
+      "head": "25 Oct",
+      "text": "Terminal threads: a thread can be a shell, with the Working, Done and Failed states of agent threads. The map draws one wire per arrow, and the Table view becomes a lane board.",
+      "item": "695777"
+     }
+    ],
+    "follow": {
+     "name": "T3 Code Fork Daily Release",
+     "plugin": "rss-atom",
+     "config": {
+      "url": "https://github.com/Yarden-zamir/t3code/releases.atom",
+      "include_any": [
+       "Daily release of fork main"
+      ],
+      "enrichment_profile": "compact-release-notes"
+     }
+    }
+   },
    "flow": [
     {
      "item": "bonus-1",

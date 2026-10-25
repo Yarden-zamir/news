@@ -2,8 +2,8 @@
 
 Usage: follow_check.py ITEMS PICKS [--riffle COMMAND]
 
-For each entry of "follow" in the picks file, Riffle fetches the source as a preview (POST /sources/preview, which saves nothing).
-Each bonus item of the entry is then:
+For each entry of "follow" in the picks file, and for the "follow" source of each spotlight band, Riffle fetches the source as a
+preview (POST /sources/preview, which saves nothing). A band source catches the items of its rows. Each item of an entry is then:
 
 - caught: the preview holds its URL.
 - fits: the preview does not reach back to it, but the source rules accept it (filter terms, or the html-news path prefix),
@@ -72,7 +72,11 @@ def main() -> None:
     parser.add_argument("--riffle", default=RIFFLE, help=f"the Riffle CLI command (default: {RIFFLE})")
     args = parser.parse_args()
     items = {str(item["id"]): item for item in json.loads(args.items.read_text())["items"]}
-    sources = json.loads(args.picks.read_text()).get("follow", [])
+    picks = json.loads(args.picks.read_text())
+    # A spotlight band can offer the source of its items too. It catches the items of its rows.
+    bands = [{**edition["spotlight"]["follow"], "items": [line["item"] for line in edition["spotlight"]["rows"]]}
+             for edition in picks.get("editions", []) if "follow" in edition.get("spotlight", {})]
+    sources = [*picks.get("follow", []), *bands]
     if not sources:
         sys.exit("follow_check: the picks file has no \"follow\" entries")
 

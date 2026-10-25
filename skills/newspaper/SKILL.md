@@ -168,6 +168,7 @@ Set `SITE` to the site folder and `DATE` to today's date as `YYYY-MM-DD`.
 - `share_image` is the path of the share card. Without `description`, link previews use the lead deck.
 - `also` lists other items about the same story. The card links them by source name.
 - `follow` lists one Riffle source for each bonus story on the page. See "Follow sources".
+- `spotlight` in an edition gives one source a band of its own under the front page. See "Spotlight".
 - The page counts items, sources and read items itself. Put only extra numbers in `numbers`, and count them from the items file.
 
 Box kinds for `flow`:
@@ -209,6 +210,26 @@ Signed-in readers add the source to a profile of their own with one click. See "
   - Read the titles that it prints: they show the stories that a reader gets.
 - If no Riffle plugin can catch a publication, add the ability to Riffle (https://github.com/Yarden-zamir/riffle) through a pull request.
   Only then add the source.
+
+## Spotlight
+
+A spotlight is a band for one source, such as the editor's own project. It sits under the lead and the side stories, across the full width.
+
+```json
+"spotlight": {
+  "source": "T3 Code Fork Daily Release", "kicker": "T3 Code fork · daily releases", "title": "From the fork",
+  "note": "One or two sentences that say what the project is.", "link": "https://github.com/<owner>/<repo>",
+  "image": "https://… (a screenshot of a feature)", "alt": "…",
+  "rows": [{"head": "25 Oct", "text": "What this release brings.", "item": "695777"}],
+  "follow": {"name": "T3 Code Fork Daily Release", "plugin": "rss-atom", "config": {"url": "https://github.com/<owner>/<repo>/releases.atom"}}
+}
+```
+
+- `source` is the source name of the items, as the items file has it.
+- `rows` gives each item of the source one row: the day in `head`, and what the item brings in `text`. Write from the item, as for a deck.
+- The band shows every item of the source that no earlier issue showed, and only those items. The build stops otherwise.
+- `follow` is optional: a Riffle source that signed-in readers can follow from the band. It catches the items of the rows, bonus items too.
+- `kicker`, `title` and `note` describe the project for a stranger. Keep them from issue to issue, so that readers know the band.
 
 ## covered.json
 
@@ -284,6 +305,7 @@ The build stops on each of these. Fix the picks, then render again:
 - a link that is not `https://`, a path on the site, or `#anchor`
 - a word from the deny list
 - a bonus item on the page without a source in `follow`, or a `follow` source that lists another item, or that sets `profile`
+- a `spotlight` that leaves out an item of its source, or that lists an item of another source
 
 ## Check
 
