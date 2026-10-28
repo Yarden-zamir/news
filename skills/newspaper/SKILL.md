@@ -65,7 +65,7 @@ SITE/
 │   ├── issues/<date>/covered.json
 │   └── og.png                1200 × 630 share card for link previews (optional, made once)
 ├── deny.txt                  words that must never appear on the page (optional, keep out of git)
-└── wrangler.jsonc            host settings (optional)
+└── kitshn.config.ts          host settings (optional; news.yarden-zamir.com uses kitshn 2)
 ```
 
 `gazette.py site` writes the other files in `public/`. Do not edit them by hand.
@@ -334,7 +334,7 @@ Use a browser that you can control, such as the T3 browser preview or Playwright
 
 ## Publish
 
-Any static host can serve `public/`. The README of this repository describes the Cloudflare Worker of news.yarden-zamir.com.
+Any static host can serve `public/`. news.yarden-zamir.com (also the-riffle.yarden-zamir.com) deploys with kitshn 2 from the repo `Yarden-zamir/news`: a push to `main` publishes, and a pull request gets a private preview. Do not deploy it with wrangler. The README of that repo has the details.
 
 After the deploy, check the live site:
 

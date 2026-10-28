@@ -1,5 +1,6 @@
 {
-  // Static assets only. The weekly run renders an issue into public/ with the newspaper skill, then deploys.
+  // Not deployed: kitshn 2 serves both hosts from a push to main (see kitshn.config.ts). Kept as an example and for a rollback.
+  // Static assets only. The weekly run renders an issue into public/ with the newspaper skill.
   // Unknown paths get public/404.html with status 404.
   "name": "news-site",
   "compatibility_date": "2026-10-13",
