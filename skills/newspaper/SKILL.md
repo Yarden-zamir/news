@@ -64,8 +64,7 @@ SITE/
 │   ├── issues/<date>/index.html
 │   ├── issues/<date>/covered.json
 │   └── og.png                1200 × 630 share card for link previews (optional, made once)
-├── deny.txt                  words that must never appear on the page (optional, keep out of git)
-└── kitshn.config.ts          host settings (optional; news.yarden-zamir.com uses kitshn 2)
+└── deny.txt                  words that must never appear on the page (optional, keep out of git)
 ```
 
 `gazette.py site` writes the other files in `public/`. Do not edit them by hand.
@@ -334,7 +333,7 @@ Use a browser that you can control, such as the T3 browser preview or Playwright
 
 ## Publish
 
-Any static host can serve `public/`. news.yarden-zamir.com (also the-riffle.yarden-zamir.com) deploys with kitshn 2 from the repo `Yarden-zamir/news`: a push to `main` publishes, and a pull request gets a private preview. Do not deploy it with wrangler. The README of that repo has the details.
+Any static host can serve `public/`. news.yarden-zamir.com (also the-riffle.yarden-zamir.com) deploys with kitshn 2 from the repo `Yarden-zamir/news`. Its `kitshn.config.ts` sits at the repo root and names `site/public` as the output. kitshn uploads the committed files, so commit the new issue in `site/public`, then push to `main`. A pull request gets a private preview. Do not deploy it with wrangler. The README of that repo has the details.
 
 After the deploy, check the live site:
 
