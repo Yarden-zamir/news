@@ -60,7 +60,7 @@ site/                      news.yarden-zamir.com
 ├── desk/<date>/picks.json the editorial choices of each issue
 ├── public/                the deployed files: issues, archive, feed, sitemap, 404 page, fonts, share card
 ├── schedule.md            the steps of the weekly run
-└── wrangler.jsonc         the Cloudflare Worker settings
+└── wrangler.jsonc         Worker settings for wrangler, for your own paper or a rollback
 ```
 
 `site/desk/<date>/items.json` and `site/deny.txt` stay out of git. The items file holds read and saved marks.
@@ -68,21 +68,14 @@ The deny list holds words that must never appear on the public page.
 
 ## Deployment
 
-The site is a Cloudflare Worker with static assets only. It runs no Worker code.
+The site is a static site on [kitshn](https://github.com/Yarden-zamir/kitshn), a Cloudflare Worker with static assets only. It runs no Worker code.
 
-- Worker name: `news-site`. Custom domains: `news.yarden-zamir.com` (canonical) and `the-riffle.yarden-zamir.com`. Settings: [`site/wrangler.jsonc`](site/wrangler.jsonc).
-- `not_found_handling` is `404-page`, so a missing page returns `public/404.html` with status 404.
-- `preview_urls` is off. The Worker has no preview URLs.
+- Settings: [`kitshn.config.ts`](kitshn.config.ts). Hosts: `news.yarden-zamir.com` (canonical) and `the-riffle.yarden-zamir.com`, both public.
+- A missing page returns `public/404.html` with status 404.
 - Cloudflare Web Analytics counts visits. Cloudflare adds its script at the edge. It sets no cookies.
 - Reader sync needs the Riffle deployment to allow both hosts: in its CORS origins, and in the `--whitelist-domain` of its oauth2-proxy. The `compose.yml` of [Riffle](https://github.com/Yarden-zamir/riffle) sets both.
 
-To deploy, run this from the repository root:
-
-```sh
-cd site && npx --yes wrangler@4.151.0 deploy --config wrangler.jsonc
-```
-
-If the Cloudflare login expired, run `npx --yes wrangler@4.151.0 login` first. The Cloudflare account must own the `yarden-zamir.com` zone.
+To deploy, commit the new issue in `site/public` and push to `main`. The kitshn workflow (`.github/workflows/kitshn.yml`) uploads `site/public`. A pull request gets a private preview.
 
 To host your own paper on Cloudflare, copy `wrangler.jsonc` into your site folder. Then change `name` and the `pattern` of the route to your Worker name and domain.
 Any static host also works: serve the `public/` folder, and serve `404.html` for missing pages.
