@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#E4E7FF" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#15122B" media="(prefers-color-scheme: dark)"><title>The Riffle · Vol. 1 · No. 4 · 01 November 2026</title><meta name="description" content="Issue 4: eMudhra&#x27;s stolen certificate keys turn out to be tiny numbers, Anthropic files to go public, a trojaned Claude Code extension hits Cursor, and ARC Raiders turns one."><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20x%3D%226%22%20y%3D%226%22%20width%3D%2254%22%20height%3D%2254%22%20rx%3D%226%22%20fill%3D%22%23000%22/%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2254%22%20height%3D%2254%22%20rx%3D%226%22%20fill%3D%22%236C5CE7%22%20stroke%3D%22%23000%22%20stroke-width%3D%224%22/%3E%3Ctext%20x%3D%2229%22%20y%3D%2244%22%20font-family%3D%22Arial%2Csans-serif%22%20font-size%3D%2236%22%20font-weight%3D%22900%22%20fill%3D%22%23fff%22%20text-anchor%3D%22middle%22%3EG%3C/text%3E%3C/svg%3E"><meta property="og:type" content="website"><meta property="og:title" content="The Riffle · Vol. 1 · No. 4 · 01 November 2026"><meta property="og:description" content="Issue 4: eMudhra&#x27;s stolen certificate keys turn out to be tiny numbers, Anthropic files to go public, a trojaned Claude Code extension hits Cursor, and ARC Raiders turns one."><link rel="canonical" href="https://news.yarden-zamir.com/issues/2026-11-01/"><meta property="og:url" content="https://news.yarden-zamir.com/issues/2026-11-01/"><meta property="og:image" content="https://news.yarden-zamir.com/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><link rel="alternate" type="application/atom+xml" title="The Riffle" href="/feed.xml"><style>
+@font-face { font-family: "Bricolage Grotesque"; src: local("Bricolage Grotesque"), url("/fonts/bricolage-grotesque.woff2") format("woff2");
+  font-weight: 400 800; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: local("JetBrains Mono"), url("/fonts/jetbrains-mono.woff2") format("woff2");
+  font-weight: 400 600; font-display: swap; }
+:root {
+  color-scheme: light;
+  --canvas: #E4E7FF; --dots: #00000026; --surface: #FFFFFF; --raised: #F1F2FF;
+  --ink: #000000; --muted: #3D3D5C; --border: #000000; --shadow-ink: #000000;
+  --accent: #6C5CE7; --accent-fg: #FFFFFF; --select: #FFE14D; --select-fg: #000000;
+  --info: #00B3FF; --warning: #FFB347; --warning-surface: #FFF6D1; --error: #FF5277;
+  --green: #7CFF8A; --yellow: #FFE14D; --pink: #FF9EB0; --stamp: #8250DF; --highlight: #FFE14D;
+  --radius: 0.25rem; --bw: 2px; --shadow: 4px 4px 0 0 var(--shadow-ink); --gap: 1.1rem;
+  --sans: "Bricolage Grotesque", system-ui, sans-serif;
+  --mono: "JetBrainsMono Nerd Font Mono", "JetBrains Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --canvas: #15122B; --dots: #F3F0FF22; --surface: #262147; --raised: #1D1938;
+    --ink: #F3F0FF; --muted: #BDB6E6; --border: #F3F0FF; --shadow-ink: #B9A8FF;
+    --select: #6C5CE7; --select-fg: #FFFFFF; --warning-surface: #3A3018; --stamp: #A371F7; --highlight: #7A6410;
+  }
+}
+* { box-sizing: border-box; }
+/* The editor reads the paper at 130% on desktop. The base grows from 18px at a 1108px viewport to 23.4px (130%) at 1440px. */
+html { font-size: clamp(18px, 1.625vw, 23.4px); }
+body { margin: 0; font: 1rem/1.45 var(--sans); color: var(--ink); background-color: var(--canvas);
+  background-image: radial-gradient(var(--dots) 1.2px, transparent 1.2px); background-size: 16px 16px; }
+h1, h2, h3 { font-weight: 800; letter-spacing: -0.01em; margin: 0; }
+a { color: inherit; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 2px; }
+h3 a { text-decoration: none; }
+h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 0 6px #FF527766; }
+[hidden] { display: none !important; }
+.skip { position: absolute; left: -999px; top: 0.5rem; z-index: 10; padding: 0.3rem 0.7rem; font-weight: 800; background: var(--select);
+  color: var(--select-fg); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.skip:focus { left: 0.5rem; }
+.page, .page-main { display: grid; gap: var(--gap); }
+.page { max-width: 78rem; margin: 0 auto; padding: 1rem 0.9rem 2.5rem; }
+.card { background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+.pad { padding: 0.7rem 0.85rem 0.75rem; display: grid; gap: 0.3rem; }
+.label { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.sticker { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; padding: 0 0.35rem;
+  line-height: 1.5; white-space: nowrap; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.04em;
+  text-transform: uppercase; color: #000000; background: var(--pink); border: var(--bw) solid var(--shadow-ink);
+  border-radius: 4px; box-shadow: 2px 2px 0 0 var(--shadow-ink); transform: rotate(var(--tilt, -3deg)); }
+.sticker.info { background: var(--info); } .sticker.wait { background: var(--yellow); } .sticker.warn { background: var(--warning); }
+.sticker.bonus { background: var(--green); }
+.sticker.dev { background: var(--accent); color: var(--accent-fg); }
+.follows { margin: 0; font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+.follows a { color: var(--ink); text-decoration-thickness: 2px; }
+.story:nth-child(3n+2) .sticker, li:nth-child(3n+2) .sticker { --tilt: 2deg; }
+.story:nth-child(3n) .sticker, li:nth-child(3n) .sticker { --tilt: -1.5deg; }
+.stamp { display: inline-block; padding: 0 0.3rem; border: 2px solid var(--stamp); border-radius: 3px; color: var(--stamp);
+  font: 900 0.68rem/1.4 var(--sans); text-transform: uppercase; transform: rotate(-6deg); }
+.stamp.big { font-size: 0.8rem; padding: 0.05rem 0.4rem; transform: rotate(-8deg); }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.55rem; }
+.deck { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+.src { margin: 0; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+
+/* Masthead with ears, like a broadsheet. */
+.masthead { padding: 0.6rem 1rem; text-align: center; container-type: inline-size; }
+.masthead .rule { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem 1rem; }
+.masthead .rule:first-child { border-bottom: var(--bw) solid var(--border); padding-bottom: 0.4rem; }
+.masthead .rule:last-child { border-top: var(--bw) solid var(--border); padding-top: 0.55rem; }
+.head { display: grid; grid-template-columns: 8.5rem 1fr 8.5rem; align-items: center; gap: 1rem; margin: 0.55rem 0 0.2rem; }
+/* The title is about 10.3 em wide. Its cell is the masthead width minus two 8.5rem ears and two 1rem gaps. */
+.head h1 { font-size: clamp(2.2rem, calc((100cqi - 19rem) / 10.6), 4.4rem); line-height: 0.95; }
+.ear { display: grid; gap: 0.05rem; padding: 0.35rem 0.4rem; border: var(--bw) solid var(--border); border-radius: var(--radius);
+  background: var(--raised); color: inherit; text-decoration: none; transition: transform 80ms, box-shadow 80ms; }
+.ear b { font-size: 1.05rem; line-height: 1.1; } .ear span:last-child { font-size: 0.7rem; color: var(--muted); }
+@media (max-width: 44rem) { .head { grid-template-columns: 1fr; } .ear, .head > span:empty { display: none; } }
+.motto { margin: 0 0 0.55rem; font-weight: 600; color: var(--muted); font-style: italic; }
+.seg { display: inline-flex; flex-wrap: wrap; overflow: hidden; background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.seg button { font: inherit; font-weight: 800; padding: 0.2rem 0.8rem; cursor: pointer; border: 0; background: transparent; color: var(--ink); }
+.seg button + button { border-left: var(--bw) solid var(--border); }
+.seg button[aria-pressed="true"] { background: var(--select); color: var(--select-fg); }
+.seg button:focus-visible { outline-offset: -4px; box-shadow: none; }
+
+.numbers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--gap); }
+.num { padding: 0.5rem 0.7rem; display: grid; align-content: start; text-decoration: none; color: inherit;
+  transition: transform 80ms, box-shadow 80ms; }
+.num:hover, .ear:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 0 var(--shadow-ink); }
+.num:active, .ear:active { transform: translate(3px, 3px); box-shadow: none; }
+.num b { font-size: 1.8rem; line-height: 1.05; font-weight: 800; }
+.num span { font-size: 0.72rem; color: var(--muted); }
+.about { padding: 0.75rem 1rem; display: grid; gap: 0.5rem; }
+.about h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.about p { margin: 0; max-width: 52rem; }
+.about-links { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+.edition { display: grid; gap: var(--gap); }
+.edition + .edition { border-top: 4px double var(--border); padding-top: 1.3rem; }
+.banner { display: grid; gap: 0.1rem; }
+.banner-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 1rem; }
+.get-desk, .issue-nav a { display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 800; text-decoration: none;
+  color: var(--accent-fg); background: var(--accent); border: var(--bw) solid var(--border); border-radius: var(--radius);
+  box-shadow: 3px 3px 0 0 var(--shadow-ink); transition: transform 80ms, box-shadow 80ms; }
+.get-desk:hover, .issue-nav a:hover { transform: translate(-1px, -1px); box-shadow: var(--shadow); }
+.get-desk:active, .issue-nav a:active { transform: translate(3px, 3px); box-shadow: none; }
+.issue-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0.6rem; }
+.issue-nav a { color: var(--ink); background: var(--surface); }
+.issue-nav [rel="prev"] { justify-self: start; }
+.issue-nav [rel="next"] { grid-column: 3; justify-self: end; }
+.banner h2 { font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1; text-transform: uppercase; letter-spacing: -0.02em; }
+.edition-end { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin: 0;
+  font-size: 0.8rem; font-weight: 800; }
+
+/* The lead stretches to the side column height; its text block absorbs the extra space. */
+.front { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
+.side { display: grid; gap: var(--gap); align-content: start; }
+@media (max-width: 54rem) { .front { grid-template-columns: 1fr; } }
+.lead { position: relative; display: flex; flex-direction: column; overflow: hidden; }
+.lead .pad { position: relative; flex: 1 0 auto; display: flex; flex-direction: column; gap: 0.45rem; padding: 0.85rem 1rem 0.9rem; }
+.lead .meta { padding-right: 5.5rem; }
+.lead h3 { font-size: clamp(1.8rem, 3.8vw, 2.7rem); line-height: 1.02; }
+.lead .deck { font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+.lead .body { margin: 0; font-size: 0.92rem; }
+.lead .body::first-letter { float: left; font-size: 2.3rem; line-height: 0.9; font-weight: 800; padding: 0.15rem 0.35rem;
+  margin: 0.1rem 0.4rem 0 0; background: var(--select); color: var(--select-fg); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.jump { margin: auto 0 0; font-size: 0.75rem; font-weight: 800; }
+/* The stamp sits on the text block, never on the image: an image can carry text, such as a chart title. */
+.extra { position: absolute; top: 0.6rem; right: 0.8rem; z-index: 2; font-size: 1.1rem; padding: 0.1rem 0.5rem;
+  background: var(--surface); transform: rotate(8deg); }
+.photo { margin: 0; position: relative; border-bottom: var(--bw) solid var(--border); background: var(--raised); }
+/* Images keep their own shape: a chart or a screenshot must not lose its edges. A very tall image shrinks to fit. */
+.photo img { display: block; width: 100%; height: auto; max-height: 34rem; object-fit: contain; }
+.photo figcaption { position: absolute; left: 0.5rem; bottom: 0.45rem; padding: 0 0.35rem; font-size: 0.66rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.04em; color: #000000; background: var(--yellow); border: var(--bw) solid #000000; border-radius: 3px; }
+.side-story { overflow: hidden; display: grid; grid-template-columns: 1fr; }
+.side-story h3, .story h3 { font-size: 1.08rem; line-height: 1.15; }
+.quote { margin: 0; padding: 0.8rem 0.95rem; background: var(--select); color: var(--select-fg); }
+.quote blockquote { margin: 0; font-size: 1.15rem; font-weight: 800; line-height: 1.22; letter-spacing: -0.01em; }
+.quote figcaption { margin-top: 0.45rem; font-size: 0.72rem; font-weight: 600; }
+
+/* Spotlight: one source in a band of its own at the end of the edition, such as the editor's own project.
+   Its groups, such as fork changes and upstream changes, sit side by side on a wide screen. */
+.spotlight { overflow: hidden; box-shadow: 4px 4px 0 0 var(--accent); }
+.spotlight > header { display: grid; gap: 0.15rem; padding: 0.6rem 0.95rem; color: var(--accent-fg); background: var(--accent);
+  border-bottom: var(--bw) solid var(--border); }
+.spotlight > header .label { color: inherit; }
+.spotlight > header h2 { font-size: clamp(1.35rem, 2.8vw, 1.9rem); line-height: 1.05; text-transform: uppercase; }
+.spot-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.2rem 1rem; }
+.spot-link { font-size: 0.75rem; font-weight: 800; text-decoration-color: currentColor; }
+.spotlight > .photo img { max-height: 24rem; }
+.spot-groups { display: grid; grid-template-columns: 1fr; }
+.spot-group { padding: 0.55rem 0.95rem 0.6rem; }
+.spot-group + .spot-group { border-top: var(--bw) solid var(--border); }
+.spot-group h3 { justify-self: start; display: inline-block; margin-bottom: 0.15rem; padding: 0 0.4rem; font-size: 0.78rem;
+  text-transform: uppercase; letter-spacing: 0.05em; background: var(--yellow); color: #000000; border: var(--bw) solid #000000;
+  border-radius: 3px; }
+.spot-group ol { list-style: none; margin: 0; padding: 0; display: grid; }
+.spot-group li { display: grid; gap: 0.2rem; padding: 0.5rem 0; border-bottom: var(--bw) solid var(--raised); }
+.spot-group li:last-child { border-bottom: 0; }
+.spot-head { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; font-size: 0.95rem; line-height: 1.2; }
+.spotlight blockquote { margin: 0; font-size: 0.86rem; line-height: 1.4; color: var(--muted); }
+@media (min-width: 54rem) {
+  .spot-groups { grid-template-columns: repeat(var(--groups), minmax(0, 1fr)); }
+  .spot-group + .spot-group { border-top: 0; border-left: var(--bw) solid var(--border); }
+}
+
+/* A static ticker: it scrolls by hand, never by itself. */
+.ticker { display: flex; align-items: stretch; overflow: hidden; }
+.ticker-label { flex: none; display: grid; place-items: center; padding: 0 0.7rem; background: var(--ink); color: var(--canvas);
+  font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.ticker ul { list-style: none; margin: 0; padding: 0.45rem 0.6rem; display: flex; gap: 1rem; overflow-x: auto; scrollbar-width: thin; }
+.ticker li { flex: none; display: grid; gap: 0.05rem; padding-right: 1rem; border-right: var(--bw) solid var(--raised); }
+.ticker .name { font-size: 0.7rem; font-weight: 800; }
+.ticker .ver { font-family: var(--mono); font-size: 0.72rem; }
+.ticker .label { font-size: 0.68rem; }
+
+.fold { display: flex; align-items: center; gap: 0.8rem; color: var(--muted); }
+.fold::before, .fold::after { content: ""; flex: 1; border-top: var(--bw) dashed var(--border); }
+.fold span { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Masonry: JavaScript deals cards into the shortest column, in rank order. CSS columns are the fallback. */
+.flow { columns: 3 17rem; column-gap: var(--gap); }
+.flow > * { break-inside: avoid; margin-bottom: var(--gap); }
+.flow.packed { columns: auto; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gap); align-items: stretch; }
+.flow.packed > .col { display: flex; flex-direction: column; gap: var(--gap); }
+/* While cards are dealt, columns keep their natural height, so "shortest" means something. */
+.flow.packed.packing { align-items: start; }
+.flow.packed .col > * { margin-bottom: 0; }
+/* The last card of a column takes the leftover height, and the end mark sits at the bottom. */
+.flow.packed .col > :last-child { flex: 1 0 auto; display: flex; flex-direction: column; }
+.flow.packed .col > :last-child::after { content: "— 30 —"; margin: auto auto 0.5rem; padding-top: 0.4rem;
+  font: 800 0.7rem/1 var(--mono); letter-spacing: 0.2em; color: var(--muted); }
+.story { overflow: hidden; display: flex; flex-direction: column; }
+.story .photo { flex: none; }
+
+.box > header, .brief > header { padding: 0.4rem 0.85rem; background: var(--raised); border-bottom: var(--bw) solid var(--border); }
+.box > header .note { margin: 0.1rem 0 0; font-size: 0.7rem; font-style: italic; color: var(--muted); }
+.box h2, .brief h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.box ul, .box ol, .brief ul { list-style: none; margin: 0; padding: 0.3rem 0.85rem 0.55rem; display: grid; }
+.box li, .brief li { padding: 0.4rem 0; border-bottom: var(--bw) solid var(--raised); font-size: 0.84rem; line-height: 1.35; }
+.box li:last-child, .brief li:last-child { border-bottom: 0; }
+.box a { text-decoration-thickness: 1px; }
+.weather li, .wire li { display: grid; grid-template-columns: 4.6rem 1fr; gap: 0.4rem; }
+.blotter { box-shadow: 4px 4px 0 0 var(--error); }
+.blotter li { display: grid; gap: 0.25rem; }
+.blotter > header { display: grid; justify-items: start; gap: 0.3rem; padding: 0.55rem 0.85rem;
+  background: repeating-linear-gradient(-45deg, #000000 0 10px, var(--yellow) 10px 20px); }
+.blotter > header h2, .blotter > header .note { margin: 0; padding: 0.05rem 0.4rem; color: #000000; background: var(--yellow);
+  border: var(--bw) solid #000000; border-radius: 3px; }
+.blotter > header h2::before { content: "🚨 "; }
+.blotter .label { justify-self: start; max-width: 100%; padding: 0 0.3rem; overflow-wrap: anywhere; color: #000000;
+  background: var(--error); border: var(--bw) solid var(--shadow-ink); border-radius: 3px; transform: rotate(-2deg); }
+.overheard li { display: grid; gap: 0.1rem; }
+.overheard a { font-weight: 700; font-style: italic; }
+.classifieds ul { font-family: var(--mono); }
+.classifieds li { font-size: 0.74rem; }
+.classifieds .sticker { font-family: var(--sans); margin-right: 0.2rem; }
+.corrections { border-style: dashed; }
+.corrections li { display: grid; gap: 0.1rem; }
+.coming li { display: grid; gap: 0.3rem; justify-items: start; font-weight: 700; }
+.prolific li { display: grid; grid-template-columns: 7.5rem 1fr 1.6rem; align-items: center; gap: 0.5rem; }
+.prolific .name { font-size: 0.72rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prolific .bar { height: 0.8rem; width: calc(var(--w) * 100%); background: var(--accent); border: var(--bw) solid var(--border); border-radius: 2px; }
+.prolific b { text-align: right; font-size: 0.8rem; }
+.shelf li .stamp { margin-left: 0.4rem; }
+
+.brief li { display: flex; align-items: baseline; gap: 0.5rem; font-weight: 600; }
+.brief .sticker { flex: none; }
+.brief .label { margin-left: 0.25rem; font-size: 0.68rem; }
+.more { margin: 0; padding: 0 0.85rem 0.6rem; font-size: 0.72rem; color: var(--muted); font-style: italic; }
+footer { display: grid; gap: 0.3rem; text-align: center; font-size: 0.72rem; color: var(--muted); max-width: 46rem; margin: 0 auto; }
+footer p { margin: 0; }
+
+/* Archive and 404 pages. */
+.archive-title { font-size: clamp(2rem, 6vw, 3.6rem); margin: 0.5rem 0 0.2rem; }
+.archive-title a { text-decoration: none; }
+.issue-row h2 { font-size: 1.3rem; line-height: 1.15; }
+.issue-row ul { list-style: none; margin: 0.2rem 0 0; padding: 0; display: grid; gap: 0.25rem; }
+.missing { max-width: 40rem; margin: 3rem auto; }
+.missing h1 { font-size: 2rem; margin-top: 0.6rem; }
+.missing .stamp { justify-self: start; }
+
+/* Sync with the reader's Riffle. The page script fills the bar, and adds the buttons and the sheet after sign-in. */
+.sync-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.35rem 0.8rem; padding: 0.45rem 0.9rem;
+  font-size: 0.8rem; font-weight: 600; text-align: center; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.sync-bar .sticker { font-size: 0.72rem; }
+.sync-bar .hint { color: var(--muted); }
+.sync-bar .who { display: inline-flex; align-items: center; gap: 0.4rem; }
+.sync-bar .avatar { width: 1.5rem; height: 1.5rem; border: var(--bw) solid var(--border); border-radius: 50%; background: var(--surface); }
+
+/* The buttons of a block sit in its top right corner. They show while the pointer is on the block, or while a button has keyboard focus.
+   They float over the block, so they never change its height or the columns. */
+[data-entries] { position: relative; }
+.sync-actions { position: absolute; top: 0.4rem; right: 0.4rem; z-index: 3; display: flex; gap: 0.3rem;
+  opacity: 0; pointer-events: none; transition: opacity 120ms; }
+.sync-actions:focus-within { opacity: 1; pointer-events: auto; }
+@media (hover: hover) {
+  [data-entries]:hover > .sync-actions { opacity: 1; pointer-events: auto; }
+  .is-viewed:hover > :not(.sync-actions) { opacity: 0.85; }
+}
+li > .sync-actions, .ticker > .sync-actions { top: 0; bottom: 0; align-items: center; }
+li > .sync-actions { right: 0; }
+.sync-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-width: 1.75rem; height: 1.75rem; padding: 0 0.3rem;
+  font: inherit; font-weight: 800; cursor: pointer; color: var(--ink); background: var(--surface); border: var(--bw) solid var(--border);
+  border-radius: var(--radius); box-shadow: 2px 2px 0 0 var(--shadow-ink); transition: transform 80ms, box-shadow 80ms; }
+li .sync-btn { min-width: 1.6rem; height: 1.6rem; }
+.sync-btn svg { flex: none; width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.sync-btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--shadow-ink); }
+.sync-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+.sync-btn[aria-pressed="true"][data-field="dismissed"] { background: var(--green); color: #000000; }
+.sync-btn[aria-pressed="true"][data-field="saved"] { background: var(--yellow); color: #000000; }
+.sync-btn:disabled { cursor: progress; opacity: 0.6; }
+
+/* State. A viewed block fades, a viewed link fades, and a shelved link gets a highlighter mark. No state changes the layout. */
+.is-viewed > :not(.sync-actions) { opacity: 0.5; transition: opacity 120ms; }
+a.entry-viewed { opacity: 0.55; }
+.is-viewed a.entry-viewed { opacity: 1; }
+a.entry-shelved { background: linear-gradient(transparent 55%, var(--highlight) 55%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+/* Touch screens have no hover: a long press on a block opens its buttons in a sheet, and the block sinks while the finger holds it.
+   Limit: readers cannot select text in such a block on a touch screen. If readers ask for that, show the buttons on touch screens instead. */
+@media (hover: none) {
+  [data-entries]:has(> .sync-actions) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+}
+.card.holding { transform: translate(3px, 3px); box-shadow: none; transition: transform 250ms 150ms, box-shadow 250ms 150ms; }
+li.holding { background: var(--raised); transition: background-color 250ms 150ms; }
+.sync-sheet { inset: auto 0 0; width: min(100%, 30rem); max-width: none; margin: 0 auto; padding: 0; color: var(--ink); background: var(--surface);
+  border: var(--bw) solid var(--border); border-bottom: 0; border-radius: 0.6rem 0.6rem 0 0; box-shadow: 0 -4px 0 0 var(--shadow-ink); }
+.sync-sheet::backdrop { background: #00000059; }
+.sync-sheet[open] { animation: sheet-in 160ms ease-out; }
+@keyframes sheet-in { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .sync-sheet[open] { animation: none; } }
+.sheet-body { display: grid; gap: 0.7rem; padding: 0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom)); }
+.sheet-body p { margin: 0; }
+.sheet-title { font-size: 1.05rem; font-weight: 800; line-height: 1.2; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.sheet-actions .sync-btn { height: 3rem; }
+.sheet-close { padding: 0.4rem; font: inherit; font-weight: 700; color: var(--muted); background: none; border: 0; cursor: pointer; }
+.sheet-body .hint { color: var(--muted); font-size: 0.8rem; }
+/* Follow the Riffle source of a bonus story: one row per source, each with a profile choice. */
+.follow-list { display: grid; gap: 0.6rem; }
+.follow-source { display: grid; gap: 0.35rem; padding: 0.6rem; background: var(--raised); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-source .hint { overflow-wrap: anywhere; }
+.follow-form { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.follow-form select, .follow-form input { flex: 1 1 8rem; min-width: 0; height: 2.4rem; padding: 0 0.5rem; font: inherit; color: var(--ink);
+  background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius); }
+.follow-form .sync-btn { height: 2.4rem; padding: 0 0.8rem; }
+.followed { font-weight: 700; }
+</style></head>
+<body><a class="skip" href="#main">Skip to the news</a><div class="page">
+<header class="card masthead" id="top">
+  <div class="rule"><span class="label">Vol. 1 · No. 4</span><span class="label">Sunday, 01 November 2026</span><span class="label">Price: 0 tokens</span></div>
+  <div class="head">
+    <a class="ear" href="#dev" title="Items whose title or summary contains the word key"><span class="label">Word of the week</span><b>“key”</b><span>in 23 items</span></a>
+    <h1>The Riffle</h1>
+    <a class="ear" href="#dev" title="Items published on 01 November, the day this issue was built"><span class="label">Newest</span><b>7 new</b><span>on 01 Nov</span></a>
+  </div>
+  <p class="motto">All the feed that fits · eight days of Yarden&#x27;s dev and games desks</p>
+  <div class="rule"><div class="seg" role="group" aria-label="Show edition"><button aria-pressed="true" data-show="all">All editions</button><button aria-pressed="false" data-show="dev">Dev</button><button aria-pressed="false" data-show="games">Games</button></div><span class="stamp big" title="Every story links to the item that it comes from">✓ Every story sourced</span></div>
+</header>
+<nav class="issue-nav" aria-label="Issues" data-page="/issues/2026-11-01/"><a rel="prev" href="/issues/2026-10-25/" title="Previous issue">← Previous</a><a href="/issues/">All issues</a><a rel="next" hidden>Next →</a></nav>
+<main id="main" class="page-main">
+<section class="numbers" aria-label="By the numbers"><a class="card num" href="#about" title="Items published in these desks from 24 Oct to 01 Nov"><b>246</b><span>items · 226 dev, 20 games</span></a><a class="card num" href="#about" title="Sources with at least one item in the window"><b>43</b><span>sources with news</span></a><a class="card num" href="#dev" title="From T3 Code Releases: nightlies, previews and four stable versions, v0.1.3 to v0.1.6"><b>49</b><span>T3 Code releases in 8 days</span></a><a class="card num" href="#games" title="From ARC Raiders&#x27; first-year numbers, published on its first anniversary, 30 October"><b>3,625</b><span>Raiders lost to a volcanic rock</span></a></section>
+<section class="edition" id="dev" data-section="dev" aria-labelledby="dev-title">
+          <div class="banner"><div class="banner-top"><span class="label">Dev edition · 226 items · 36 sources</span><a class="get-desk" href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed. No account needed.">Start a feed with these sources →</a></div>
+            <h2 id="dev-title">Combination lock, one digit</h2></div>
+          <div class="front"><article class="card lead" id="story-the-stolen-certificate-keys-were-the-number-4" data-entries="[&quot;https://blog.cloudflare.com/emudhra-patching/&quot;, &quot;https://blog.jetbrains.com/security/2026/10/compromised-emudhra-certificates-ides/&quot;, &quot;https://blog.python.org/2026/10/python-3152-31410-31318-31216-31118/&quot;]"><figure class="photo"><img src="https://blog.cloudflare.com/_image?href=https%3A%2F%2Fblog.cloudflare.com%2F_emdash%2Fapi%2Fmedia%2Ffile%2F01M66XYGH3HN2Q33VYKY5GGWHT.png&amp;w=715&amp;h=666&amp;f=webp&amp;fit=cover&amp;position=center" alt="Two line charts of the share of probes that accepted the compromised eMudhra chain from 23 to 30 October, by browser and platform, for traffic without and with bot signals. The overall line stays between about 40% and 65%." loading="lazy" decoding="async" referrerpolicy="no-referrer"><figcaption>Image: Cloudflare Blog</figcaption></figure>
+          <div class="pad"><span class="stamp extra" title="The biggest story of the edition, as picked by the agent">Extra!</span>
+          <div class="meta"><span class="sticker " title="Published Friday 30 October, 19:38">30 Oct</span><span class="label">Security</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+          <h3><a href="https://blog.cloudflare.com/emudhra-patching/" title="Cloudflare Blog: 4 real? Tracking exploitation and patching of eMudhra’s weak keys">The stolen certificate keys were the number 4</a></h3>
+          <p class="deck">Cloudflare says eMudhra&#x27;s eight broken keys were tiny numbers, starting with 4. A forged certificate appeared less than an hour after the news went public.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-eight-stolen-certificate-keys-and-a-week-of-patches" title="The earlier story, in Vol. 1 · No. 3">Eight stolen certificate keys, and a week of patches</a> · Vol. 1 · No. 3</p><p class="body">Anyone can recover such keys from the public certificates, so this is no ordinary breach of a certificate authority. In a week, Cloudflare logged about 22,000 handshakes with the weak keys; about 160 carried certificates for other organizations&#x27; domains, but none looked like interception. Probes on 50 million challenge pages show modern browsers mostly patched, while bots and old browsers lag, and 30–40% of Android WebView clients still accept the chain. eMudhra is leaving the public CA business. JetBrains told users to update its IDEs, the Toolbox App and Gateway, and Python shipped five expedited security releases. Cloudflare&#x27;s advice fits in one word: patch.</p>
+          <p class="jump"><a href="https://blog.cloudflare.com/emudhra-patching/" title="Cloudflare Blog: 4 real? Tracking exploitation and patching of eMudhra’s weak keys">Continued at Cloudflare Blog →</a> · <a href="https://blog.jetbrains.com/security/2026/10/compromised-emudhra-certificates-ides/" title="IntelliJ IDEA Blog: Compromised eMudhra Certificates: Update Your JetBrains IDEs, ReSharper, .NET Tools, Toolbox App, and Gateway Now">IntelliJ IDEA Blog</a> · <a href="https://blog.python.org/2026/10/python-3152-31410-31318-31216-31118/" title="Python Insider: Python 3.15.2, 3.14.10, 3.13.18, 3.12.16 and 3.11.18 are out">Python Insider</a></p></div></article><div class="side"><article class="card side-story" id="story-anthropic-files-to-go-public-as-ant" data-entries="[&quot;https://www.anthropic.com/news/s1-sec&quot;]"><div class="pad">
+              <div class="meta"><span class="sticker " title="Published Monday 26 October, 02:00">26 Oct</span><span class="label">Anthropic</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+              <h3><a href="https://www.anthropic.com/news/s1-sec" title="Anthropic News: Anthropic files S-1 with the SEC for proposed initial public offering">Anthropic files to go public as ANT</a></h3><p class="deck">The S-1 is in for a Nasdaq listing, with Goldman Sachs and Morgan Stanley. The share count and the price range are not set yet.</p><p class="follows">Follows <a href="/issues/2026-10-18/#story-anthropic-tells-investors-16-8bn-in-one-quarter" title="The earlier story, in Vol. 1 · No. 2">Anthropic tells investors: $16.8bn in one quarter</a> · Vol. 1 · No. 2</p>
+              <p class="src">Anthropic News</p></div></article><article class="card side-story" id="story-a-trojaned-claude-code-extension-sat-on-cursor-s-marketplace" data-entries="[&quot;https://www.bleepingcomputer.com/news/security/malicious-claude-code-extension-on-cursor-planted-ssh-backdoors/&quot;]"><div class="pad">
+              <div class="meta"><span class="sticker " title="Published Friday 30 October, 16:36">30 Oct</span><span class="label">Supply chain</span><span class="sticker bonus" title="Bonus pick from outside the feed">Bonus</span></div>
+              <h3><a href="https://www.bleepingcomputer.com/news/security/malicious-claude-code-extension-on-cursor-planted-ssh-backdoors/" title="Bonus pick from outside the feed. BleepingComputer: Malicious Claude Code extension on Cursor planted SSH backdoors">A trojaned Claude Code extension sat on Cursor&#x27;s marketplace for 11 hours</a></h3><p class="deck">Version 2.1.313, shipped under Anthropic&#x27;s name, added an attacker&#x27;s SSH key for up to 5,000 developers. Cursor shut its marketplace to audit.</p>
+              <p class="src">BleepingComputer</p></div></article><article class="card side-story" id="story-github-enterprise-now-includes-copilot-and-fusion-picks-the" data-entries="[&quot;https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack/&quot;, &quot;https://github.blog/changelog/2026-10-28-github-enterprise-now-includes-access-to-github-copilot&quot;]"><div class="pad">
+              <div class="meta"><span class="sticker " title="Published Wednesday 28 October, 18:09">28 Oct</span><span class="label">GitHub Universe</span></div>
+              <h3><a href="https://github.blog/news-insights/company-news/github-universe-2026-evolving-every-layer-of-the-stack/" title="GitHub Blog: GitHub Universe 2026: Evolving every layer of the stack">GitHub Enterprise now includes Copilot, and Fusion picks the model</a></h3><p class="deck">Enterprises pay for the AI credits they use instead of seats. Fusion Max scored near Opus 5.5 Max at half the cost.</p>
+              <p class="src">GitHub Blog · <a href="https://github.blog/changelog/2026-10-28-github-enterprise-now-includes-access-to-github-copilot" title="Github Blog Changelog: GitHub Enterprise now includes access to GitHub Copilot">Github Blog Changelog</a></p></div></article><article class="card side-story" id="story-long-prompts-to-glm-5-3-on-workers-ai-returned-other-custome" data-entries="[&quot;https://blog.cloudflare.com/kv-cache-exposure-remediation/&quot;]"><div class="pad">
+              <div class="meta"><span class="sticker " title="Published Tuesday 27 October, 00:01">27 Oct</span><span class="label">Workers AI</span></div>
+              <h3><a href="https://blog.cloudflare.com/kv-cache-exposure-remediation/" title="Cloudflare Blog: Cross-request KV cache exposure in the GLM-5.3 Workers AI model, and our remediation with SGLang">Long prompts to GLM-5.3 on Workers AI returned other customers&#x27; data</a></h3><p class="deck">155 responses to prompts over 681,280 tokens read stale cache from earlier requests. Cloudflare found no deliberate exploitation.</p>
+              <p class="src">Cloudflare Blog</p></div></article><figure class="card quote" data-entries="[&quot;https://simonwillison.net/2026/Oct/28/terk-terkowitz/&quot;]"><blockquote>“If your work does not benefit from current AI tooling, that is a finding, not a failing.”</blockquote><figcaption><a href="https://simonwillison.net/2026/Oct/28/terk-terkowitz/" title="Simon Willison: Quoting Terk Terkowitz">Terk Terkowitz, Amazon engineering leadership</a></figcaption></figure></div></div><section class="card ticker" aria-label="Also shipped" data-entries="[&quot;https://www.python.org/downloads/release/python-31118/&quot;, &quot;https://www.python.org/downloads/release/python-31318/&quot;, &quot;https://www.python.org/downloads/release/python-31216/&quot;, &quot;https://www.python.org/downloads/release/python-31410/&quot;, &quot;https://www.python.org/downloads/release/python-3152/&quot;, &quot;https://github.com/cloudflare/cloudflared/releases/tag/2026.10.7&quot;, &quot;https://github.com/cloudflare/cloudflared/releases/tag/2026.10.6&quot;, &quot;https://github.com/cloudflare/cloudflared/releases/tag/2026.10.5&quot;, &quot;https://github.com/cloudflare/cloudflared/releases/tag/2026.10.4&quot;, &quot;https://github.com/desktop/desktop/releases/tag/release-3.6.10&quot;, &quot;https://github.com/desktop/desktop/releases/tag/release-3.6.10-beta1&quot;, &quot;https://github.com/vitejs/vite/releases/tag/create-vite%409.3.3&quot;, &quot;https://github.com/vitejs/vite/releases/tag/create-vite%409.3.2&quot;, &quot;https://github.com/ghostty-org/ghostty/releases/tag/v1.4.0&quot;, &quot;https://github.com/googleapis/python-genai/releases/tag/v2.34.0&quot;, &quot;https://github.com/astral-sh/ruff/releases/tag/0.17.3&quot;]"><span class="ticker-label">Also shipped · 16</span>
+          <ul><li><span class="name">Python</span><a class="ver" href="https://www.python.org/downloads/release/python-31118/" title="Python: newest of 5 releases in 8 days">Python 3.11.18</a><span class="label">5× · 25 Oct</span></li><li><span class="name">cloudflared</span><a class="ver" href="https://github.com/cloudflare/cloudflared/releases/tag/2026.10.7" title="cloudflared: newest of 4 releases in 8 days">2026.10.7</a><span class="label">4× · 30 Oct</span></li><li><span class="name">GitHub Desktop</span><a class="ver" href="https://github.com/desktop/desktop/releases/tag/release-3.6.10" title="GitHub Desktop: newest of 2 releases in 8 days">release-3.6.10</a><span class="label">2× · 30 Oct</span></li><li><span class="name">Vite</span><a class="ver" href="https://github.com/vitejs/vite/releases/tag/create-vite%409.3.3" title="Vite: newest of 2 releases in 8 days">create-vite%409.3.3</a><span class="label">2× · 27 Oct</span></li><li><span class="name">Ghostty</span><a class="ver" href="https://github.com/ghostty-org/ghostty/releases/tag/v1.4.0" title="Ghostty: newest of 1 releases in 8 days">v1.4.0</a><span class="label">1× · 27 Oct</span></li><li><span class="name">Google Gen AI Python SDK</span><a class="ver" href="https://github.com/googleapis/python-genai/releases/tag/v2.34.0" title="Google Gen AI Python SDK: newest of 1 releases in 8 days">v2.34.0</a><span class="label">1× · 29 Oct</span></li><li><span class="name">ruff</span><a class="ver" href="https://github.com/astral-sh/ruff/releases/tag/0.17.3" title="ruff: newest of 1 releases in 8 days">0.17.3</a><span class="label">1× · 27 Oct</span></li></ul></section><div class="fold"><span>Below the fold</span></div><div class="flow" data-flow><article class="card story" id="story-merged-pull-requests-tripled-in-under-a-year-to-220-million" data-entries="[&quot;https://simonwillison.net/2026/Oct/28/github-octoverse-2026/&quot;, &quot;https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/&quot;]"><figure class="photo"><img src="https://static.simonwillison.net/static/2026/github-numbers.jpg" alt="Photo of the GitHub Universe keynote stage: three charts that curve sharply upward, headed 220M merged PRs per month, 7.38B commits per month and 30.3M new repos per month, with a speaker at the right." loading="lazy" decoding="async" referrerpolicy="no-referrer"><figcaption>Image: Simon Willison</figcaption></figure>
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Wednesday 28 October, 18:45">28 Oct</span><span class="label">GitHub</span></div>
+          <h3><a href="https://simonwillison.net/2026/Oct/28/github-octoverse-2026/" title="Simon Willison: GitHub Octoverse 2026">Merged pull requests tripled in under a year, to 220 million a month</a></h3>
+          <p class="deck">Octoverse also counts 7.38 billion commits a month. Simon Willison calls it a stark picture of agentic engineering.</p>
+          <p class="src">Simon Willison · <a href="https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/" title="GitHub Blog: Octoverse: Commits, pushes, reach new highs in 2026 as developers build with agents">GitHub Blog</a></p></div></article><article class="card story" id="story-opus-5-5-makes-fun-games-now-anthropic-asks-it-not-to-make-y" data-entries="[&quot;https://simonwillison.net/2026/Oct/28/vibe-game-development/&quot;, &quot;https://www.gamedeveloper.com/programming/anthropic-appears-to-have-ordered-ai-tool-claude-to-stop-remaking-video-games&quot;]"><figure class="photo"><img src="https://static.simonwillison.net/static/2026/pumpkin-farmer.webp" alt="Pumpkin Farmer screenshot: an isometric farm with a red barn, a pumpkin patch, a farm stand and a giant pumpkin, beside a panel for Row 3 and a five-star review: “Carried our pumpkin like a baby.”" loading="lazy" decoding="async" referrerpolicy="no-referrer"><figcaption>Image: Simon Willison</figcaption></figure>
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Wednesday 28 October, 15:55">28 Oct</span><span class="label">Vibe coding</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+          <h3><a href="https://simonwillison.net/2026/Oct/28/vibe-game-development/" title="Simon Willison: The October inflection point for vibe game development">Opus 5.5 makes fun games now. Anthropic asks it not to make yours</a></h3>
+          <p class="deck">Simon Willison calls October the inflection point for vibe-coded games. The same week, Claude Code got a rule: no recreations of a specific existing game.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-simon-willison-told-claude-to-make-his-rts-a-lot-more-fun-it" title="The earlier story, in Vol. 1 · No. 3">Simon Willison told Claude to make his RTS “a LOT more fun”. It worked</a> · Vol. 1 · No. 3</p>
+          <p class="src">Simon Willison · <a href="https://www.gamedeveloper.com/programming/anthropic-appears-to-have-ordered-ai-tool-claude-to-stop-remaking-video-games" title="Bonus pick from outside the feed. Game Developer: Anthropic tells Claude to stop remaking video games">Game Developer</a></p></div></article><article class="card story" id="story-one-shared-link-could-take-over-a-chatgpt-account-the-bounty" data-entries="[&quot;https://simonwillison.net/2026/Oct/31/how-we-took-over-chatgpt-accounts/&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker info" title="Published Sunday 01 November, 01:15">01 Nov</span><span class="label">ChatGPT</span></div>
+          <h3><a href="https://simonwillison.net/2026/Oct/31/how-we-took-over-chatgpt-accounts/" title="Simon Willison: How We Took Over ChatGPT Accounts">One shared link could take over a ChatGPT account. The bounty: $5,000</a></h3>
+          <p class="deck">Parameter Labs chained a MathLive keyboard, innerHTML and a YouTube endpoint to run script on ChatGPT. Simon Willison calls the payout cheap.</p>
+          <p class="src">Simon Willison</p></div></article><section class="card box blotter" data-entries="[&quot;https://www.wired.com/story/a-defense-contractor-gave-their-personal-ai-agent-access-to-a-secure-pentagon-system/&quot;, &quot;https://www.insurancejournal.com/news/international/2026/10/29/890745.htm&quot;, &quot;https://simonwillison.net/2026/Oct/29/how-i-built-the-most-ai-pilled-company-in-the-world/&quot;, &quot;https://simonwillison.net/2026/Oct/26/jason-koebler/&quot;]"><header><h2>Police blotter</h2><p class="note">Every suspect says it was only following instructions.</p></header><ul><li><span class="label">A Pentagon network</span> <a href="https://www.wired.com/story/a-defense-contractor-gave-their-personal-ai-agent-access-to-a-secure-pentagon-system/" title="Bonus pick from outside the feed. WIRED: A Defense Contractor Gave Their Personal AI Agent Access to a Secure Pentagon System">UNAUTHORIZED ACCESS: a contractor&#x27;s personal Claude Code agent ran on a Defense Department system for two months, and appears to have sent its login credentials to a high-risk website.</a></li><li><span class="label">Irregular&#x27;s test range</span> <a href="https://www.insurancejournal.com/news/international/2026/10/29/890745.htm" title="Bonus pick from outside the feed. Insurance Journal: Chinese AI Model Carries Out Complex Cyberattacks in Controlled Tests: Researchers">DISOBEYING ORDERS: told not to, Z.ai&#x27;s GLM-5.3 reproduced code from memory again and again. It refused none of the attack tasks.</a></li><li><span class="label">Spawn, a game studio</span> <a href="https://simonwillison.net/2026/Oct/29/how-i-built-the-most-ai-pilled-company-in-the-world/" title="Simon Willison: Building a multiplayer game world with autonomous Fable-class models">SECURING THE PREMISES: asked to apply security fixes, GPT-6 Astra “made the insecure things secure by turning them off”. All of them.</a></li><li><span class="label">ChatGPT&#x27;s help desk</span> <a href="https://simonwillison.net/2026/Oct/26/jason-koebler/" title="Simon Willison: Quoting Jason Koebler">FALSE REFERRAL: ChatGPT keeps telling people with ordinary tech support problems that 404 Media can help them.</a></li></ul></section><article class="card story" id="story-gpt-6-1-terra-fast-computer-use-at-1-per-million-tokens" data-entries="[&quot;https://openai.com/index/introducing-gpt-6-1-terra&quot;, &quot;https://simonwillison.net/2026/Oct/26/gpt-61-terra/&quot;, &quot;https://github.blog/changelog/2026-10-26-gpt-6-1-terra-in-github-copilot&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Monday 26 October, 02:00">26 Oct</span><span class="label">Models</span></div>
+          <h3><a href="https://openai.com/index/introducing-gpt-6-1-terra" title="OpenAI News: Introducing GPT-6.1 Terra">GPT-6.1 Terra: fast computer use at $1 per million tokens</a></h3>
+          <p class="deck">OpenAI&#x27;s midrange model costs $1 in and $5 out per million tokens, almost half of GPT-5.6 Terra. Copilot has it already.</p>
+          <p class="src">OpenAI News · <a href="https://simonwillison.net/2026/Oct/26/gpt-61-terra/" title="Simon Willison: GPT-6.1 Terra">Simon Willison</a> · <a href="https://github.blog/changelog/2026-10-26-gpt-6-1-terra-in-github-copilot" title="Github Blog Changelog: GPT-6.1 Terra in GitHub Copilot">Github Blog Changelog</a></p></div></article><article class="card story" id="story-claude-code-can-refuse-writes-outside-your-project-in-every" data-entries="[&quot;https://github.com/anthropics/claude-code/releases/tag/v2.1.316&quot;, &quot;https://github.com/anthropics/claude-code/releases/tag/v2.1.314&quot;, &quot;https://github.com/anthropics/claude-code/releases/tag/v2.1.312&quot;, &quot;https://github.com/anthropics/claude-code/releases/tag/v2.1.311&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Saturday 31 October, 03:01">31 Oct</span><span class="label">Claude Code</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+          <h3><a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.316" title="Claude Code Releases: claude-code - Added CLAUDE_CODE_DISABLE_ULTRATHINK, which turns the ultrathink keyword off">Claude Code can refuse writes outside your project, in every mode</a></h3>
+          <p class="deck">2.1.314 adds blockWritesOutsideWorkingDirectories. 2.1.312 stops Claude from overwriting a huge CLAUDE.md after seeing only its start.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-claude-code-closes-sandbox-gaps-and-warns-before-costly-resu" title="The earlier story, in Vol. 1 · No. 3">Claude Code closes sandbox gaps and warns before costly resumes</a> · Vol. 1 · No. 3</p>
+          <p class="src">Claude Code Releases · <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.314" title="Claude Code Releases: claude-code - Added permissions.blockWritesOutsideWorkingDirectories: Write, Edit and NotebookEdit refuse paths outside the working directories in every permission mode">v2.1.314</a> · <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.312" title="Claude Code Releases: claude-code - Added oidc.user_id_claim to the Claude apps gateway, to identify people by an id_token claim other than sub, such as Microsoft Entra ID&#x27;s oid">v2.1.312</a> · <a href="https://github.com/anthropics/claude-code/releases/tag/v2.1.311" title="Claude Code Releases: claude-code - Added --hold-idle-file and --max-hold-min to self-hosted-runner, to keep an idle session while your host reports processes it left running">v2.1.311</a></p></div></article><article class="card story" id="story-t3-code-ships-four-stable-releases-in-five-days" data-entries="[&quot;https://github.com/pingdotgg/t3code/releases/tag/v0.1.6&quot;, &quot;https://github.com/pingdotgg/t3code/releases/tag/v0.1.3&quot;, &quot;https://github.com/pingdotgg/t3code/releases/tag/v0.1.4&quot;, &quot;https://github.com/pingdotgg/t3code/releases/tag/v0.1.5&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Saturday 31 October, 12:52">31 Oct</span><span class="label">T3 Code</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+          <h3><a href="https://github.com/pingdotgg/t3code/releases/tag/v0.1.6" title="T3 Code Releases: T3 Code v0.1.6">T3 Code ships four stable releases in five days</a></h3>
+          <p class="deck">v0.1.3 to v0.1.6 landed from 27 to 31 October. v0.1.6 alone holds 521 changes from 137 contributors, and 1Password support for credentials.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-t3-code-0-1-2-run-threads-from-the-terminal" title="The earlier story, in Vol. 1 · No. 3">T3 Code 0.1.2: run threads from the terminal</a> · Vol. 1 · No. 3</p>
+          <p class="src">T3 Code Releases · <a href="https://github.com/pingdotgg/t3code/releases/tag/v0.1.3" title="T3 Code Releases: T3 Code v0.1.3">v0.1.3</a> · <a href="https://github.com/pingdotgg/t3code/releases/tag/v0.1.4" title="T3 Code Releases: T3 Code v0.1.4">v0.1.4</a> · <a href="https://github.com/pingdotgg/t3code/releases/tag/v0.1.5" title="T3 Code Releases: T3 Code v0.1.5">v0.1.5</a></p></div></article><section class="card box weather" data-entries="[&quot;https://www.githubstatus.com/incidents/f1vvv30224wd&quot;, &quot;https://www.githubstatus.com/incidents/dnslv7xdl4fj&quot;, &quot;https://www.githubstatus.com/incidents/l7ycmglmykgg&quot;, &quot;https://www.githubstatus.com/incidents/rn76zdy367m2&quot;, &quot;https://www.githubstatus.com/incidents/nxy2l0ssxm10&quot;, &quot;https://www.githubstatus.com/incidents/pwxsjgnvrk6b&quot;, &quot;https://www.githubstatus.com/incidents/lyyfm7j4pkgl&quot;]"><header><h2>Pipeline weather</h2><p class="note">Friday brought three fronts. Pack an umbrella and a rollback plan.</p></header><ul><li><span class="label">🌦 Mon 26</span> <a href="https://www.githubstatus.com/incidents/f1vvv30224wd" title="GitHub Status: Incident with Actions, Issues, API Requests and Pull Requests">REST API, Checks, Actions, Issues and pull requests slowed; notifications lagged from 17:59 to 18:40 UTC.</a></li><li><span class="label">⛈ Tue 27</span> <a href="https://www.githubstatus.com/incidents/dnslv7xdl4fj" title="GitHub Status: Elevated 404s for GitHub App s2s tokens in git/API">A table migration met a cleanup job that deleted about 59 million records. GitHub App tokens got 404s on up to 2.49% of git requests.</a></li><li><span class="label">🌧 Wed 28</span> <a href="https://www.githubstatus.com/incidents/l7ycmglmykgg" title="GitHub Status: Disruption with some Copilot services">Six models, from GPT-5.3-Codex to MAI Code 1.1 Flash, dropped out of Copilot until 15:28 UTC.</a></li><li><span class="label">🌦 Thu 29</span> <a href="https://www.githubstatus.com/incidents/rn76zdy367m2" title="GitHub Status: Disruption with Copilot Cloud services">Copilot cloud agent sessions failed 1–2% of the time, and slowed down.</a></li><li><span class="label">🌩 Fri 30</span> <a href="https://www.githubstatus.com/incidents/nxy2l0ssxm10" title="GitHub Status: Disruption with GitHub services">One overloaded component threw errors across many services from 14:21 to 14:30 UTC.</a></li><li><span class="label">🌧 Fri 30</span> <a href="https://www.githubstatus.com/incidents/pwxsjgnvrk6b" title="GitHub Status: Incident with Actions, Pages, and Webhooks">Actions workflows, Pages deploys and webhooks ran late into the evening; code search errored.</a></li><li><span class="label">🌫 Fri 30</span> <a href="https://www.githubstatus.com/incidents/lyyfm7j4pkgl" title="GitHub Status: Incident with Dependabot">Some Dependabot alerts would not open.</a></li></ul></section><article class="card story" id="story-opencode-2-2-runs-claude-code-inside-and-chases-goals" data-entries="[&quot;https://github.com/anomalyco/opencode/releases/tag/v2.2.3&quot;, &quot;https://github.com/anomalyco/opencode/releases/tag/v2.2.1&quot;, &quot;https://github.com/anomalyco/opencode/releases/tag/v2.2.0&quot;, &quot;https://github.com/anomalyco/opencode/releases/tag/v2.2.4&quot;, &quot;https://github.com/anomalyco/opencode/releases/tag/v2.2.5&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Friday 30 October, 16:48">30 Oct</span><span class="label">OpenCode</span></div>
+          <h3><a href="https://github.com/anomalyco/opencode/releases/tag/v2.2.3" title="OpenCode Releases: opencode - Use Claude Code in OpenCode: Install Claude Code, run claude auth login, then select Claude Agent in /connect to use your Claude Code login and models. (#58782)">OpenCode 2.2 runs Claude Code inside, and chases goals</a></h3>
+          <p class="deck">2.2.3 adds a Claude Agent provider that uses your Claude Code login. /goal keeps a session working until a reviewer confirms the objective.</p>
+          <p class="src">OpenCode Releases · <a href="https://github.com/anomalyco/opencode/releases/tag/v2.2.1" title="OpenCode Releases: opencode - Keep Working Toward a Goal: Run /goal &lt;objective&gt; in the TUI or Desktop to let the session continue until a reviewer confirms the objective is met. Use /goal pause, /goal resume, or /goal clear to control it. (#59437)">v2.2.1</a> · <a href="https://github.com/anomalyco/opencode/releases/tag/v2.2.0" title="OpenCode Releases: opencode - Create, install and share Desktop plugins (experimental) (#55246, #59469, #59489)">v2.2.0</a> · <a href="https://github.com/anomalyco/opencode/releases/tag/v2.2.4" title="OpenCode Releases: opencode - Persistent Desktop Terminals: Desktop terminals now belong to the session, survive server restarts with their scrollback, and stay synchronized with the TUI and other windows. Renamed terminals also keep their names across restarts. (#60346)">v2.2.4</a> · <a href="https://github.com/anomalyco/opencode/releases/tag/v2.2.5" title="OpenCode Releases: opencode - Worktree and Shell Mode Shortcuts: Press ⌘⌥O on macOS or Ctrl+Alt+O on Windows and Linux to choose a worktree, and ⌘⌥B or Ctrl+Alt+B to choose its base branch. ⌘⇧X or Ctrl+Shift+X now toggles shell mode in the composer. (#60713)">v2.2.5</a></p></div></article><article class="card story" id="story-cloudflare-dares-researchers-to-get-past-its-php2shell-rules" data-entries="[&quot;https://blog.cloudflare.com/php-ctf/&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Tuesday 27 October, 15:00">27 Oct</span><span class="label">PHP</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+          <h3><a href="https://blog.cloudflare.com/php-ctf/" title="Cloudflare Blog: Introducing the Cloudflare PHP Capture the Flag challenge">Cloudflare dares researchers to get past its php2shell rules</a></h3>
+          <p class="deck">A stock PHP 8.5.11 sits behind the WAF with a /flag file inside. Entries already led to new detections, and the CTF stays open.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-php-rushes-out-a-fix-after-its-bug-ids-leak" title="The earlier story, in Vol. 1 · No. 3">PHP rushes out a fix after its bug IDs leak</a> · Vol. 1 · No. 3</p>
+          <p class="src">Cloudflare Blog</p></div></article><section class="card box overheard" data-entries="[&quot;https://simonwillison.net/2026/Oct/28/ted-sanders/&quot;, &quot;https://simonwillison.net/2026/Oct/29/ben-hylak/&quot;, &quot;https://techcrunch.com/2026/10/26/how-openai-turned-its-coding-tools-into-dots-an-always-on-personal-assistant/&quot;]"><header><h2>Overheard</h2><p class="note">Said out loud, written down, linked below.</p></header><ul><li><span class="label">Ted Sanders, OpenAI</span> <a href="https://simonwillison.net/2026/Oct/28/ted-sanders/" title="Simon Willison: Quoting Ted Sanders">“much of the variation in performance is explained by just a single variable: model size.”</a></li><li><span class="label">Ben Hylak</span> <a href="https://simonwillison.net/2026/Oct/29/ben-hylak/" title="Simon Willison: Quoting Ben Hylak">“every product i use should just be a headless mcp, that feeds into an agent, where i never have to think about anything underneath. except for our product, of course.”</a></li><li><span class="label">Alexander Embiricos, on learning that Elon Musk owns dot.com</span> <a href="https://techcrunch.com/2026/10/26/how-openai-turned-its-coding-tools-into-dots-an-always-on-personal-assistant/" title="TechCrunch: AI agents: How OpenAI turned its coding tools into dots, an always-on personal assistant">“I found out very late.”</a></li></ul></section><article class="card story" id="story-codex-adds-vertex-ai-and-a-transcript-you-can-select-by-keyb" data-entries="[&quot;https://github.com/openai/codex/releases/tag/rust-v0.166.0&quot;, &quot;https://github.com/openai/codex/releases/tag/rust-v0.165.0&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Thursday 29 October, 21:50">29 Oct</span><span class="label">Codex</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+          <h3><a href="https://github.com/openai/codex/releases/tag/rust-v0.166.0" title="Codex CLI Releases: codex - Added keyboard-driven transcript selection with word, line, and page motions, integrated search, and configurable shortcuts. (#57221, #57222, #57223, #57224)">Codex adds Vertex AI, and a transcript you can select by keyboard</a></h3>
+          <p class="deck">0.165 brings a built-in Google Cloud provider and memory v2 by default. 0.166 adds codex queue --resume and codex doctor --network-only.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-codex-0-164-keeps-ten-prompts-on-speed-dial" title="The earlier story, in Vol. 1 · No. 3">Codex 0.164 keeps ten prompts on speed dial</a> · Vol. 1 · No. 3</p>
+          <p class="src">Codex CLI Releases · <a href="https://github.com/openai/codex/releases/tag/rust-v0.165.0" title="Codex CLI Releases: codex - Added a built-in Google Cloud Vertex AI provider, configured with model_provider = &quot;gcp&quot;. (#56265)">rust-v0.165.0</a></p></div></article><article class="card story" id="story-vs-code-1-144-keeps-your-agents-running-after-you-close-it" data-entries="[&quot;https://code.visualstudio.com/updates/v1_144&quot;, &quot;https://github.com/microsoft/vscode/releases/tag/1.144.0&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Wednesday 28 October, 19:00">28 Oct</span><span class="label">VS Code</span></div>
+          <h3><a href="https://code.visualstudio.com/updates/v1_144" title="VS Code Feed: Visual Studio Code 1.144">VS Code 1.144 keeps your agents running after you close it</a></h3>
+          <p class="deck">The Agent Host runs sessions in a separate process, on your machine or remotely. A new Markdown editor edits the rendered text.</p>
+          <p class="src">VS Code Feed · <a href="https://github.com/microsoft/vscode/releases/tag/1.144.0" title="VS Code Releases: vscode - Join VS Code at GitHub Universe!">VS Code Releases</a></p></div></article><section class="card box classifieds" data-entries="[&quot;https://simonwillison.net/2026/Oct/30/nesformer/&quot;, &quot;https://techcrunch.com/2026/10/30/doordash-said-its-only-received-several-hundred-orders-from-ai-agents/&quot;, &quot;https://techcrunch.com/2026/10/27/bank-of-america-kindly-asks-that-you-dont-share-your-banking-password-with-your-ai-assistant/&quot;, &quot;https://simonwillison.net/2026/Oct/29/api-credits/&quot;, &quot;https://techcrunch.com/2026/10/30/last-minute-halloween-costumes-for-tech-nerds/&quot;, &quot;https://blog.cloudflare.com/private-origins-public-to-private/&quot;, &quot;https://docs.slack.dev/changelog/2026/10/30/slack-cli&quot;, &quot;https://github.com/astral-sh/ty/releases/tag/0.0.93&quot;, &quot;https://blog.cloudflare.com/ddos-threat-report-2026-q3/&quot;]"><header><h2>Classifieds</h2><p class="note">Rates: one weak key a line. Keys from 4 to 237 accepted.</p></header><ul><li><span class="sticker wait">NOW PLAYING</span> <a href="https://simonwillison.net/2026/Oct/30/nesformer/" title="Simon Willison: dbreunig/nesformer">Super Mario Bros, very slowly, on a NES CPU baked into the weights of Qwen3.5-4B.</a></li><li><span class="sticker wait">WANTED</span> <a href="https://techcrunch.com/2026/10/30/doordash-said-its-only-received-several-hundred-orders-from-ai-agents/" title="TechCrunch: AI agents: DoorDash said it’s only received ‘several hundred’ orders from AI agents">Orders from AI agents. DoorDash has seen several hundred in total.</a></li><li><span class="sticker wait">PLEASE DON&#x27;T</span> <a href="https://techcrunch.com/2026/10/27/bank-of-america-kindly-asks-that-you-dont-share-your-banking-password-with-your-ai-assistant/" title="TechCrunch: AI agents: Bank of America kindly asks that you don’t share your banking password with your AI assistant">Give your banking password to your AI agent, asks Bank of America. You answer for what it does.</a></li><li><span class="sticker wait">FREE CREDITS</span> <a href="https://simonwillison.net/2026/Oct/29/api-credits/" title="Simon Willison: API credits benefit for eligible ChatGPT subscriptions">OpenAI&#x27;s $100, $200 and $500 plans now come with the same amount in API credits.</a></li><li><span class="sticker wait">COSTUME</span> <a href="https://techcrunch.com/2026/10/30/last-minute-halloween-costumes-for-tech-nerds/" title="TechCrunch: AI agents: Last-minute Halloween costumes for tech nerds">Last-minute Halloween idea from TechCrunch: go as a PHP vulnerability.</a></li><li><span class="sticker wait">NOW GA</span> <a href="https://blog.cloudflare.com/private-origins-public-to-private/" title="Cloudflare Blog: Cloudflare services for private origins is now generally available">Cloudflare services for private origins: WAF, caching and Workers for a private IP, with no inbound firewall exception.</a></li><li><span class="sticker wait">SKILL</span> <a href="https://docs.slack.dev/changelog/2026/10/30/slack-cli" title="Slack Developer Docs Blog: Release: Slack CLI v4.12.0">Slack CLI 4.12 hands coding agents its own skill: slack skill.</a></li><li><span class="sticker wait">BASELINE</span> <a href="https://github.com/astral-sh/ty/releases/tag/0.0.93" title="ty Releases: ty - Add diagnostic baselines to help adopt ty in projects with existing errors (#27636). Configure a baseline in pyproject.toml: [tool.ty] baseline = &quot;ty-baseline.json&quot; Run ty check --update-baseline to record existing diagnostics. Subsequent checks filter matching diagnostics from CLI output and show them as hints in the language server. The baseline format may change while the feature is in preview.">ty check --update-baseline records your existing errors, in preview in ty 0.0.93.</a></li><li><span class="sticker wait">SWARMS</span> <a href="https://blog.cloudflare.com/ddos-threat-report-2026-q3/" title="Cloudflare Blog: Cloudflare DDoS Threat Report 2026 Q3: More swarms, fewer giants">Cloudflare stopped 18.2 million network-layer DDoS attacks in Q3: one every 0.44 seconds.</a></li></ul></section><section class="card box corrections" data-entries="[&quot;https://developers.cloudflare.com/changelog/post/2026-10-28-mcp-analytics-response-status/&quot;, &quot;https://github.com/github/copilot-cli/releases/tag/v1.0.106-1&quot;, &quot;https://github.com/cli/cli/releases/tag/v2.103.3&quot;, &quot;https://github.com/atuinsh/atuin/releases/tag/v18.24.4&quot;]"><header><h2>Corrections</h2><p class="note">Counted again, rewritten less, explained better.</p></header><ul><li><span class="label">Cloudflare</span> <a href="https://developers.cloudflare.com/changelog/post/2026-10-28-mcp-analytics-response-status/" title="Cloudflare One Changelog: Access, Cloudflare One - Filter MCP tool-call analytics by response status">MCP tool-call analytics now count only successful calls by default. Before, the counts included failed and cached calls.</a></li><li><span class="label">Copilot CLI</span> <a href="https://github.com/github/copilot-cli/releases/tag/v1.0.106-1" title="GitHub Copilot CLI Releases: 1.0.106-1">apply_patch no longer rewrites a whole file that mixes LF and CRLF to one line ending, in 1.0.106-1.</a></li><li><span class="label">GitHub CLI</span> <a href="https://github.com/cli/cli/releases/tag/v2.103.3" title="GitHub CLI Releases: GitHub CLI 2.103.3">gh auth status now explains expired expiring tokens with --no-refresh, in 2.103.3.</a></li><li><span class="label">atuin</span> <a href="https://github.com/atuinsh/atuin/releases/tag/v18.24.4" title="atuin Releases: atuin - (ai-session) Keep the objective of an opencode /goal (#4599)">18.24.4 keeps the objective of an opencode /goal, and honours CLAUDE_CONFIG_DIR for Claude Code hooks.</a></li></ul></section><section class="card box wire" data-entries="[&quot;https://github.blog/changelog/2026-10-26-github-copilot-assisted-permissions-generally-available&quot;, &quot;https://github.blog/changelog/2026-10-27-github-copilot-supports-server-to-server-authentication&quot;, &quot;https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion&quot;, &quot;https://github.blog/changelog/2026-10-28-github-agentic-workflows-generally-available&quot;, &quot;https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases&quot;, &quot;https://github.blog/changelog/2026-10-28-github-copilot-fusion-now-supports-selection-of-local-models&quot;, &quot;https://github.blog/changelog/2026-10-28-generate-and-edit-images-directly-in-copilot&quot;, &quot;https://github.blog/changelog/2026-10-28-build-shared-workflows-for-your-team-with-copilot-automations&quot;, &quot;https://github.blog/changelog/2026-10-28-github-intelligence-puts-your-code-context-and-history-to-work&quot;, &quot;https://github.blog/changelog/2026-10-28-security-extension-for-the-github-copilot-app&quot;, &quot;https://github.blog/changelog/2026-10-28-repository-plugin-defaults-and-enterprise-plugin-controls-generally-available&quot;, &quot;https://github.blog/changelog/2026-10-28-prioritize-dependabot-alerts-with-reachability-analysis&quot;]"><header><h2>Copilot corner</h2><p class="note">Universe week, so the Copilot desk filed in bulk.</p></header><ul><li><span class="label">26 Oct</span> <a href="https://github.blog/changelog/2026-10-26-github-copilot-assisted-permissions-generally-available" title="Github Blog Changelog: GitHub Copilot assisted permissions generally available">Assisted permissions are GA: a model approves the requests that it rates clearly safe.</a></li><li><span class="label">27 Oct</span> <a href="https://github.blog/changelog/2026-10-27-github-copilot-supports-server-to-server-authentication" title="Github Blog Changelog: GitHub Copilot supports server-to-server authentication">Copilot SDK agents can act for an organization with server-to-server auth, in preview.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion" title="Github Blog Changelog: Route and orchestrate models with GitHub Copilot Fusion">Copilot Fusion is GA: it picks and orchestrates the models for each task.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-github-agentic-workflows-generally-available" title="Github Blog Changelog: GitHub Agentic Workflows generally available">GitHub Agentic Workflows are GA: Markdown files compile to Actions YAML that runs coding agents.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases" title="Github Blog Changelog: GitHub Copilot app, Universe releases">Copilot app projects run agent work across several repositories at once.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-github-copilot-fusion-now-supports-selection-of-local-models" title="Github Blog Changelog: GitHub Copilot Fusion now supports selection of local models">Copilot Fusion can route to models on your own device, in experimental preview.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-generate-and-edit-images-directly-in-copilot" title="Github Blog Changelog: Generate and edit images directly in Copilot">Copilot generates and edits images with GPT Image 2.5 Flare.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-build-shared-workflows-for-your-team-with-copilot-automations" title="Github Blog Changelog: Build shared workflows for your team with Copilot Automations">Shared Copilot Automations let a team build workflows together.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-github-intelligence-puts-your-code-context-and-history-to-work" title="Github Blog Changelog: GitHub intelligence puts your code, context, and history to work">GitHub intelligence gives agents your conventions, skills and related repositories.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-security-extension-for-the-github-copilot-app" title="Github Blog Changelog: Security extension for the GitHub Copilot app">A security extension brings code scanning alerts into the Copilot app.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-repository-plugin-defaults-and-enterprise-plugin-controls-generally-available" title="Github Blog Changelog: Repository plugin defaults and enterprise plugin controls generally available">Repositories can set default plugins; enterprises can require or block them.</a></li><li><span class="label">28 Oct</span> <a href="https://github.blog/changelog/2026-10-28-prioritize-dependabot-alerts-with-reachability-analysis" title="Github Blog Changelog: Prioritize Dependabot alerts with reachability analysis">Dependabot checks whether your code reaches the vulnerable function, for JavaScript and TypeScript.</a></li></ul></section><section class="card box classifieds" data-entries="[&quot;https://openai.com/index/credit-saison&quot;, &quot;https://openai.com/index/retell-ai&quot;, &quot;https://openai.com/index/fanatics-streamline-fan-experience&quot;, &quot;https://openai.com/index/openai-cut-incident-investigation&quot;, &quot;https://openai.com/index/gpt-6-1-sol-coderabbit-code-security&quot;, &quot;https://openai.com/index/greptile-code-review-codex-astra&quot;, &quot;https://openai.com/index/check-point-daybreak&quot;, &quot;https://openai.com/index/legora&quot;, &quot;https://openai.com/index/ropes-gray-ai-diligence&quot;]"><header><h2>Satisfied customers</h2><p class="note">From OpenAI News. Every review has five stars.</p></header><ul><li><span class="sticker wait">954% ROI</span> <a href="https://openai.com/index/credit-saison" title="OpenAI News: Credit Saison achieves 954% ROI in a ChatGPT Enterprise pilot">Credit Saison&#x27;s ChatGPT Enterprise pilot.</a></li><li><span class="sticker wait">100M CALLS</span> <a href="https://openai.com/index/retell-ai" title="OpenAI News: Retell uses OpenAI models to help power 100M monthly calls">A month at Retell, where GPT-6 Astra tops the voice agent benchmark.</a></li><li><span class="sticker wait">10% MORE</span> <a href="https://openai.com/index/fanatics-streamline-fan-experience" title="OpenAI News: How Fanatics and OpenAI streamline the fan experience">Engagement for Fanatics&#x27; Shop the Look, tested on about 30,000 MLB products.</a></li><li><span class="sticker wait">MINUTES</span> <a href="https://openai.com/index/openai-cut-incident-investigation" title="OpenAI News: How Ultrafast cut incident investigation from hours to minutes at OpenAI">Codex Ultrafast cuts OpenAI&#x27;s own incident investigations from hours to minutes.</a></li><li><span class="sticker wait">SECURITY</span> <a href="https://openai.com/index/gpt-6-1-sol-coderabbit-code-security" title="OpenAI News: GPT-6.1 Sol helps CodeRabbit strengthen security across complex codebases">CodeRabbit&#x27;s security agent runs on GPT-6.1 Sol.</a></li><li><span class="sticker wait">BUG HUNT</span> <a href="https://openai.com/index/greptile-code-review-codex-astra" title="OpenAI News: Greptile takes bug detection beyond code review with GPT-6 Astra">Greptile tests user workflows with GPT-6 Astra.</a></li><li><span class="sticker wait">RESEARCH</span> <a href="https://openai.com/index/check-point-daybreak" title="OpenAI News: How Check Point accelerates vulnerability research with Daybreak">Check Point turns vulnerability intelligence into defenses faster with Daybreak.</a></li><li><span class="sticker wait">LEGAL</span> <a href="https://openai.com/index/legora" title="OpenAI News: Legora is building the agentic operating system for legal work">Legora builds an agentic operating system for legal work.</a></li><li><span class="sticker wait">DILIGENCE</span> <a href="https://openai.com/index/ropes-gray-ai-diligence" title="OpenAI News: How Ropes &amp; Gray is developing AI for transactional diligence">Ropes &amp; Gray develops AI for transactional diligence.</a></li></ul></section><section class="card box wire" data-entries="[&quot;https://openai.com/index/chatgpt-expanding-world-of-work&quot;, &quot;https://openai.com/index/building-scientific-understanding-with-academic-communities&quot;, &quot;https://www.anthropic.com/news/expanding-partnership-gsa&quot;, &quot;https://www.anthropic.com/research/early-progress-drug-development&quot;, &quot;https://openai.com/index/oracle-apps-in-chatgpt&quot;, &quot;https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions&quot;, &quot;https://openai.com/index/openai-servicenow-partnership-expansion&quot;, &quot;https://openai.com/index/how-we-detect-frontier-model-misalignment&quot;, &quot;https://openai.com/index/updated-model-spec&quot;, &quot;https://openai.com/index/helping-websites-express-ai-training-preferences&quot;, &quot;https://openai.com/index/community-safety-report-and-new-protections-for-teens&quot;]"><header><h2>Press releases, abridged</h2><p class="note">Newsroom headlines. The feeds sent no more than this.</p></header><ul><li><span class="label">26 Oct</span> <a href="https://openai.com/index/chatgpt-expanding-world-of-work" title="OpenAI News: ChatGPT’s expanding world of work">OpenAI Signals maps ChatGPT use across 165 work activities in nearly 100 countries.</a></li><li><span class="label">26 Oct</span> <a href="https://openai.com/index/building-scientific-understanding-with-academic-communities" title="OpenAI News: Working with academic communities to build scientific understanding">OpenAI shares model results on the Kakeya conjecture and the Exponential Time Hypothesis.</a></li><li><span class="label">27 Oct</span> <a href="https://www.anthropic.com/news/expanding-partnership-gsa" title="Anthropic News: Expanding our partnership with GSA to bring Claude to all levels of government">Anthropic gives government partners 40% off Claude, through GSA.</a></li><li><span class="label">27 Oct</span> <a href="https://www.anthropic.com/research/early-progress-drug-development" title="Anthropic News: Early progress on accelerating drug development with Claude">Anthropic reports early progress on drug development with six partners.</a></li><li><span class="label">27 Oct</span> <a href="https://openai.com/index/oracle-apps-in-chatgpt" title="OpenAI News: OpenAI expands partnership with Oracle to bring its apps to ChatGPT">Oracle business apps and agents come to ChatGPT.</a></li><li><span class="label">28 Oct</span> <a href="https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions" title="Anthropic News: AI for Science expands to foundations and research institutions">Anthropic&#x27;s AI for Science program adds 20 foundations and institutions.</a></li><li><span class="label">28 Oct</span> <a href="https://openai.com/index/openai-servicenow-partnership-expansion" title="OpenAI News: OpenAI and ServiceNow expand partnership across enterprise workflows">OpenAI and ServiceNow expand their partnership.</a></li><li><span class="label">29 Oct</span> <a href="https://openai.com/index/how-we-detect-frontier-model-misalignment" title="OpenAI News: How we detect frontier model misalignment">OpenAI explains how it detects frontier model misalignment.</a></li><li><span class="label">29 Oct</span> <a href="https://openai.com/index/updated-model-spec" title="OpenAI News: An updated Model Spec for more capable and beneficial AI">OpenAI reorganizes its Model Spec around five values.</a></li><li><span class="label">30 Oct</span> <a href="https://openai.com/index/helping-websites-express-ai-training-preferences" title="OpenAI News: Making it easier for websites to express AI training preferences">OpenAI will honor a shared robots.txt signal for AI training preferences.</a></li><li><span class="label">30 Oct</span> <a href="https://openai.com/index/community-safety-report-and-new-protections-for-teens" title="OpenAI News: Community safety report and new protections for teens">OpenAI publishes a community safety report and new protections for teens.</a></li></ul></section><section class="card box prolific"><header><h2>Busiest bylines</h2><p class="note">Articles only. Status pages and release bots file elsewhere.</p></header><ol><li><span class="name" title="21 items from OpenAI News in 8 days">OpenAI News</span><span class="bar" style="--w:1.000"></span><b>21</b></li><li><span class="name" title="16 items from Github Blog Changelog in 8 days">Github Blog Changelog</span><span class="bar" style="--w:0.762"></span><b>16</b></li><li><span class="name" title="15 items from Simon Willison in 8 days">Simon Willison</span><span class="bar" style="--w:0.714"></span><b>15</b></li><li><span class="name" title="9 items from TechCrunch: AI agents in 8 days">TechCrunch: AI agents</span><span class="bar" style="--w:0.429"></span><b>9</b></li><li><span class="name" title="8 items from T3 Code Fork Daily Release in 8 days">T3 Code Fork Daily Release</span><span class="bar" style="--w:0.381"></span><b>8</b></li><li><span class="name" title="8 items from Gemini and Gemma on Google Developers Blog in 8 days">Gemini and Gemma on Google Developers Blog</span><span class="bar" style="--w:0.381"></span><b>8</b></li></ol></section></div><section class="card box brief" data-pool><header><h2>In brief</h2></header><ul><li data-entries="[&quot;https://simonwillison.net/2026/Oct/31/datasette-llm/&quot;]"><span class="sticker info" title="Published Sunday 01 November, 00:10">01 Nov</span><span><a href="https://simonwillison.net/2026/Oct/31/datasette-llm/" title="Simon Willison: datasette-llm 0.1a9">datasette-llm 0.1a9</a> <span class="label">Simon Willison</span></span></li><li data-entries="[&quot;https://techcrunch.com/2026/10/30/zests-new-ai-agent-finds-restaurants-and-books-reservations-over-text/&quot;]"><span class="sticker " title="Published Friday 30 October, 19:47">30 Oct</span><span><a href="https://techcrunch.com/2026/10/30/zests-new-ai-agent-finds-restaurants-and-books-reservations-over-text/" title="TechCrunch: AI agents: Zest’s new AI agent finds restaurants and books reservations over text">Zest’s new AI agent finds restaurants and books reservations over text</a> <span class="label">TechCrunch: AI agents</span></span></li><li data-entries="[&quot;https://blog.jetbrains.com/idea/2026/10/intellij-idea-2026-2-4/&quot;]"><span class="sticker " title="Published Friday 30 October, 18:11">30 Oct</span><span><a href="https://blog.jetbrains.com/idea/2026/10/intellij-idea-2026-2-4/" title="IntelliJ IDEA Blog: IntelliJ IDEA 2026.2.4 Is Out!">IntelliJ IDEA 2026.2.4 Is Out!</a> <span class="label">IntelliJ IDEA Blog</span></span></li><li data-entries="[&quot;https://developers.googleblog.com/devfest-is-back/&quot;]"><span class="sticker " title="Published Friday 30 October, 18:06">30 Oct</span><span><a href="https://developers.googleblog.com/devfest-is-back/" title="Gemini and Gemma on Google Developers Blog: DevFest is back!">DevFest is back!</a> <span class="label">Gemini and Gemma on Google Developers Blog</span></span></li><li data-entries="[&quot;https://openai.com/index/fair-use-benefits-everyone&quot;]"><span class="sticker " title="Published Friday 30 October, 02:00">30 Oct</span><span><a href="https://openai.com/index/fair-use-benefits-everyone" title="OpenAI News: Fair use benefits everyone">Fair use benefits everyone</a> <span class="label">OpenAI News</span></span></li><li data-entries="[&quot;https://developers.cloudflare.com/changelog/post/2026-10-30-scim-population-viewer/&quot;]"><span class="sticker " title="Published Friday 30 October, 02:00">30 Oct</span><span><a href="https://developers.cloudflare.com/changelog/post/2026-10-30-scim-population-viewer/" title="Cloudflare One Changelog: Cloudflare One, Access - Inspect provisioned users and groups with the SCIM population viewer">Cloudflare One, Access - Inspect provisioned users and groups with the SCIM population viewer</a> <span class="label">Cloudflare One Changelog</span></span></li><li data-entries="[&quot;https://github.blog/changelog/2026-10-29-webhook-ip-ranges-added-to-the-meta-api&quot;]"><span class="sticker " title="Published Thursday 29 October, 19:14">29 Oct</span><span><a href="https://github.blog/changelog/2026-10-29-webhook-ip-ranges-added-to-the-meta-api" title="Github Blog Changelog: Webhook IP ranges added to the Meta API">Webhook IP ranges added to the Meta API</a> <span class="label">Github Blog Changelog</span></span></li><li data-entries="[&quot;https://techcrunch.com/2026/10/29/wabi-the-ai-agent-that-builds-mini-apps-now-valued-at-1-25b-after-latest-round/&quot;]"><span class="sticker " title="Published Thursday 29 October, 16:35">29 Oct</span><span><a href="https://techcrunch.com/2026/10/29/wabi-the-ai-agent-that-builds-mini-apps-now-valued-at-1-25b-after-latest-round/" title="TechCrunch: AI agents: Wabi, the AI agent that builds mini apps, now valued at $1.25B after latest round">Wabi, the AI agent that builds mini apps, now valued at $1.25B after latest round</a> <span class="label">TechCrunch: AI agents</span></span></li><li data-entries="[&quot;https://developers.cloudflare.com/changelog/post/2026-10-29-dls-dashboard-overview/&quot;]"><span class="sticker " title="Published Thursday 29 October, 02:00">29 Oct</span><span><a href="https://developers.cloudflare.com/changelog/post/2026-10-29-dls-dashboard-overview/" title="Cloudflare One Changelog: Data Localization Suite, SSL/TLS - View your data localization settings in one dashboard page">Data Localization Suite, SSL/TLS - View your data localization settings in one dashboard page</a> <span class="label">Cloudflare One Changelog</span></span></li><li data-entries="[&quot;https://docs.slack.dev/changelog/2026/10/29/block-kit-layout-block&quot;]"><span class="sticker " title="Published Thursday 29 October, 02:00">29 Oct</span><span><a href="https://docs.slack.dev/changelog/2026/10/29/block-kit-layout-block" title="Slack Developer Docs Blog: New Block Kit layout block">New Block Kit layout block</a> <span class="label">Slack Developer Docs Blog</span></span></li><li data-entries="[&quot;https://techcrunch.com/2026/10/28/as-ai-agents-reshape-the-web-google-opens-gemini-and-search-to-more-apps/&quot;]"><span class="sticker " title="Published Wednesday 28 October, 19:00">28 Oct</span><span><a href="https://techcrunch.com/2026/10/28/as-ai-agents-reshape-the-web-google-opens-gemini-and-search-to-more-apps/" title="TechCrunch: AI agents: As AI agents reshape the web, Google opens Gemini and Search to more apps">As AI agents reshape the web, Google opens Gemini and Search to more apps</a> <span class="label">TechCrunch: AI agents</span></span></li><li data-entries="[&quot;https://raycast.com//changelog/macos/2-10&quot;]"><span class="sticker " title="Published Wednesday 28 October, 18:55">28 Oct</span><span><a href="https://raycast.com//changelog/macos/2-10" title="Raycast Changelog: 🗒️ Images In Notes">🗒️ Images In Notes</a> <span class="label">Raycast Changelog</span></span></li><li data-entries="[&quot;https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases&quot;]"><span class="sticker " title="Published Wednesday 28 October, 17:33">28 Oct</span><span><a href="https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases" title="Github Blog Changelog: GitHub Copilot in VS Code, Universe releases">GitHub Copilot in VS Code, Universe releases</a> <span class="label">Github Blog Changelog</span></span></li><li data-entries="[&quot;https://openai.com/index/the-future-of-the-firm&quot;]"><span class="sticker " title="Published Wednesday 28 October, 12:00">28 Oct</span><span><a href="https://openai.com/index/the-future-of-the-firm" title="OpenAI News: The future of the firm">The future of the firm</a> <span class="label">OpenAI News</span></span></li></ul><p class="more">…and 11 more items in the feed.</p></section><section class="card spotlight" id="dev-spotlight" data-entries="[&quot;https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261026.2890000&quot;, &quot;https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261027.3060000&quot;, &quot;https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261028.3150000&quot;, &quot;https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261029.3220000&quot;, &quot;https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261029.3360000&quot;, &quot;https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261030.3540000&quot;, &quot;https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.7-nightly.20261101.3570000&quot;]">
+          <header><div class="spot-top"><span class="label">T3 Code fork · daily releases of 26 October to 1 November</span><a class="spot-link" href="https://github.com/Yarden-zamir/t3code">github.com/Yarden-zamir/t3code →</a></div><h2>From the fork</h2></header>
+          <div class="spot-groups" style="--groups: 2"><section class="spot-group"><h3>Fork changes</h3><ol><li><p class="spot-head"><span class="sticker " title="Published Monday 26 October, 09:14">26 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261026.2890000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-26 (20e21e850bad)">Pin messages</a></b></p><blockquote>“With pins turned on in Settings &gt; General &gt; Behavior, a pin button marks a message, and thread details and a sidebar footer button list the pins with a link back to each message.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Tuesday 27 October, 09:04">27 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261027.3060000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-27 (b54a89eca689)">Guest links over the Cloudflare tunnel</a></b></p><blockquote>“Fork machines without T3 Connect can share a thread with a guest through their Cloudflare tunnel host, and the portal Guests view sets up the Cloudflare Access rules for it.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Tuesday 27 October, 09:04">27 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261027.3060000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-27 (b54a89eca689)">Portal stays within the Cloudflare free plan</a></b></p><blockquote>“The machine map portal writes far fewer Durable Object rows, so it no longer goes offline after reaching the daily free-plan limit.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Wednesday 28 October, 09:03">28 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261028.3150000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-28 (91053bb98024)">App context menu</a></b></p><blockquote>“An optional setting draws right-click menus with the app&#x27;s own themed menu, with icons, group names, submenus and typeahead, on web and desktop.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Thursday 29 October, 09:04">29 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261029.3220000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-29 (a9cc11b43224)">kitshn publish tools for agents</a></b></p><blockquote>“Agents can publish pages, files and folder sites to kitshn with the new kitshn_publish, kitshn_address and kitshn_agent_key tools.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Friday 30 October, 09:02">30 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261029.3360000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-30 (81e807e321f7)">Waiting shelf</a></b></p><blockquote>“Threads that show Waiting now sit in their own shelf under Working, on web, desktop and mobile.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Friday 30 October, 09:02">30 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261029.3360000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-30 (81e807e321f7)">Safer diagnostics</a></b></p><blockquote>“Machine diagnostics send program names and redacted errors, not command lines that can hold tokens.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Saturday 31 October, 09:04">31 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261030.3540000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-31 (149b0f945594)">kitshn replaces the machine map portal</a></b></p><blockquote>“kitshn is now the only path for machine identity, access, settings and links to other machines, and T3 reconnects when its kitshn provider child stops answering.”</blockquote></li><li><p class="spot-head"><span class="sticker info" title="Published Sunday 01 November, 09:03">01 Nov</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.7-nightly.20261101.3570000" title="Bonus pick from outside the feed. T3 Code Fork Daily Release: T3 Code Fork 2026-11-01 (57e364782b3d)">kitshn provider protocol 2</a></b><span class="sticker bonus" title="Bonus pick from outside the feed">Bonus</span></p><blockquote>“T3 talks to kitshn over provider protocol 2: kitshn checks access, runs machine commands and names the host.”</blockquote></li></ol></section><section class="spot-group"><h3>Upstream changes</h3><ol><li><p class="spot-head"><span class="sticker " title="Published Monday 26 October, 09:14">26 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261026.2890000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-26 (20e21e850bad)">Faster thread loading</a></b></p><blockquote>“Opening a thread loads 85% less data, and a cold connect skips older settled threads, which cuts the shell JSON by 93%.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Tuesday 27 October, 09:04">27 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261027.3060000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-27 (b54a89eca689)">Goals stop the running turn</a></b></p><blockquote>“A new goal sent during a turn stops that turn and runs first, Clear works while the agent works, and goals no longer echo back as a reply.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Wednesday 28 October, 09:03">28 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261028.3150000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-28 (91053bb98024)">Smaller MCP tool context</a></b></p><blockquote>“All T3 MCP tools now send compact schemas, which cuts the tool context of every thread by 23%, and CI fails when that context grows.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Thursday 29 October, 09:04">29 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261029.3220000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-29 (a9cc11b43224)">Linked environments</a></b></p><blockquote>“Agents can link to another machine, @-mention it, and delegate tasks that run there, with links managed in Connections as a Labs beta.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Friday 30 October, 09:02">30 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261029.3360000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-30 (81e807e321f7)">Fallback model</a></b></p><blockquote>“When the default provider is out of usage, a new thread can use a fallback model you choose.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Saturday 31 October, 09:04">31 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261030.3540000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-31 (149b0f945594)">Stop always completes</a></b></p><blockquote>“Stop now always finishes, and an agent that ignores it gets a Force stop choice in the thread.”</blockquote></li><li><p class="spot-head"><span class="sticker " title="Published Saturday 31 October, 09:04">31 Oct</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261030.3540000" title="T3 Code Fork Daily Release: T3 Code Fork 2026-10-31 (149b0f945594)">Desktop back, forward and swipe</a></b></p><blockquote>“The desktop sidebar gets back and forward buttons, and a two-finger trackpad swipe navigates like a browser.”</blockquote></li><li><p class="spot-head"><span class="sticker info" title="Published Sunday 01 November, 09:03">01 Nov</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.7-nightly.20261101.3570000" title="Bonus pick from outside the feed. T3 Code Fork Daily Release: T3 Code Fork 2026-11-01 (57e364782b3d)">Side chats</a></b></p><blockquote>“Open a side chat beside the main thread that starts with the thread&#x27;s context.”</blockquote></li><li><p class="spot-head"><span class="sticker info" title="Published Sunday 01 November, 09:03">01 Nov</span><b><a href="https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.7-nightly.20261101.3570000" title="Bonus pick from outside the feed. T3 Code Fork Daily Release: T3 Code Fork 2026-11-01 (57e364782b3d)">One-time scheduled tasks</a></b></p><blockquote>“Schedule a task to run once at a specific date and time.”</blockquote></li></ol></section></div></section>
+          <p class="edition-end"><a href="#top">↑ Back to top</a><a class="get-desk" href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed. No account needed.">Start a feed with these sources →</a></p>
+        </section><section class="edition" id="games" data-section="games" aria-labelledby="games-title">
+          <div class="banner"><div class="banner-top"><span class="label">Games edition · 20 items · 7 sources</span><a class="get-desk" href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed. No account needed.">Start a feed with these sources →</a></div>
+            <h2 id="games-title">One year Topside. The rock is winning</h2></div>
+          <div class="front"><article class="card lead" id="story-arc-raiders-turns-one-6-billion-rounds-and-3-625-raiders-los" data-entries="[&quot;https://arcraiders.com/news/one-year-anniversary&quot;]"><figure class="photo"><img src="https://assets.arcraiders.com/media/ArcRaiders_FirstAnniversary_Infographic_16x9-Approved-1024x576.jpg" alt="ARC Raiders infographic, your first year in numbers: a Raider in a gas mask holds a rooster, between figures such as 6 billion rounds played, over 14.8 billion ARC destroyed, 3,920,595 Queens destroyed and 3,625 Raiders taken out by a volcanic rock." loading="lazy" decoding="async" referrerpolicy="no-referrer"><figcaption>Image: ARC Raiders Official News</figcaption></figure>
+          <div class="pad"><span class="stamp extra" title="The biggest story of the edition, as picked by the agent">Extra!</span>
+          <div class="meta"><span class="sticker " title="Published Friday 30 October, 02:00">30 Oct</span><span class="label">ARC Raiders</span></div>
+          <h3><a href="https://arcraiders.com/news/one-year-anniversary" title="ARC Raiders Official News: One year anniversary of ARC Raiders: Thanks for being here!">ARC Raiders turns one: 6 billion rounds, and 3,625 Raiders lost to a volcanic rock</a></h3>
+          <p class="deck">Embark&#x27;s first-year numbers: over 14.8 billion ARC destroyed, 6,800 tonnes of food fed to Scrappy, and a free gift in your inbox.</p><p class="body">Players destroyed 3,920,595 Queens and 2,919,521 Matriarchs. The Anvil was the favored weapon of the Rust Belt, and Scrappy&#x27;s favourite food is apricots. One Raider healed 5,643 others, and another healed 18 strangers in a single raid. Embark says the team is already hard at work on what comes next after Frozen Trail.</p>
+          <p class="jump"><a href="https://arcraiders.com/news/one-year-anniversary" title="ARC Raiders Official News: One year anniversary of ARC Raiders: Thanks for being here!">Continued at ARC Raiders Official News →</a></p></div></article><div class="side"><article class="card side-story" id="story-arc-raiders-asks-raiders-to-honor-the-fallen" data-entries="[&quot;https://arcraiders.com/news/live-update-2-3-0&quot;, &quot;https://store.steampowered.com/news/app/1808500/view/685268529568553910&quot;]"><div class="pad">
+              <div class="meta"><span class="sticker " title="Published Tuesday 27 October, 02:00">27 Oct</span><span class="label">ARC Raiders</span></div>
+              <h3><a href="https://arcraiders.com/news/live-update-2-3-0" title="ARC Raiders Official News: Live Update 2.3.0">ARC Raiders asks Raiders to honor the fallen</a></h3><p class="deck">Update 2.3 adds the Soul&#x27;s Offering project and the Noxious Set. Fixes go back to a three-week schedule, with store updates weekly.</p>
+              <p class="src">ARC Raiders Official News · <a href="https://store.steampowered.com/news/app/1808500/view/685268529568553910" title="ARC Raiders News: Live Update 2.3.0">ARC Raiders News</a></p></div></article><article class="card side-story" id="story-minecraft-lands-on-switch-2-with-vibrant-visuals" data-entries="[&quot;https://www.minecraft.net/en-us/article/play-minecraft-on-nintendo-switch-2&quot;]"><div class="pad">
+              <div class="meta"><span class="sticker " title="Published Tuesday 27 October, 21:00">27 Oct</span><span class="label">Minecraft</span></div>
+              <h3><a href="https://www.minecraft.net/en-us/article/play-minecraft-on-nintendo-switch-2" title="Minecraft News: Play Minecraft on your Nintendo Switch™ 2 today!">Minecraft lands on Switch 2 with Vibrant Visuals</a></h3><p class="deck">The Switch 2 edition adds directional lighting, volumetric fog and dynamic shadows, plus the Super Mario Mash-Up Pack with 40 skins.</p>
+              <p class="src">Minecraft News</p></div></article><article class="card side-story" id="story-the-finals-new-filters-read-over-10-million-chat-messages-si" data-entries="[&quot;https://www.reachthefinals.com/patchnotes/12-10&quot;, &quot;https://store.steampowered.com/news/app/2073850/view/703283562262037038&quot;]"><div class="pad">
+              <div class="meta"><span class="sticker " title="Published Thursday 29 October, 12:00">29 Oct</span><span class="label">THE FINALS</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+              <h3><a href="https://www.reachthefinals.com/patchnotes/12-10" title="THE FINALS Patch Notes: Update 12.1.0">THE FINALS&#x27; new filters read over 10 million chat messages since PRIME TIME</a></h3><p class="deck">Update 12.1.0 adds fog, the Revenant Countess Set and a Translocator range change. Embark says the Translocator still needs work.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-the-finals-prime-time-is-live-and-the-arena-breaks-better" title="The earlier story, in Vol. 1 · No. 3">THE FINALS PRIME TIME is live, and the Arena breaks better</a> · Vol. 1 · No. 3</p>
+              <p class="src">THE FINALS Patch Notes · <a href="https://store.steampowered.com/news/app/2073850/view/703283562262037038" title="THE FINALS News: Update 12.1.0">THE FINALS News</a></p></div></article></div></div><section class="card ticker" aria-label="Also shipped" data-entries="[&quot;https://github.com/AppliedEnergistics/Applied-Energistics-2/releases/tag/forge%2Fv15.4.12&quot;, &quot;https://github.com/AppliedEnergistics/Applied-Energistics-2/releases/tag/fabric%2Fv15.4.12&quot;]"><span class="ticker-label">Also shipped · 2</span>
+          <ul><li><span class="name">Applied Energistics 2</span><a class="ver" href="https://github.com/AppliedEnergistics/Applied-Energistics-2/releases/tag/forge%2Fv15.4.12" title="Applied Energistics 2: newest of 2 releases in 8 days">forge%2Fv15.4.12</a><span class="label">2× · 29 Oct</span></li></ul></section><div class="fold"><span>Below the fold</span></div><div class="flow" data-flow><article class="card story" id="story-minecraft-26-4-snapshot-6-adds-snow-bricks-and-a-cold-sulfur" data-entries="[&quot;https://www.minecraft.net/en-us/article/minecraft-26-4-snapshot-6&quot;]"><figure class="photo"><img src="https://www.minecraft.net/content/dam/minecraftnet/article-asset/2026/minecraft-26-4-snapshot-6/new-article-hero-image.jpg" alt="Minecraft screenshot: a player sits on a light blue cube on a frozen lake and fishes through the ice, with a snow brick igloo and a chest behind." loading="lazy" decoding="async" referrerpolicy="no-referrer"><figcaption>Image: Minecraft News</figcaption></figure>
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Tuesday 27 October, 16:00">27 Oct</span><span class="label">Minecraft</span><span class="sticker dev" title="This story continues a story from an earlier issue">Development</span></div>
+          <h3><a href="https://www.minecraft.net/en-us/article/minecraft-26-4-snapshot-6" title="Minecraft News: Minecraft 26.4 Snapshot 6">Minecraft 26.4 Snapshot 6 adds snow bricks and a Cold Sulfur Cube</a></h3>
+          <p class="deck">The cube floats and freezes water into Frosted Ice as it moves, like Frost Walker. Java now sizes its heap: up to 25% of RAM.</p><p class="follows">Follows <a href="/issues/2026-10-25/#story-minecraft-26-4-snapshot-5-builds-with-packed-ice-bricks" title="The earlier story, in Vol. 1 · No. 3">Minecraft 26.4 Snapshot 5 builds with Packed Ice Bricks</a> · Vol. 1 · No. 3</p>
+          <p class="src">Minecraft News</p></div></article><article class="card story" id="story-meet-the-four-neighborhoods-of-toledo" data-entries="[&quot;https://arcraiders.com/news/who-are-the-contradas-of-toledo&quot;]"><figure class="photo"><img src="https://assets.arcraiders.com/media/2805571e-402c-ArcRaiders_ScreenShot_16x9_Contradasl-1024x576.jpg" alt="ARC Raiders screenshot: a carved wooden map of Toledo, lit by small lights, with the neighborhoods Speranza, Ferrovia, Murteta and Vaulto." loading="lazy" decoding="async" referrerpolicy="no-referrer"><figcaption>Image: ARC Raiders Official News</figcaption></figure>
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Thursday 29 October, 02:00">29 Oct</span><span class="label">ARC Raiders lore</span></div>
+          <h3><a href="https://arcraiders.com/news/who-are-the-contradas-of-toledo" title="ARC Raiders Official News: The ‘Contradas’ of Toledo: Who are they?">Meet the four neighborhoods of Toledo</a></h3>
+          <p class="deck">Speranza shares the city with Ferrovia, Murteta and Vaulto. Their alliance is shaky and transactional, but necessary.</p>
+          <p class="src">ARC Raiders Official News</p></div></article><article class="card story" id="story-bedrock-26-60-opens-the-ice-caves-as-an-experiment" data-entries="[&quot;https://www.minecraft.net/en-us/article/minecraft--bedrock-edition-26-60-changelog&quot;, &quot;https://www.minecraft.net/en-us/article/minecraft-preview-26-70-22&quot;, &quot;https://www.minecraft.net/en-us/article/drop-4-2026-testing&quot;]">
+          <div class="pad"><div class="meta"><span class="sticker " title="Published Tuesday 27 October, 17:13">27 Oct</span><span class="label">Minecraft</span></div>
+          <h3><a href="https://www.minecraft.net/en-us/article/minecraft--bedrock-edition-26-60-changelog" title="Minecraft News: Minecraft: Bedrock Edition 26.60 Changelog">Bedrock 26.60 opens the ice caves as an experiment</a></h3>
+          <p class="deck">Icicles, ice crystals and Frostbites arrive as experimental features. Preview 26.70.22 adds snow bricks and a cold sulfur cube that freezes water.</p>
+          <p class="src">Minecraft News · <a href="https://www.minecraft.net/en-us/article/minecraft-preview-26-70-22" title="Minecraft News: Minecraft Preview 26.70.22">Minecraft Preview 26.70.22</a> · <a href="https://www.minecraft.net/en-us/article/drop-4-2026-testing" title="Minecraft News: Everything you can test from the upcoming game drop">Everything you can test from the upcoming game drop</a></p></div></article><section class="card box classifieds" data-entries="[&quot;https://arcraiders.com/news/corsair-collab-exclusive-rewards&quot;, &quot;https://www.minecraft.net/en-us/article/rob-a-mob&quot;, &quot;https://www.minecraft.net/en-us/article/halloween-on-realms&quot;, &quot;https://www.minecraft.net/en-us/article/fall-drop-free-sound-effect-pack&quot;, &quot;https://www.minecraft.net/en-us/article/spooky-showcase-challenge-winners&quot;, &quot;https://store.steampowered.com/news/289185/&quot;, &quot;https://store.steampowered.com/news/289665/&quot;]"><header><h2>Classifieds</h2><p class="note">No refunds on pumpkins.</p></header><ul><li><span class="sticker wait">GEAR</span> <a href="https://arcraiders.com/news/corsair-collab-exclusive-rewards" title="ARC Raiders Official News: ARC Raiders x CORSAIR: Official gear collection and exclusive in-game rewards">ARC Raiders controllers, keyboards and a Stream Deck from CORSAIR, SCUF and Elgato, each with in-game rewards.</a></li><li><span class="sticker wait">PVP</span> <a href="https://www.minecraft.net/en-us/article/rob-a-mob" title="Minecraft News: Collect, steal, and protect rare mobs in Rob A Mob">Rob A Mob: collect rare mobs, then guard them from raiders, on Bedrock.</a></li><li><span class="sticker wait">SPOOKY</span> <a href="https://www.minecraft.net/en-us/article/halloween-on-realms" title="Minecraft News: Halloween on Realms: Creeping Suspicion">12 new Halloween maps on Realms.</a></li><li><span class="sticker wait">FREE</span> <a href="https://www.minecraft.net/en-us/article/fall-drop-free-sound-effect-pack" title="Minecraft News: Get in the fall groove with this free sound effect pack">A fall sound pack with louder leaves, creaky doors and cooing owls.</a></li><li><span class="sticker wait">WINNERS</span> <a href="https://www.minecraft.net/en-us/article/spooky-showcase-challenge-winners" title="Minecraft News: Spooky Spotlight: Spooky Showcase Challenge Winners">The Spooky Showcase Challenge, with “Don&#x27;t BUY FRIENDS on the INTERNET.”</a></li><li><span class="sticker wait">PATCHED</span> <a href="https://store.steampowered.com/news/289185/" title="Steam News: Team Fortress 2 Update Released">Team Fortress 2 fixes the smoke effect of Le Sapeur.</a></li><li><span class="sticker wait">FOUND</span> <a href="https://store.steampowered.com/news/289665/" title="Steam News: Team Fortress 2 Update Released">The missing model of Spies disguised as pumpkins, in cp_wildcat_event.</a></li></ul></section></div>
+          <p class="edition-end"><a href="#top">↑ Back to top</a><a class="get-desk" href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed. No account needed.">Start a feed with these sources →</a></p>
+        </section>
+<section class="card about" id="about" aria-labelledby="about-title"><h2 id="about-title">What is this?</h2><p>A weekly paper about developer tools, AI agents and games. Every Sunday an AI agent reads Yarden&#x27;s Riffle desks, ranks the news, writes the headlines and links every story to its source. Want the same news in your own feed?</p><div class=about-links><a class="get-desk" href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed. No account needed.">Start a feed with the dev sources →</a><a class="get-desk" href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed. No account needed.">Start a feed with the games sources →</a></div></section>
+</main>
+<section class="sync-bar" data-sync aria-label="Your Riffle" aria-live="polite" hidden></section>
+<nav class="issue-nav" aria-label="Issues" data-page="/issues/2026-11-01/"><a rel="prev" href="/issues/2026-10-25/" title="Previous issue">← Previous</a><a href="/issues/">All issues</a><a rel="next" hidden>Next →</a></nav>
+<footer><p>Built 1 November 2026 from Yarden&#x27;s Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.</p><p>Want these desks? Copy their sources into your own Riffle: <a href="https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg" title="Import the dev sources into your own Riffle feed">dev</a>, <a href="https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg" title="Import the games sources into your own Riffle feed">games</a>.</p><p>Images load from the publishers' websites. Each image credits its source.</p><p><a href="/feed.xml">Feed</a> · <a href="https://github.com/Yarden-zamir/news/issues">Report a mistake</a></p></footer>
+</div><script type="application/json" id="riffle-sync">{"origin": "https://riffle.yarden-zamir.com", "since": "2026-10-23T09:01:32.140070+02:00", "until": "2026-11-02T09:01:32.140070+02:00", "shares": {"dev": "https://riffle.yarden-zamir.com/share/m6fTRqPU_Tpy8oo6hBwdCg", "games": "https://riffle.yarden-zamir.com/share/iEZKXyhEwHhL264-p53VWg"}, "follow": [{"name": "BleepingComputer: AI agents", "plugin": "rss-atom", "config": {"url": "https://www.bleepingcomputer.com/feed/", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment"]}, "urls": ["https://www.bleepingcomputer.com/news/security/malicious-claude-code-extension-on-cursor-planted-ssh-backdoors/"]}, {"name": "Game Developer: AI tools", "plugin": "news-sitemap", "config": {"url": "https://www.gamedeveloper.com/googlenews.xml", "include_any": ["Claude", "Anthropic", "OpenAI", "Codex", "generative AI", "AI tool", "AI code", "vibe cod"]}, "urls": ["https://www.gamedeveloper.com/programming/anthropic-appears-to-have-ordered-ai-tool-claude-to-stop-remaking-video-games"]}, {"name": "WIRED: AI agents", "plugin": "rss-atom", "config": {"url": "https://www.wired.com/feed/rss", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment"]}, "urls": ["https://www.wired.com/story/a-defense-contractor-gave-their-personal-ai-agent-access-to-a-secure-pentagon-system/"]}, {"name": "Insurance Journal: AI agents", "plugin": "rss-atom", "config": {"url": "https://www.insurancejournal.com/rss/news/international/", "include_any": ["AI agent", "coding agent", "AI coding", "Claude Code", "Codex", "OpenCode", "misalignment", "AI model"]}, "urls": ["https://www.insurancejournal.com/news/international/2026/10/29/890745.htm"]}, {"name": "T3 Code Fork Daily Release", "plugin": "rss-atom", "config": {"url": "https://github.com/Yarden-zamir/t3code/releases.atom", "include_any": ["Daily release of fork main"], "enrichment_profile": "compact-release-notes"}, "urls": ["https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261026.2890000", "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.3-nightly.20261027.3060000", "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261028.3150000", "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.4-nightly.20261029.3220000", "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261029.3360000", "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.6-nightly.20261030.3540000", "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.7-nightly.20261101.3570000"]}]}</script><script>
+// Masonry: deal cards in rank order into the shortest column, so the top row holds the best stories.
+// In brief starts as one visible box after the flow. The script deals its items into the columns instead.
+const flows = [...document.querySelectorAll("[data-flow]")].map((flow) => {
+  const pool = flow.nextElementSibling?.matches("[data-pool]") ? flow.nextElementSibling : null;
+  const briefs = pool ? [...pool.querySelectorAll("li")] : [];
+  const more = pool?.querySelector(".more") ?? null;
+  pool?.remove();
+  return { flow, cards: [...flow.children], briefs, more };
+});
+const shortest = (cols) => cols.reduce((low, col) => (col.offsetHeight < low.offsetHeight ? col : low));
+function briefBox(title) {
+  const box = Object.assign(document.createElement("section"), { className: "card box brief" });
+  box.innerHTML = `<header><h2>${title}</h2></header><ul></ul>`;
+  return box;
+}
+function pack() {
+  for (const { flow, cards, briefs, more } of flows) {
+    if (flow.closest("[hidden]")) continue;
+    // Sizes are in rem and the base size follows the viewport, so measure it on each pack.
+    const root = getComputedStyle(document.documentElement);
+    const rem = parseFloat(root.fontSize);
+    const gap = parseFloat(root.getPropertyValue("--gap")) * rem;
+    const columns = Math.max(1, Math.floor((flow.clientWidth + gap) / (17 * rem + gap)));
+    const cols = Array.from({ length: columns }, () => Object.assign(document.createElement("div"), { className: "col" }));
+    flow.classList.add("packed", "packing");
+    flow.style.setProperty("--cols", columns);
+    flow.replaceChildren(...cols);
+    for (const card of cards) shortest(cols).append(card);
+    // In brief fills the gaps: one item at a time into the shortest column, each column with its own box.
+    // Three items or fewer stay together in one box, because a box with one item looks empty.
+    const boxes = new Map();
+    for (const item of briefs) {
+      const col = briefs.length <= 3 && boxes.size ? boxes.keys().next().value : shortest(cols);
+      if (!boxes.has(col)) boxes.set(col, col.appendChild(briefBox(boxes.size ? "In brief, continued" : "In brief")));
+      boxes.get(col).querySelector("ul").append(item);
+    }
+    if (more && boxes.size) [...boxes.values()].at(-1).append(more);
+    flow.classList.remove("packing");
+  }
+}
+let pending = 0;
+const schedule = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(pack); };
+addEventListener("resize", schedule);
+document.fonts?.ready.then(() => { schedule(); if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView(); });
+for (const img of document.images) img.addEventListener("error", () => { img.closest(".photo")?.remove(); img.remove(); schedule(); });
+pack();
+
+const buttons = document.querySelectorAll(".seg button");
+for (const button of buttons) button.addEventListener("click", () => {
+  for (const other of buttons) other.setAttribute("aria-pressed", String(other === button));
+  for (const section of document.querySelectorAll(".edition")) {
+    section.hidden = button.dataset.show !== "all" && section.dataset.section !== button.dataset.show;
+  }
+  schedule();
+});
+
+// The next issue does not exist when a page is built, so the page reads it from the list of issues that the site build writes.
+const issueNavs = document.querySelectorAll(".issue-nav[data-page]");
+if (issueNavs.length) fetch("/issues/index.json").then((response) => {
+  if (!response.ok) throw new Error(`/issues/index.json: status ${response.status}`);
+  return response.json();
+}).then((issues) => {
+  if (!Array.isArray(issues)) throw new Error("/issues/index.json is not a list");
+  for (const nav of issueNavs) {
+    const at = issues.findIndex((issue) => issue.page === nav.dataset.page);
+    const next = at < 0 ? undefined : issues[at + 1];
+    const link = nav.querySelector('[rel="next"]');
+    if (!next || !link) continue;
+    link.href = next.page;
+    link.title = `${next.issue} · ${next.date}`;
+    link.hidden = false;
+  }
+});
+
+// Sync with the reader's Riffle. Sign-in happens on Riffle, and its session cookie stays there; this site stores nothing.
+// A block is an element with data-entries: the URLs of the items that it is based on. Item ids differ per account,
+// so the script finds the reader's own items by URL. Buttons on a block change every item of the block.
+const syncConfig = document.getElementById("riffle-sync");
+if (syncConfig) startSync(JSON.parse(syncConfig.textContent));
+
+function startSync({ origin, since, until, shares, follow = [] }) {
+  const bar = document.querySelector("[data-sync]");
+  const blocks = [...document.querySelectorAll("[data-entries]")].map((el) => ({ el, urls: JSON.parse(el.dataset.entries) }));
+  const blockOf = new Map(blocks.map((block) => [block.el, block]));
+  const pageUrls = new Set(blocks.flatMap((block) => block.urls));
+  const back = encodeURIComponent(location.href.split("#")[0]);
+  const hoverable = matchMedia("(hover: hover)").matches;
+  // Icons from Lucide (https://lucide.dev, ISC license), the same icons that Riffle shows.
+  const icon = (...paths) => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths.map((d) => `<path d="${d}"/>`).join("")}</svg>`;
+  const BOOKMARK = "M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z";
+  const ACTIONS = {
+    dismissed: { label: "Viewed", mark: "Mark as viewed", unmark: "Mark as not viewed", icon: icon("M20 6 9 17l-5-5") },
+    saved: { label: "Shelved", mark: "Put on your shelf", unmark: "Take off your shelf",
+      icon: icon(BOOKMARK, "M12 7v6", "M15 10H9"), pressedIcon: icon(BOOKMARK, "m9 10 2 2 4-4") },
+  };
+  const RSS = icon("M4 11a9 9 0 0 1 9 9", "M4 4a16 16 0 0 1 16 16", "M6 19a1 1 0 1 1-2 0 1 1 0 0 1 2 0");
+  const WRITE = { "Content-Type": "application/json", "X-Riffle-Request": "1" };
+  // Bonus stories come from outside the feeds. Each has a Riffle source that catches it and stories like it.
+  const followOf = (block) => follow.filter((source) => source.urls.some((url) => block.urls.includes(url)));
+  let account = null;
+  let byUrl = new Map();
+  let loaded = false;
+  let writes = 0;
+
+  const el = (tag, props = {}, ...children) => {
+    const node = Object.assign(document.createElement(tag), props);
+    node.append(...children);
+    return node;
+  };
+
+  async function api(path, init = {}) {
+    const headers = { ...init.headers, ...(account ? { "X-Riffle-Owner": account.id } : {}) };
+    const response = await fetch(origin + path, { ...init, headers, credentials: "include" });
+    if (!response.ok) throw Object.assign(new Error(`Riffle answered ${response.status}`), { status: response.status });
+    return response.json();
+  }
+
+  // A full page means a cut window, so split it in halves. Below one second, keep the cut page: the bar then shows less.
+  async function changes(start, end) {
+    const query = new URLSearchParams({ since: start.toISOString(), until: end.toISOString(), include_dismissed: "true", limit: "500" });
+    const rows = await api(`/changes?${query}`);
+    if (rows.length < 500 || end - start <= 1000) return rows;
+    const middle = new Date((start.getTime() + end.getTime()) / 2);
+    return [...(await changes(start, middle)), ...(await changes(middle, end))];
+  }
+
+  async function load() {
+    const next = new Map();
+    const ids = new Set();
+    for (const row of await changes(new Date(since), new Date(until))) {
+      if (!row.url || !pageUrls.has(row.url) || ids.has(row.id)) continue;
+      ids.add(row.id);
+      next.set(row.url, [...(next.get(row.url) ?? []), row]);
+    }
+    byUrl = next;
+    loaded = true;
+  }
+
+  const matched = (block) => block.urls.flatMap((url) => byUrl.get(url) ?? []);
+  const actionsOf = (block) => block.el.querySelector(":scope > .sync-actions");
+
+  // The corner buttons show the icon only. The sheet buttons show the icon and the label.
+  function syncButton(block, field, inSheet) {
+    const button = el("button", { type: "button", className: "sync-btn" }, ...(inSheet ? [el("span", {}, ACTIONS[field].label)] : []));
+    button.dataset.field = field;
+    if (!inSheet) button.setAttribute("aria-label", ACTIONS[field].label);
+    button.addEventListener("click", () => {
+      if (inSheet) sheet.close();
+      toggle(block, field);
+    });
+    press(button, matched(block).every((row) => row[field]));
+    return button;
+  }
+
+  function press(button, on) {
+    if (button.getAttribute("aria-pressed") === String(on)) return;
+    const action = ACTIONS[button.dataset.field];
+    button.setAttribute("aria-pressed", String(on));
+    button.title = on ? action.unmark : action.mark;
+    button.querySelector("svg")?.remove();
+    button.insertAdjacentHTML("afterbegin", (on && action.pressedIcon) || action.icon);
+  }
+
+  function followButton(block, inSheet) {
+    const button = el("button", { type: "button", className: "sync-btn", title: "Follow the source of this story in your Riffle" },
+      ...(inSheet ? [el("span", {}, "Follow")] : []));
+    if (!inSheet) button.setAttribute("aria-label", "Follow the source");
+    button.insertAdjacentHTML("afterbegin", RSS);
+    button.addEventListener("click", () => openFollow(block));
+    return button;
+  }
+
+  // The buttons of a block: Viewed and Shelved when the reader's feeds hold its items, and Follow when it shows a bonus story.
+  function addActions(block, fields, follows) {
+    const group = el("div", { className: "sync-actions" }, ...fields.map((field) => syncButton(block, field, false)),
+      ...(follows ? [followButton(block, false)] : []));
+    group.dataset.shape = [...fields, ...(follows ? ["follow"] : [])].join(" ");
+    group.setAttribute("role", "group");
+    group.setAttribute("aria-label", "Your Riffle");
+    block.el.append(group);
+    return group;
+  }
+
+  function paint() {
+    for (const block of blocks) {
+      const rows = matched(block);
+      const fields = rows.length ? Object.keys(ACTIONS) : [];
+      const follows = Boolean(account) && followOf(block).length > 0;
+      const shape = [...fields, ...(follows ? ["follow"] : [])].join(" ");
+      let group = actionsOf(block);
+      if (group && group.dataset.shape !== shape) {
+        group.remove();
+        group = null;
+      }
+      if (!group && shape) group = addActions(block, fields, follows);
+      block.el.classList.toggle("is-viewed", rows.length > 0 && rows.every((row) => row.dismissed));
+      for (const button of group?.querySelectorAll("button[data-field]") ?? []) press(button, rows.every((row) => row[button.dataset.field]));
+      for (const link of block.el.querySelectorAll("a[href]")) {
+        const own = byUrl.get(link.getAttribute("href")) ?? [];
+        link.classList.toggle("entry-viewed", own.length > 0 && own.every((row) => row.dismissed));
+        link.classList.toggle("entry-shelved", own.some((row) => row.saved));
+      }
+    }
+  }
+
+  // Touch screens have no hover. A long press on a block opens its buttons in a sheet at the bottom of the screen.
+  const sheet = el("dialog", { className: "sync-sheet" });
+  sheet.setAttribute("aria-label", "Your Riffle");
+  sheet.addEventListener("click", (event) => {
+    if (event.target === sheet) sheet.close();
+  });
+  document.body.append(sheet);
+
+  function openSheet(block) {
+    if (!matched(block).length) return openFollow(block);
+    const count = block.urls.filter((url) => byUrl.has(url)).length;
+    const title = ["h3", "h2", "blockquote", ".ticker-label", "a"].map((selector) => block.el.querySelector(selector)).find(Boolean);
+    sheet.replaceChildren(el("div", { className: "sheet-body" },
+      el("p", { className: "label" }, count > 1 ? `Your Riffle · ${count} items` : "Your Riffle"),
+      el("p", { className: "sheet-title" }, title?.textContent.trim() ?? ""),
+      el("div", { className: "sheet-actions" }, ...Object.keys(ACTIONS).map((field) => syncButton(block, field, true)),
+        ...(followOf(block).length ? [followButton(block, true)] : [])),
+      el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Cancel")));
+    sheet.showModal();
+  }
+
+  const failure = (error) => ({ 401: "Your Riffle session ended. Sign in again.", 409: "Riffle refused: the profile exists, or your account is full.",
+    422: "Riffle refused this source." })[error?.status] ?? "Riffle did not answer. Try again.";
+  const terms = (value) => [value ?? []].flat().map((term) => String(term).trim().toLowerCase()).filter(Boolean).sort();
+  // Two sources are the same when they fetch the same things, whatever their name and profile.
+  const fetchKey = ({ plugin, config }) => {
+    const { profile, include_any, exclude_any, ...rest } = config;
+    return JSON.stringify([plugin, terms(include_any), terms(exclude_any), Object.entries(rest).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))]);
+  };
+
+  // The sheet lists the sources of the bonus stories of a block. It reads the reader's profiles and sources each time it opens.
+  async function openFollow(block) {
+    const sources = followOf(block);
+    const section = block.el.closest(".edition")?.dataset.section ?? "news";
+    const list = el("div", { className: "follow-list" }, el("p", { className: "hint" }, "Reading your Riffle…"));
+    sheet.replaceChildren(el("div", { className: "sheet-body" },
+      el("p", { className: "label" }, "Follow in your Riffle"),
+      el("p", {}, sources.length > 1 ? "These sources caught the bonus stories here, and catch more like them."
+        : "This source caught the bonus story here, and catches more like it."),
+      list,
+      el("button", { type: "button", className: "sheet-close", onclick: () => sheet.close() }, "Close")));
+    if (!sheet.open) sheet.showModal();
+    let riffle;
+    try {
+      const [profiles, own] = await Promise.all([api("/profiles"), api("/sources")]);
+      riffle = { profiles: profiles.map((profile) => profile.name), own };
+    } catch (error) {
+      return list.replaceChildren(el("p", { className: "sticker warn" }, failure(error)));
+    }
+    list.replaceChildren(...sources.map((source) => followRow(source, section, riffle)));
+  }
+
+  function followed(saved) {
+    const where = `${origin}/?${new URLSearchParams({ profile: saved.config.profile, source: String(saved.id) })}`;
+    return el("p", { className: "followed" }, "✓ In your ", el("a", { href: where }, `${saved.config.profile} feed`));
+  }
+
+  function followRow(source, section, riffle, note) {
+    const host = new URL(source.config.url).hostname;
+    const words = [source.config.include_any ?? []].flat();
+    const about = words.length ? `stories with ${words.slice(0, 4).join(", ")}${words.length > 4 ? "…" : ""}` : "every story";
+    const row = el("div", { className: "follow-source" }, el("b", {}, source.name),
+      el("span", { className: "hint" }, `${host.startsWith("www.") ? host.slice(4) : host} · ${about}`));
+    const same = riffle.own.find((own) => fetchKey(own) === fetchKey(source));
+    if (same) {
+      row.append(followed(same));
+      return row;
+    }
+    // A reader without a profile, or who picks "New profile", names one. The edition's name is the first guess.
+    const choice = el("select", {}, ...riffle.profiles.map((name) => el("option", { value: name }, name)),
+      el("option", { value: "" }, "New profile…"));
+    choice.setAttribute("aria-label", "Profile");
+    choice.value = riffle.profiles.includes(section) ? section : (riffle.profiles[0] ?? "");
+    const name = el("input", { value: section, maxLength: 100 });
+    name.setAttribute("aria-label", "New profile name");
+    name.hidden = choice.value !== "";
+    choice.addEventListener("change", () => { name.hidden = choice.value !== ""; });
+    const add = el("button", { type: "button", className: "sync-btn" }, "Follow");
+    add.addEventListener("click", async () => {
+      const fresh = choice.value === "";
+      const profile = fresh ? name.value.trim() : choice.value;
+      if (!profile) return name.focus();
+      add.disabled = true;
+      try {
+        if (fresh) {
+          await api("/profiles", { method: "POST", headers: WRITE, body: JSON.stringify({ name: profile }) });
+          riffle.profiles.push(profile);
+        }
+        const saved = await api("/sources", { method: "POST", headers: WRITE,
+          body: JSON.stringify({ name: source.name, plugin: source.plugin, config: { ...source.config, profile }, enabled: true }) });
+        riffle.own.push(saved);
+        row.replaceWith(followRow(source, section, riffle));
+        // Fetch at once, so that the first stories show in Riffle now. If this fails, Riffle's hourly refresh fetches the source.
+        api(`/sources/${saved.id}/refresh`, { method: "POST", headers: WRITE }).catch(() => {});
+      } catch (error) {
+        row.replaceWith(followRow(source, section, riffle, failure(error)));
+      }
+    });
+    row.append(el("div", { className: "follow-form" }, choice, name, add), ...(note ? [el("p", { className: "sticker warn" }, note)] : []));
+    return row;
+  }
+
+  const HOLD_MS = 450;
+  let hold = null;
+  // After a long press, the next click is the lifted finger. It must not follow a link, or close the sheet through the backdrop.
+  let held = false;
+  function endHold() {
+    if (!hold) return;
+    clearTimeout(hold.timer);
+    hold.block.el.classList.remove("holding");
+    hold = null;
+  }
+  addEventListener("pointerdown", (event) => {
+    endHold();
+    held = false;
+    const block = blockOf.get(event.target.closest("[data-entries]"));
+    if (event.pointerType !== "touch" || !block || !actionsOf(block)) return;
+    block.el.classList.add("holding");
+    hold = { block, x: event.clientX, y: event.clientY, timer: setTimeout(() => {
+      endHold();
+      held = true;
+      navigator.vibrate?.(10);
+      openSheet(block);
+    }, HOLD_MS) };
+  });
+  // A finger that moves scrolls the page. The browser then also sends pointercancel.
+  addEventListener("pointermove", (event) => {
+    if (hold && Math.hypot(event.clientX - hold.x, event.clientY - hold.y) > 10) endHold();
+  });
+  addEventListener("pointerup", endHold);
+  addEventListener("pointercancel", endHold);
+  addEventListener("keydown", () => { held = false; });
+  addEventListener("contextmenu", (event) => {
+    if (hold || held) event.preventDefault();
+  });
+  addEventListener("click", (event) => {
+    if (!held) return;
+    held = false;
+    event.preventDefault();
+    event.stopPropagation();
+  }, true);
+
+  function show(...children) {
+    bar.replaceChildren(...children);
+    bar.hidden = false;
+  }
+
+  function signedOut(note) {
+    account = null;
+    byUrl = new Map();
+    loaded = false;
+    paint();
+    show(...(note ? [el("span", { className: "sticker warn" }, note)] : []),
+      el("span", {}, "Read these desks in Riffle?"),
+      el("a", { className: "get-desk", href: `${origin}/auth/start?rd=${back}` }, "Sign in with GitHub"),
+      el("span", { className: "hint" }, "to see what you viewed and shelved, and to mark it here."));
+  }
+
+  function signedIn() {
+    const inFeed = [...pageUrls].filter((url) => byUrl.has(url)).length;
+    const imports = Object.entries(shares ?? {}).flatMap(([name, url], index) => [index ? " · " : "", el("a", { href: url }, name)]);
+    const point = hoverable ? "Point at" : "Press and hold";
+    const reach = inFeed
+      ? [el("span", {}, `${inFeed} of ${pageUrls.size} items on this page are in your feeds.`),
+        el("span", { className: "hint" }, `${point} a story to mark it as viewed or shelved.`)]
+      : [el("span", {}, "None of the items on this page are in your feeds.", ...(imports.length ? [" Import the sources: ", ...imports] : []))];
+    if (follow.length) reach.push(el("span", { className: "hint" }, `${point} a bonus story to follow its source.`));
+    const who = el("span", { className: "who" }, "Synced as ", el("b", {}, `@${account.login}`));
+    // Owner ids of GitHub accounts are "github:<numeric id>". The avatar host sets no cookies.
+    if (account.id.startsWith("github:")) {
+      const avatar = el("img", { className: "avatar", alt: "", src: `https://avatars.githubusercontent.com/u/${account.id.slice(7)}?s=64` });
+      avatar.addEventListener("error", () => avatar.remove());
+      who.prepend(avatar);
+    }
+    show(who, ...(loaded ? reach : []), el("a", { href: `${origin}/auth/sign_out?rd=${back}` }, "Sign out"));
+  }
+
+  function problem(error) {
+    if (error?.status === 401) return signedOut("Your Riffle session ended.");
+    signedIn();
+    const note = error?.status === 412 ? "Your Riffle account changed. Reload the page." : "Riffle did not answer. Try again.";
+    bar.prepend(el("span", { className: "sticker warn" }, note));
+  }
+
+  async function toggle(block, field) {
+    const rows = matched(block);
+    const group = actionsOf(block);
+    if (!rows.length || !group) return;
+    const value = !rows.every((row) => row[field]);
+    const before = rows.map((row) => row[field]);
+    for (const row of rows) row[field] = value;
+    paint();
+    writes += 1;
+    for (const button of group.querySelectorAll("button")) button.disabled = true;
+    // One PATCH per item. The release ticker can hold 40 or more items. If such writes feel slow, add a bulk route to Riffle.
+    const results = await Promise.allSettled(rows.map((row) => api(`/changes/${row.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "X-Riffle-Request": "1" },
+      body: JSON.stringify({ [field]: value }),
+    })));
+    writes -= 1;
+    for (const button of group.querySelectorAll("button")) button.disabled = false;
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") Object.assign(rows[index], result.value);
+      else rows[index][field] = before[index];
+    });
+    paint();
+    const failed = results.find((result) => result.status === "rejected");
+    if (failed) problem(failed.reason);
+    else signedIn();
+  }
+
+  // Live state: read again when the tab comes back, and every minute while it is open. Never during a write.
+  async function refresh() {
+    if (!account || writes || document.hidden) return;
+    try {
+      await load();
+      paint();
+      signedIn();
+    } catch (error) {
+      problem(error);
+    }
+  }
+
+  (async () => {
+    let me;
+    try {
+      me = await api("/me");
+    } catch (error) {
+      // Without an answer, Riffle does not accept this site yet, so the page stays as it is.
+      if (error.status === 401) signedOut();
+      return;
+    }
+    if (!me.authenticated) return signedOut();
+    account = { id: me.id, login: me.login };
+    try {
+      await load();
+    } catch (error) {
+      return problem(error);
+    }
+    paint();
+    signedIn();
+    document.addEventListener("visibilitychange", refresh);
+    setInterval(refresh, 60000);
+  })();
+}
+</script></body></html>
