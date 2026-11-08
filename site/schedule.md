@@ -23,6 +23,10 @@ Run each script as `uv run --no-project --python 3.12 python -I $SKILL/<script>`
 3. Read `$SITE/public/issues/*/covered.json`: every item that earlier issues showed. No item from these files may appear again.
 4. Add 2 to 5 bonus stories from outside the feed. Find them with web search: news from this week that the feed does not have and that no earlier issue showed.
    Interests: coding agents and Claude Code, T3 Code, herdr and terminals, git and worktrees, Cloudflare, Python and uv, self-hosting, OpenStreetMap, Minecraft and ARC Raiders.
+   Also search for severe vulnerabilities of the week in software that developers or self-hosters run.
+   Examples are OpenSSH, git, curl, OpenSSL, glibc or musl, the Linux kernel and package registries.
+   Such a story is always a candidate for the front page, also when the feed does not have it.
+   Read every headline of each feed that you open, not only the entries that match your search.
    Read each page. Append each story to `items.json` with `"bonus": true`, the matching section, a unique id such as `bonus-1`, its real URL and its publish time.
    Find the rows of the police blotter of step 6 in the same way. They do not count toward the 5.
 5. Find developments: new items that continue a story of an earlier issue. Set `follows` to the URL of the earlier item, and say in the deck what changed.
