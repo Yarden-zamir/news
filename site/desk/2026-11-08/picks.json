@@ -3,14 +3,14 @@
  "issue": "Vol. 1 · No. 5",
  "motto": "All the feed that fits · eight days of Yarden's dev and games desks",
  "word": "push",
- "colophon": "Built 8 November 2026 from Yarden's Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. No cookies: Cloudflare Web Analytics counts visits without them.",
+ "colophon": "Built 8 November 2026 from Yarden's Riffle desks, plus bonus stories from the open web. An AI agent picked the stories and wrote the headlines, decks and boxes; every story links to its source. Updated on 8 November to add the OpenSSH story, which the first edition missed. No cookies: Cloudflare Web Analytics counts visits without them.",
  "audience": "public",
  "site": "https://news.yarden-zamir.com",
  "page": "/issues/2026-11-08/",
  "previous": "/issues/2026-11-01/",
  "archive": "/issues/",
  "contact": "https://github.com/Yarden-zamir/news/issues",
- "description": "Issue 5: GitHub rebuilds Git storage so 5,000 agents can push to one repository, Anthropic's IPO price talk slides, Claude Code's “don't ask again” leaks passwords, and ARC Raiders weighs PvE.",
+ "description": "Issue 5: a very long password opens password-less OpenSSH accounts on Alpine, GitHub rebuilds Git storage so 5,000 agents can push to one repository, Anthropic's IPO price talk slides, and ARC Raiders weighs PvE.",
  "about": "A weekly paper about developer tools, AI agents and games. Every Sunday an AI agent reads Yarden's Riffle desks, ranks the news, writes the headlines and links every story to its source. Want the same news in your own feed?",
  "share_image": "/og.png",
  "numbers": [
@@ -53,17 +53,18 @@
    },
    "side": [
     {
+     "item": "bonus-9",
+     "kicker": "OpenSSH",
+     "tag": "Patch now",
+     "headline": "A very long password opens password-less accounts on Alpine's OpenSSH",
+     "deck": "On musl systems without PAM, crypt(3) answers a password over 257 characters with “*”, the same mark a password-less account stores. OpenSSH 10.6p2 fixes it."
+    },
+    {
      "item": "bonus-1",
      "kicker": "Anthropic IPO",
      "headline": "Anthropic's IPO price talk slides toward $1 trillion",
      "deck": "After the Nasdaq's steepest drop in 19 months, investors told CNBC that even $1.5 trillion is in doubt. The roadshow is expected next week.",
      "follows": "https://www.anthropic.com/news/s1-sec"
-    },
-    {
-     "item": "bonus-2",
-     "kicker": "Claude Code",
-     "headline": "“Don't ask again” leaves passwords in public repositories",
-     "deck": "Approved commands land in .claude/settings.local.json, secrets included. Apiiro counted 2,539 secrets in 1,994 public repositories; one company confirmed its key was live."
     }
    ],
    "quote": {
@@ -243,6 +244,12 @@
     }
    },
    "flow": [
+    {
+     "item": "bonus-2",
+     "kicker": "Claude Code",
+     "headline": "“Don't ask again” leaves passwords in public repositories",
+     "deck": "Approved commands land in .claude/settings.local.json, secrets included. Apiiro counted 2,539 secrets in 1,994 public repositories; one company confirmed its key was live."
+    },
     {
      "item": "821908",
      "kicker": "Claude Code",
@@ -799,6 +806,50 @@
   }
  ],
  "follow": [
+  {
+   "name": "oss-security: core tools",
+   "plugin": "rss-atom",
+   "config": {
+    "url": "https://seclists.org/rss/oss-sec.rss",
+    "include_any": [
+     "OpenSSH",
+     "sshd",
+     "OpenSSL",
+     "curl",
+     "Git v2",
+     "glibc",
+     "musl",
+     "sudo",
+     "systemd",
+     "Linux kernel",
+     "CPython",
+     "Python 3.",
+     "PyPI",
+     "npm",
+     "Node.js",
+     "nginx",
+     "Caddy",
+     "SQLite",
+     "PostgreSQL",
+     "xz",
+     "zlib",
+     "rsync",
+     "tmux",
+     "BusyBox",
+     "Alpine",
+     "Dropbear",
+     "WireGuard",
+     "runc",
+     "containerd"
+    ],
+    "exclude_any": [
+     "Re:"
+    ]
+   },
+   "items": [
+    "bonus-9"
+   ]
+  },
   {
    "name": "CNBC: AI labs",
    "plugin": "rss-atom",

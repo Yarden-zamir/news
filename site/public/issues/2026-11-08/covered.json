@@ -4,7 +4,7 @@
  "date": "2026-11-08",
  "built": "2026-11-08T01:14:57.709976+02:00",
  "title": "The Riffle",
- "description": "Issue 5: GitHub rebuilds Git storage so 5,000 agents can push to one repository, Anthropic's IPO price talk slides, Claude Code's “don't ask again” leaks passwords, and ARC Raiders weighs PvE.",
+ "description": "Issue 5: a very long password opens password-less OpenSSH accounts on Alpine, GitHub rebuilds Git storage so 5,000 agents can push to one repository, Anthropic's IPO price talk slides, and ARC Raiders weighs PvE.",
  "leads": [
   {
    "section": "dev",
@@ -37,6 +37,15 @@
    "anchor": null
   },
   {
+   "url": "https://seclists.org/oss-sec/2026/q4/522",
+   "title": "\"sshole\": password authentication bypass: OpenSSH + musl libc",
+   "kind": "article",
+   "source": "oss-security",
+   "published_at": "2026-11-05T16:14:35+02:00",
+   "headline": "A very long password opens password-less accounts on Alpine's OpenSSH",
+   "anchor": "story-a-very-long-password-opens-password-less-accounts-on-alpine"
+  },
+  {
    "url": "https://www.cnbc.com/2026/11/06/investors-brace-for-anthropic-valuation-1point5-trillion-a-stretch.html",
    "title": "Investors brace for lower Anthropic valuation, calling $1.5 trillion a 'stretch'",
    "kind": "article",
@@ -44,15 +53,6 @@
    "published_at": "2026-11-06T23:00:14+02:00",
    "headline": "Anthropic's IPO price talk slides toward $1 trillion",
    "anchor": "story-anthropic-s-ipo-price-talk-slides-toward-1-trillion"
-  },
-  {
-   "url": "https://cybersecuritynews.com/claude-codes-yes-and-dont-ask-again/",
-   "title": "Claude Code's \"Yes, and Don't Ask Again\" Option Can Leak Passwords and API Keys to GitHub",
-   "kind": "article",
-   "source": "Cyber Security News",
-   "published_at": "2026-11-07T10:20:25+02:00",
-   "headline": "“Don't ask again” leaves passwords in public repositories",
-   "anchor": "story-don-t-ask-again-leaves-passwords-in-public-repositories"
   },
   {
    "url": "https://simonwillison.net/2026/Nov/1/kyle-kingsbury/",
@@ -125,6 +125,15 @@
    "published_at": "2026-11-06T09:02:00+02:00",
    "headline": "T3 Code Fork 2026-11-06 (ec1d5d9dd68d)",
    "anchor": null
+  },
+  {
+   "url": "https://cybersecuritynews.com/claude-codes-yes-and-dont-ask-again/",
+   "title": "Claude Code's \"Yes, and Don't Ask Again\" Option Can Leak Passwords and API Keys to GitHub",
+   "kind": "article",
+   "source": "Cyber Security News",
+   "published_at": "2026-11-07T10:20:25+02:00",
+   "headline": "“Don't ask again” leaves passwords in public repositories",
+   "anchor": "story-don-t-ask-again-leaves-passwords-in-public-repositories"
   },
   {
    "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.319",
