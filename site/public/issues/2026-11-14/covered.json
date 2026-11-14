@@ -1,0 +1,1273 @@
+{
+ "issue": "Vol. 1 · No. 6",
+ "page": "/issues/2026-11-14/",
+ "date": "2026-11-14",
+ "built": "2026-11-14T20:06:02.164578+02:00",
+ "title": "The Riffle",
+ "description": "Issue 6: hijacked GitHub accounts plant a CI secret stealer, Git fixes six bugs, SSHole goes from advisory to attacks, Anthropic ships Claude Fable 5.2 and opens its IPO roadshow, and ARC Raiders passes 17 million sales.",
+ "leads": [
+  {
+   "section": "dev",
+   "headline": "4,837 hijacked GitHub accounts planted a CI secret stealer",
+   "anchor": "story-4-837-hijacked-github-accounts-planted-a-ci-secret-stealer"
+  },
+  {
+   "section": "games",
+   "headline": "ARC Raiders turns one with 17 million sold, as sales slow",
+   "anchor": "story-arc-raiders-turns-one-with-17-million-sold-as-sales-slow"
+  }
+ ],
+ "items": [
+  {
+   "url": "https://www.bleepingcomputer.com/news/security/hackers-compromise-4-800-github-accounts-to-steal-cloud-credentials/",
+   "title": "Hackers compromise 4,800 GitHub accounts to steal cloud credentials",
+   "kind": "article",
+   "source": "BleepingComputer",
+   "published_at": "2026-11-13T00:25:30+02:00",
+   "headline": "4,837 hijacked GitHub accounts planted a CI secret stealer",
+   "anchor": "story-4-837-hijacked-github-accounts-planted-a-ci-secret-stealer"
+  },
+  {
+   "url": "https://github.blog/open-source/git/git-security-vulnerabilities-announced-7/",
+   "title": "Git security vulnerabilities announced",
+   "kind": "article",
+   "source": "GitHub Blog",
+   "published_at": "2026-11-10T20:00:00+02:00",
+   "headline": "Git 2.56.1 fixes six bugs, and one runs code on a recursive clone",
+   "anchor": "story-git-2-56-1-fixes-six-bugs-and-one-runs-code-on-a-recursive-c"
+  },
+  {
+   "url": "https://github.com/desktop/desktop/releases/tag/release-3.6.12-beta1",
+   "title": "GitHub Desktop 3.6.12-beta1",
+   "kind": "release",
+   "source": "GitHub Desktop Releases",
+   "published_at": "2026-11-11T10:58:37+02:00",
+   "headline": "GitHub Desktop 3.6.12-beta1",
+   "anchor": null
+  },
+  {
+   "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+   "title": "Introducing Claude Fable 5.2 and Claude Mythos 5.2",
+   "kind": "article",
+   "source": "Anthropic News",
+   "published_at": "2026-11-09T02:00:00+02:00",
+   "headline": "Claude Fable 5.2 ships; its twin, Mythos 5.2, stays with vetted groups",
+   "anchor": "story-claude-fable-5-2-ships-its-twin-mythos-5-2-stays-with-vetted"
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-09-claude-fable-5-2-in-github-copilot",
+   "title": "Claude Fable 5.2 in GitHub Copilot",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-09T18:46:43+02:00",
+   "headline": "Claude Fable 5.2 in GitHub Copilot",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/9/llm-anthropic/",
+   "title": "llm-anthropic 0.31",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-10T01:58:46+02:00",
+   "headline": "llm-anthropic 0.31",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/11/anthropic-ipo-roadshow/",
+   "title": "Anthropic's IPO roadshow video",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-11T17:11:59+02:00",
+   "headline": "Anthropic's IPO roadshow video",
+   "anchor": null
+  },
+  {
+   "url": "https://seclists.org/oss-sec/2026/q4/630",
+   "title": "OpenSSL: 5 Low fixes merged, QUIC, AES-GCM-SIV and CMS",
+   "kind": "article",
+   "source": "oss-security: core tools",
+   "published_at": "2026-11-10T19:48:09+02:00",
+   "headline": "OpenSSL: 5 Low fixes merged, QUIC, AES-GCM-SIV and CMS",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-10-dependabot-alerts-will-pause-on-inactive-repositories",
+   "title": "Dependabot alerts will pause on inactive repositories",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-10T16:20:05+02:00",
+   "headline": "Dependabot alerts will pause on inactive repositories",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-13-upcoming-deprecation-of-selected-github-copilot-models-in-december",
+   "title": "Upcoming deprecation of selected GitHub Copilot models in December",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-13T22:40:05+02:00",
+   "headline": "Upcoming deprecation of selected GitHub Copilot models in December",
+   "anchor": null
+  },
+  {
+   "url": "https://developers.cloudflare.com/changelog/post/2026-11-12-cloudflared-matrix-path-parameters/",
+   "title": "Cloudflare Tunnel, Cloudflare Tunnel for SASE - Cloudflare Tunnel extends URL normalization",
+   "kind": "article",
+   "source": "Cloudflare One Changelog",
+   "published_at": "2026-11-12T02:00:00+02:00",
+   "headline": "Cloudflare Tunnel, Cloudflare Tunnel for SASE - Cloudflare Tunnel extends URL normalization",
+   "anchor": null
+  },
+  {
+   "url": "https://blog.modelcontextprotocol.io/posts/mcp-release-cycle/",
+   "title": "A More Predictable Release Cycle for MCP",
+   "kind": "article",
+   "source": "MCP Blog",
+   "published_at": "2026-11-11T11:00:00+02:00",
+   "headline": "A More Predictable Release Cycle for MCP",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.8-nightly.20261107.4090000",
+   "title": "T3 Code Fork 2026-11-08 (108610952b9f)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-08T09:01:56+02:00",
+   "headline": "T3 Code Fork 2026-11-08 (108610952b9f)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.8-nightly.20261108.4130000",
+   "title": "T3 Code Fork 2026-11-09 (ee161d8e5480)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-09T09:04:52+02:00",
+   "headline": "T3 Code Fork 2026-11-09 (ee161d8e5480)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.9-nightly.20261110.4320000",
+   "title": "T3 Code Fork 2026-11-10 (46fe228f8558)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-10T18:40:32+02:00",
+   "headline": "T3 Code Fork 2026-11-10 (46fe228f8558)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.9-nightly.20261110.4350000",
+   "title": "T3 Code Fork 2026-11-10 (9eadd6b014e1)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-10T21:46:11+02:00",
+   "headline": "T3 Code Fork 2026-11-10 (9eadd6b014e1)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.10-nightly.20261113.4590000",
+   "title": "T3 Code Fork 2026-11-13 v0.1.10-nightly.20261113.4590000 (f64b36fc2601)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-13T09:11:32+02:00",
+   "headline": "T3 Code Fork 2026-11-13 v0.1.10-nightly.20261113.4590000 (f64b36fc2601)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.9-nightly.20261111.4400000",
+   "title": "T3 Code Fork 2026-11-11 v0.1.9-nightly.20261111.4400000 (d4d0e3928ea6)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-11T11:20:14+02:00",
+   "headline": "T3 Code Fork 2026-11-11 v0.1.9-nightly.20261111.4400000 (d4d0e3928ea6)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.10-nightly.20261112.4510000",
+   "title": "T3 Code Fork 2026-11-12 v0.1.10-nightly.20261112.4510000 (78de4c713a7f)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-12T09:12:55+02:00",
+   "headline": "T3 Code Fork 2026-11-12 v0.1.10-nightly.20261112.4510000 (78de4c713a7f)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/Yarden-zamir/t3code/releases/tag/v0.1.10-nightly.20261114.4700000",
+   "title": "T3 Code Fork 2026-11-14 v0.1.10-nightly.20261114.4700000 (76451f71a8a3)",
+   "kind": "article",
+   "source": "T3 Code Fork Daily Release",
+   "published_at": "2026-11-14T09:25:39+02:00",
+   "headline": "T3 Code Fork 2026-11-14 v0.1.10-nightly.20261114.4700000 (76451f71a8a3)",
+   "anchor": null
+  },
+  {
+   "url": "https://www.bleepingcomputer.com/news/security/hackers-exploit-sshole-openssh-flaw-to-breach-linux-systems/",
+   "title": "Hackers exploit SSHole OpenSSH flaw to breach Linux systems",
+   "kind": "article",
+   "source": "BleepingComputer",
+   "published_at": "2026-11-09T18:04:57+02:00",
+   "headline": "SSHole moves from advisory to attacks, and one intruder got root",
+   "anchor": "story-sshole-moves-from-advisory-to-attacks-and-one-intruder-got-r"
+  },
+  {
+   "url": "https://www.anthropic.com/news/roadshow-launch",
+   "title": "Anthropic launches roadshow for proposed initial public offering",
+   "kind": "article",
+   "source": "Anthropic News",
+   "published_at": "2026-11-10T02:00:00+02:00",
+   "headline": "Anthropic opens its roadshow at $70 to $78 a share",
+   "anchor": "story-anthropic-opens-its-roadshow-at-70-to-78-a-share"
+  },
+  {
+   "url": "https://blog.cloudflare.com/adapting-to-ai-penetration-testing-orchestrators/",
+   "title": "Adapting to AI penetration testing orchestrators: The Modern Security Model",
+   "kind": "article",
+   "source": "Cloudflare Blog",
+   "published_at": "2026-11-13T21:26:07+02:00",
+   "headline": "ARTEX is deleted, and 50 families of AI pentest bots scan Cloudflare's customers",
+   "anchor": "story-artex-is-deleted-and-50-families-of-ai-pentest-bots-scan-clo"
+  },
+  {
+   "url": "https://www.bleepingcomputer.com/news/security/apache-http-server-patches-critical-http-2-remote-code-execution-flaw/",
+   "title": "Apache HTTP Server patches critical HTTP/2 remote code execution flaw",
+   "kind": "article",
+   "source": "BleepingComputer",
+   "published_at": "2026-11-12T21:12:55+02:00",
+   "headline": "Apache fixes an HTTP/2 bug that can run code without a login",
+   "anchor": "story-apache-fixes-an-http-2-bug-that-can-run-code-without-a-login"
+  },
+  {
+   "url": "https://seclists.org/oss-sec/2026/q4/682",
+   "title": "PostgreSQL 18.7, 17.12, 16.16, 15.20, 14.25, and 19 RC 2 Released, fixes 52 security vulnerabilities",
+   "kind": "article",
+   "source": "oss-security: core tools",
+   "published_at": "2026-11-12T20:02:44+02:00",
+   "headline": "PostgreSQL patches 52 security bugs in one go, and retires version 14",
+   "anchor": "story-postgresql-patches-52-security-bugs-in-one-go-and-retires-ve"
+  },
+  {
+   "url": "https://epoch.ai/publications/incident-report-ai-agents-attempted-exploits-on-our-website",
+   "title": "Incident report: AI agents attempted exploits on our website during a third-party alignment evaluation",
+   "kind": "article",
+   "source": "Epoch AI",
+   "published_at": "2026-11-13T02:00:00+02:00",
+   "headline": "Incident report: AI agents attempted exploits on our website during a third-party alignment evaluation",
+   "anchor": null
+  },
+  {
+   "url": "https://alignment.openai.com/misalignment-reports/stopping-a-running-alignment-evaluation/",
+   "title": "Stopping a running alignment evaluation",
+   "kind": "article",
+   "source": "OpenAI misalignment reports",
+   "published_at": "2026-11-12T10:00:00+02:00",
+   "headline": "Stopping a running alignment evaluation",
+   "anchor": null
+  },
+  {
+   "url": "https://alignment.openai.com/misalignment-reports/using-peers-work-to-gain-unauthorized-access-to-openai-research-infrastructure/",
+   "title": "Using peers’ work to gain unauthorized access to OpenAI research infrastructure",
+   "kind": "article",
+   "source": "OpenAI misalignment reports",
+   "published_at": "2026-11-10T10:00:00+02:00",
+   "headline": "Using peers’ work to gain unauthorized access to OpenAI research infrastructure",
+   "anchor": null
+  },
+  {
+   "url": "https://thezvi.substack.com/p/fable-and-mythos-52-the-system-card",
+   "title": "Fable and Mythos 5.2: The System Card",
+   "kind": "article",
+   "source": "Don't Worry About the Vase",
+   "published_at": "2026-11-11T18:25:17+02:00",
+   "headline": "Fable and Mythos 5.2: The System Card",
+   "anchor": null
+  },
+  {
+   "url": "https://zellij.dev/news/terminal-inbox-session-previews/",
+   "title": "Zellij 0.46: built-in terminal, attention inbox, session previews",
+   "kind": "article",
+   "source": "Zellij",
+   "published_at": "2026-11-11T02:00:00+02:00",
+   "headline": "Zellij 0.46 becomes a terminal with an inbox for your agents",
+   "anchor": "story-zellij-0-46-becomes-a-terminal-with-an-inbox-for-your-agents"
+  },
+  {
+   "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.323",
+   "title": "claude-code - Added Code Mode, an experimental opt-in in which Claude writes JavaScript to call its tools; see https://code.claude.com/docs/en/code-mode to turn it on, or to turn it off for an organization",
+   "kind": "release",
+   "source": "Claude Code Releases",
+   "published_at": "2026-11-13T00:12:13+02:00",
+   "headline": "Claude Code's new Code Mode writes JavaScript to call its tools",
+   "anchor": "story-claude-code-s-new-code-mode-writes-javascript-to-call-its-to"
+  },
+  {
+   "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.325",
+   "title": "claude-code - Fixed a security issue in how zstd-compressed responses are decoded",
+   "kind": "release",
+   "source": "Claude Code Releases",
+   "published_at": "2026-11-13T22:40:01+02:00",
+   "headline": "Fixed a security issue in how zstd-compressed responses are decoded",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.321",
+   "title": "claude-code - Added Claude Fable 5.2 (claude-fable-5-2), now the default Fable model — 1M context, $8/$40 per Mtok with $0.20/Mtok cache reads",
+   "kind": "release",
+   "source": "Claude Code Releases",
+   "published_at": "2026-11-09T21:22:30+02:00",
+   "headline": "Added Claude Fable 5.2 (claude-fable-5-2), now the default Fable model — 1M context, $8/$40 per Mtok with $0.20/Mtok cache reads",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.322",
+   "title": "claude-code - Added fast mode on Vertex in the global, us and eu regions, falling back to standard speed if Vertex refuses it",
+   "kind": "release",
+   "source": "Claude Code Releases",
+   "published_at": "2026-11-10T04:29:43+02:00",
+   "headline": "Added fast mode on Vertex in the global, us and eu regions, falling back to standard speed if Vertex refuses it",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/introducing-chatgpt-wallet",
+   "title": "Introducing ChatGPT Wallet",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-13T17:00:00+02:00",
+   "headline": "ChatGPT Wallet lets agents check out, after a Face ID or fingerprint check",
+   "anchor": "story-chatgpt-wallet-lets-agents-check-out-after-a-face-id-or-fing"
+  },
+  {
+   "url": "https://techcrunch.com/2026/11/13/chatgpts-new-wallet-lets-ai-agents-shop-and-check-out-for-you/",
+   "title": "ChatGPT’s new Wallet lets AI agents shop and check out for you",
+   "kind": "article",
+   "source": "TechCrunch: AI agents",
+   "published_at": "2026-11-13T18:00:12+02:00",
+   "headline": "ChatGPT’s new Wallet lets AI agents shop and check out for you",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/11/aws-emulator/",
+   "title": "aws-emulator",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-11T23:18:30+02:00",
+   "headline": "An agent swarm wrote AWS's official local emulator: 29,684 commits in three weeks",
+   "anchor": "story-an-agent-swarm-wrote-aws-s-official-local-emulator-29-684-co"
+  },
+  {
+   "url": "https://github.com/pingdotgg/t3code/releases/tag/v0.1.9",
+   "title": "T3 Code v0.1.9",
+   "kind": "release",
+   "source": "T3 Code Releases",
+   "published_at": "2026-11-11T13:33:49+02:00",
+   "headline": "T3 Code 0.1.9: 198 changes, and agent sign-ins through T3 Connect",
+   "anchor": "story-t3-code-0-1-9-198-changes-and-agent-sign-ins-through-t3-conn"
+  },
+  {
+   "url": "https://github.com/pingdotgg/t3code/releases/tag/v0.1.8",
+   "title": "T3 Code v0.1.8",
+   "kind": "release",
+   "source": "T3 Code Releases",
+   "published_at": "2026-11-10T00:46:42+02:00",
+   "headline": "T3 Code v0.1.8",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/openai/codex/releases/tag/rust-v0.169.0",
+   "title": "codex - The opt-in terminal workspace supports multiple side-chat tabs. Switch between them with the keyboard or mouse, and reopen saved local side chats after restarting Codex. (#59784, #60152, #60181)",
+   "kind": "release",
+   "source": "Codex CLI Releases",
+   "published_at": "2026-11-13T10:39:10+02:00",
+   "headline": "Codex puts side chats in tabs beside the main chat",
+   "anchor": "story-codex-puts-side-chats-in-tabs-beside-the-main-chat"
+  },
+  {
+   "url": "https://github.com/openai/codex/releases/tag/rust-v0.168.0",
+   "title": "codex - Browse model providers under Sessions → Model providers and choose the default for new chats. (#59541, #59722)",
+   "kind": "release",
+   "source": "Codex CLI Releases",
+   "published_at": "2026-11-13T05:56:26+02:00",
+   "headline": "Browse model providers under Sessions → Model providers and choose the default for new chats. (#59541, #59722)",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/anomalyco/opencode/releases/tag/v2.3.0",
+   "title": "opencode - Background Subagents by Default: Subagents now return immediately, continue in the background, and report back whenever they become idle. You can keep working in the parent session while multiple subagents run concurrently. (#63382)",
+   "kind": "release",
+   "source": "OpenCode Releases",
+   "published_at": "2026-11-13T10:55:07+02:00",
+   "headline": "OpenCode runs subagents in the background by default",
+   "anchor": "story-opencode-runs-subagents-in-the-background-by-default"
+  },
+  {
+   "url": "https://github.com/anomalyco/opencode/releases/tag/v2.2.7",
+   "title": "opencode - GitHub Copilot Auto: Pick Auto in the model picker when your Copilot account has an Auto pool, and Copilot's router chooses the model for each session at the Auto discount. If routing fails, OpenCode falls back to the account's default chat model. (#62997)",
+   "kind": "release",
+   "source": "OpenCode Releases",
+   "published_at": "2026-11-10T12:37:15+02:00",
+   "headline": "GitHub Copilot Auto: Pick Auto in the model picker when your Copilot account has an Auto pool, and Copilot's router chooses the model for each session at the Auto discount. If routing fails, OpenCode falls back to the account's default chat model. (#62997)",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/pyynvrm1vskw",
+   "title": "Increase in timeouts for some unauthenticated users",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-08T14:32:35+02:00",
+   "headline": "Increase in timeouts for some unauthenticated users",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/c9px7cw2ghrs",
+   "title": "Increased timeouts due to surge in anonymous users",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-09T11:09:56+02:00",
+   "headline": "Increased timeouts due to surge in anonymous users",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/xxb3l2bm76dr",
+   "title": "Incident with Webhooks and Actions",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-09T13:50:35+02:00",
+   "headline": "Incident with Webhooks and Actions",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/tp8cghg7tlc4",
+   "title": "Incident with Actions and Checks API",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-09T20:59:32+02:00",
+   "headline": "Incident with Actions and Checks API",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/6jm5k16vyhfg",
+   "title": "Degraded availability for GPT-5.3 Codex and GPT-5.6 models in Copilot",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-10T02:05:52+02:00",
+   "headline": "Degraded availability for GPT-5.3 Codex and GPT-5.6 models in Copilot",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/hnf21m9jkl3c",
+   "title": "Incident with Git Operations and Pull Requests",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-10T19:55:03+02:00",
+   "headline": "Incident with Git Operations and Pull Requests",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/dvy0t3mvh1lg",
+   "title": "Impact across multiple GitHub products including Actions, Pages, and Copilot products.",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-11T23:21:39+02:00",
+   "headline": "Impact across multiple GitHub products including Actions, Pages, and Copilot products.",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/1xzmt89vv61l",
+   "title": "Incident with Pull Requests",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-13T20:29:31+02:00",
+   "headline": "Incident with Pull Requests",
+   "anchor": null
+  },
+  {
+   "url": "https://www.githubstatus.com/incidents/51drrqvsv66g",
+   "title": "Copilot experiencing degraded model availability for some GPT models",
+   "kind": "status",
+   "source": "GitHub Status",
+   "published_at": "2026-11-13T23:27:59+02:00",
+   "headline": "Copilot experiencing degraded model availability for some GPT models",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/news-insights/company-news/github-availability-report-october-2026/",
+   "title": "GitHub availability report: October 2026",
+   "kind": "article",
+   "source": "GitHub Blog",
+   "published_at": "2026-11-13T02:20:16+02:00",
+   "headline": "GitHub moved 140 of 151 services to Azure; reliability is “still not where it needed to be”",
+   "anchor": "story-github-moved-140-of-151-services-to-azure-reliability-is-sti"
+  },
+  {
+   "url": "https://code.visualstudio.com/updates/v1_146",
+   "title": "Visual Studio Code 1.146",
+   "kind": "article",
+   "source": "VS Code Feed",
+   "published_at": "2026-11-11T19:00:00+02:00",
+   "headline": "VS Code 1.146 freezes the Local harness; it goes in February",
+   "anchor": "story-vs-code-1-146-freezes-the-local-harness-it-goes-in-february"
+  },
+  {
+   "url": "https://github.com/microsoft/vscode/releases/tag/1.146.0",
+   "title": "vscode - GitHub Universe, on demand. Watch the VS Code session recordings.",
+   "kind": "release",
+   "source": "VS Code Releases",
+   "published_at": "2026-11-11T12:07:14+02:00",
+   "headline": "GitHub Universe, on demand. Watch the VS Code session recordings.",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/microsoft/vscode/releases/tag/1.145.3",
+   "title": "vscode - GitHub Universe, on demand. Watch the VS Code session recordings.",
+   "kind": "release",
+   "source": "VS Code Releases",
+   "published_at": "2026-11-10T20:53:52+02:00",
+   "headline": "GitHub Universe, on demand. Watch the VS Code session recordings.",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/10/prompting-claude-fable-52/",
+   "title": "Quoting Prompting Claude Fable 5.2",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-10T07:34:14+02:00",
+   "headline": "Quoting Prompting Claude Fable 5.2",
+   "anchor": null
+  },
+  {
+   "url": "https://techcrunch.com/2026/11/12/united-airlines-blocks-ai-agents-from-booking-flights-citing-cybersecurity-risks/",
+   "title": "United Airlines blocks AI agents from booking flights, citing cybersecurity risks",
+   "kind": "article",
+   "source": "TechCrunch: AI agents",
+   "published_at": "2026-11-12T19:17:58+02:00",
+   "headline": "United Airlines blocks AI agents from booking flights, citing cybersecurity risks",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/10/muse-ember/",
+   "title": "Introducing Our Smallest, Most Efficient Model: Muse Ember",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-10T09:28:21+02:00",
+   "headline": "Introducing Our Smallest, Most Efficient Model: Muse Ember",
+   "anchor": null
+  },
+  {
+   "url": "https://blog.cloudflare.com/kitesurf-open-source/",
+   "title": "Kitesurf is now open source",
+   "kind": "article",
+   "source": "Cloudflare Blog",
+   "published_at": "2026-11-13T22:20:21+02:00",
+   "headline": "Cloudflare open-sources Kitesurf, its browser for agents on Workers",
+   "anchor": "story-cloudflare-open-sources-kitesurf-its-browser-for-agents-on-w"
+  },
+  {
+   "url": "https://blog.cloudflare.com/spend-management/",
+   "title": "Introducing Spend Management: Spending limits and alerts for Cloudflare",
+   "kind": "article",
+   "source": "Cloudflare Blog",
+   "published_at": "2026-11-13T16:00:00+02:00",
+   "headline": "Cloudflare can now pause your Workers at a spending limit",
+   "anchor": "story-cloudflare-can-now-pause-your-workers-at-a-spending-limit"
+  },
+  {
+   "url": "https://blog.cloudflare.com/launching-vite-ecosystem-fund/",
+   "title": "Launching the Vite Ecosystem Fund",
+   "kind": "article",
+   "source": "Cloudflare Blog",
+   "published_at": "2026-11-09T15:00:00+02:00",
+   "headline": "Cloudflare pays 44 Vite projects $301,300, because “AI has made funding urgent”",
+   "anchor": "story-cloudflare-pays-44-vite-projects-301-300-because-ai-has-made"
+  },
+  {
+   "url": "https://developers.cloudflare.com/changelog/post/2026-11-11-leaked-service-token-recovery/",
+   "title": "Access, Cloudflare One - GitHub automatically detects leaked Access service tokens",
+   "kind": "article",
+   "source": "Cloudflare One Changelog",
+   "published_at": "2026-11-11T02:00:00+02:00",
+   "headline": "Access, Cloudflare One - GitHub automatically detects leaked Access service tokens",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/cli/cli/releases/tag/v2.104.0",
+   "title": "GitHub CLI 2.104.0",
+   "kind": "release",
+   "source": "GitHub CLI Releases",
+   "published_at": "2026-11-12T21:05:11+02:00",
+   "headline": "GitHub CLI 2.104.0",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-12-actions-for-arm32-linux-windows-retirement",
+   "title": "Actions for ARM32 Linux & Windows retirement",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-12T22:59:36+02:00",
+   "headline": "Actions for ARM32 Linux & Windows retirement",
+   "anchor": null
+  },
+  {
+   "url": "https://blog.python.org/2026/11/python-3160-alpha-2-is-now-available/",
+   "title": "Python 3.16.0 alpha 2 is now available",
+   "kind": "article",
+   "source": "Python Insider",
+   "published_at": "2026-11-10T02:00:00+02:00",
+   "headline": "Python 3.16.0 alpha 2 is now available",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/10/llm-gemini/",
+   "title": "llm-gemini 0.36",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-10T22:09:44+02:00",
+   "headline": "llm-gemini 0.36",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/12/llm-gemini/",
+   "title": "llm-gemini 0.37",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-13T00:55:19+02:00",
+   "headline": "llm-gemini 0.37",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/11/gemini-decisions-api/",
+   "title": "Gemini Decisions API",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-12T00:03:25+02:00",
+   "headline": "Gemini Decisions API",
+   "anchor": null
+  },
+  {
+   "url": "https://developers.googleblog.com/catch-go-bugs-that-fuzzing-misses-with-gemini-and-a-constraint-solver/",
+   "title": "Catch Go bugs that fuzzing misses with Gemini and a constraint solver",
+   "kind": "article",
+   "source": "Gemini and Gemma on Google Developers Blog",
+   "published_at": "2026-11-12T23:12:22.536210+02:00",
+   "headline": "Catch Go bugs that fuzzing misses with Gemini and a constraint solver",
+   "anchor": null
+  },
+  {
+   "url": "https://blog.modelcontextprotocol.io/posts/exploring-file-uploads-and-downloads-in-mcp/",
+   "title": "Exploring File Uploads and Downloads in MCP",
+   "kind": "article",
+   "source": "MCP Blog",
+   "published_at": "2026-11-10T11:00:00+02:00",
+   "headline": "Exploring File Uploads and Downloads in MCP",
+   "anchor": null
+  },
+  {
+   "url": "https://docs.slack.dev/changelog/2026/11/13/slack-cli",
+   "title": "Release: Slack CLI v4.14.0",
+   "kind": "article",
+   "source": "Slack Developer Docs Blog",
+   "published_at": "2026-11-13T02:00:00+02:00",
+   "headline": "Release: Slack CLI v4.14.0",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/13/datasette-leaflet/",
+   "title": "datasette-leaflet 0.3",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-14T00:30:54+02:00",
+   "headline": "datasette-leaflet 0.3",
+   "anchor": null
+  },
+  {
+   "url": "https://techcrunch.com/2026/11/13/ai-agent-startup-langchain-hits-3b-valuation/",
+   "title": "AI agent startup LangChain hits $3B valuation",
+   "kind": "article",
+   "source": "TechCrunch: AI agents",
+   "published_at": "2026-11-13T21:37:57+02:00",
+   "headline": "AI agent startup LangChain hits $3B valuation",
+   "anchor": null
+  },
+  {
+   "url": "https://raycast.com//changelog/macos/2-12",
+   "title": "🧮 New Calculator",
+   "kind": "article",
+   "source": "Raycast Changelog",
+   "published_at": "2026-11-12T11:17:10+02:00",
+   "headline": "🧮 New Calculator",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/9/details-summary/",
+   "title": "Hide your slop PR descriptions behind <details><summary>",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-09T06:25:05+02:00",
+   "headline": "Simon Willison folds agent-written PR descriptions away",
+   "anchor": "story-simon-willison-folds-agent-written-pr-descriptions-away"
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/9/mysterious-beeps/",
+   "title": "Locating the source of a mysterious beep with Claude",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-10T01:57:21+02:00",
+   "headline": "Claude Code built a beep finder out of five devices",
+   "anchor": "story-claude-code-built-a-beep-finder-out-of-five-devices"
+  },
+  {
+   "url": "https://blog.cloudflare.com/choosing-quepaxa/",
+   "title": "Choosing QuePaxa, an unusual consensus algorithm",
+   "kind": "article",
+   "source": "Cloudflare Blog",
+   "published_at": "2026-11-11T16:24:46+02:00",
+   "headline": "Cloudflare's new control plane agrees without a leader",
+   "anchor": "story-cloudflare-s-new-control-plane-agrees-without-a-leader"
+  },
+  {
+   "url": "https://seclists.org/oss-sec/2026/q4/564",
+   "title": "[oss-security][CVE-2026-119170] Regression in FIPS enforcement of hash algorithms affecting only Python 3.14.10",
+   "kind": "article",
+   "source": "oss-security: core tools",
+   "published_at": "2026-11-06T23:41:26+02:00",
+   "headline": "[oss-security][CVE-2026-119170] Regression in FIPS enforcement of hash algorithms affecting only Python 3.14.10",
+   "anchor": null
+  },
+  {
+   "url": "https://docs.slack.dev/changelog/2026/11/13/admin-users-set-regular-org-demotion",
+   "title": "Org-level admin.users.setRegular API method calls now remove Workspace Owner roles",
+   "kind": "article",
+   "source": "Slack Developer Docs Blog",
+   "published_at": "2026-11-13T02:00:00+02:00",
+   "headline": "Org-level admin.users.setRegular API method calls now remove Workspace Owner roles",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/11/llm/",
+   "title": "llm 0.37.2",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-11T19:19:52+02:00",
+   "headline": "llm 0.37.2",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/docker/compose/releases/tag/v5.7.1",
+   "title": "compose - fix(oci): verify the manifests fetched against their digest, and take only complete cache entries by @ndeloof in #14490",
+   "kind": "release",
+   "source": "Docker Compose Releases",
+   "published_at": "2026-11-11T10:06:10+02:00",
+   "headline": "fix(oci): verify the manifests fetched against their digest, and take only complete cache entries by @ndeloof in #14490",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-09-secret-scanning-detects-secrets-in-github-actions-workflow-logs",
+   "title": "Secret scanning detects secrets in GitHub Actions workflow logs",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-09T11:01:37+02:00",
+   "headline": "Secret scanning detects secrets in GitHub Actions workflow logs",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-10-a-more-informative-github-dashboard",
+   "title": "A more informative GitHub dashboard",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-10T12:34:35+02:00",
+   "headline": "A more informative GitHub dashboard",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-10-gemini-4-carbon-in-github-copilot",
+   "title": "Gemini 4 Carbon in GitHub Copilot",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-10T21:26:51+02:00",
+   "headline": "Gemini 4 Carbon in GitHub Copilot",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-10-c-language-server-now-auto-configures-msbuild-builds",
+   "title": "C++ language server now auto-configures MSBuild builds",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-10T19:04:10+02:00",
+   "headline": "C++ language server now auto-configures MSBuild builds",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-10-github-app-support-for-enterprise-copilot-seat-management",
+   "title": "GitHub App support for Enterprise Copilot seat management",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-11T02:10:31+02:00",
+   "headline": "GitHub App support for Enterprise Copilot seat management",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-11-issue-types-and-fields-are-available-for-personal-accounts",
+   "title": "Issue types and fields are available for personal accounts",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-11T19:16:46+02:00",
+   "headline": "Issue types and fields are available for personal accounts",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-12-public-monitoring-alerts-now-have-direct-links",
+   "title": "Public monitoring alerts now have direct links",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-12T16:37:38+02:00",
+   "headline": "Public monitoring alerts now have direct links",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-13-manage-ai-scan-for-repositories-using-the-rest-api",
+   "title": "Manage AI Scan for repositories using the REST API",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-13T14:22:41+02:00",
+   "headline": "Manage AI Scan for repositories using the REST API",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-13-gemini-4-hydrogen-in-github-copilot",
+   "title": "Gemini 4 Hydrogen in GitHub Copilot",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-13T20:23:48+02:00",
+   "headline": "Gemini 4 Hydrogen in GitHub Copilot",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-13-github-enterprise-server-support-in-the-github-copilot-app",
+   "title": "GitHub Enterprise Server support in the GitHub Copilot app",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-13T20:27:13+02:00",
+   "headline": "GitHub Enterprise Server support in the GitHub Copilot app",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/control-room",
+   "title": "Control Room: A central system to track and stop model workloads across our research infrastructure",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-09T15:00:00+02:00",
+   "headline": "Control Room: A central system to track and stop model workloads across our research infrastructure",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/chatgpt-enterprise-aws-marketplace",
+   "title": "ChatGPT Enterprise now available in AWS Marketplace",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-09T21:00:00+02:00",
+   "headline": "ChatGPT Enterprise now available in AWS Marketplace",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/ai-effect-on-freelance-work",
+   "title": "Work at the Frontier: AI’s effect on freelance work",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-10T09:00:00+02:00",
+   "headline": "Work at the Frontier: AI’s effect on freelance work",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/introducing-businesses-chatgpt",
+   "title": "Introducing Businesses in ChatGPT",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-10T12:00:00+02:00",
+   "headline": "Introducing Businesses in ChatGPT",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/cogent-security",
+   "title": "Cogent and OpenAI build cyber defense factories for enterprises",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-10T02:00:00+02:00",
+   "headline": "Cogent and OpenAI build cyber defense factories for enterprises",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/chatgpt-plus-for-veterans",
+   "title": "ChatGPT Plus for veterans and servicemembers",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-11T10:00:00+02:00",
+   "headline": "ChatGPT Plus for veterans and servicemembers",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/children-first-declaration",
+   "title": "Supporting research on AI and children’s safety",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-12T02:00:00+02:00",
+   "headline": "Supporting research on AI and children’s safety",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/business/customer-stories/amplitude",
+   "title": "How Amplitude ships product improvements in 1–2 days with OpenAI",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-12T22:00:00+02:00",
+   "headline": "How Amplitude ships product improvements in 1–2 days with OpenAI",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/business/customer-stories/shield",
+   "title": "Shield helps technicians hand off legacy portal work with OpenAI",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-13T10:00:00+02:00",
+   "headline": "Shield helps technicians hand off legacy portal work with OpenAI",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.112",
+   "title": "copilot-cli - 2026-11-13",
+   "kind": "release",
+   "source": "GitHub Copilot CLI Releases",
+   "published_at": "2026-11-14T01:59:41+02:00",
+   "headline": "v1.0.112",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/vitejs/vite/releases/tag/v8.3.8",
+   "title": "vite - build: keep magicString and ast in transform hook meta (#24012) (a3b28e8)",
+   "kind": "release",
+   "source": "Vite Releases",
+   "published_at": "2026-11-11T04:46:37+02:00",
+   "headline": "v8.3.8",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/fastapi/fastapi/releases/tag/0.163.0",
+   "title": "fastapi - FastAPI includes an official skill that helps coding agents use new features and recommended patterns for your installed version. Install it with uvx library-skills in your project. See Develop with AI.",
+   "kind": "release",
+   "source": "FastAPI Releases",
+   "published_at": "2026-11-14T18:53:02+02:00",
+   "headline": "0.163.0",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/astral-sh/ty/releases/tag/0.0.104",
+   "title": "ty - Narrow class objects in equality and membership checks (#30393)",
+   "kind": "release",
+   "source": "ty Releases",
+   "published_at": "2026-11-13T22:53:59+02:00",
+   "headline": "0.0.104",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/openai/openai-python/releases/tag/v3.51.0",
+   "title": "openai-python - api: expand agent, image, Live, and external key support (#4269) (59738a2)",
+   "kind": "release",
+   "source": "OpenAI Python SDK Releases",
+   "published_at": "2026-11-13T23:12:49+02:00",
+   "headline": "v3.51.0",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/atuinsh/atuin/releases/tag/v18.24.8",
+   "title": "atuin - (release) Build musl artifacts with a musl C++ toolchain for Luau (#4723)",
+   "kind": "release",
+   "source": "atuin Releases",
+   "published_at": "2026-11-13T04:17:45+02:00",
+   "headline": "v18.24.8",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/googleapis/python-genai/releases/tag/v3.3.0",
+   "title": "python-genai - Add --flavor=interactions-eap packaging and scrub private exports (39f6abe)",
+   "kind": "release",
+   "source": "Google Gen AI Python SDK Releases",
+   "published_at": "2026-11-12T21:46:21+02:00",
+   "headline": "v3.3.0",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/anthropics/anthropic-sdk-python/releases/tag/v2.8.0",
+   "title": "anthropic-sdk-python - api: add Claude Tag metrics to the analytics summaries and users reports",
+   "kind": "release",
+   "source": "Anthropic Python SDK Releases",
+   "published_at": "2026-11-10T18:32:58+02:00",
+   "headline": "v2.8.0",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/cloudflare/cloudflared/releases/tag/2026.11.0",
+   "title": "2026.11.0",
+   "kind": "release",
+   "source": "cloudflared Releases",
+   "published_at": "2026-11-12T14:25:02+02:00",
+   "headline": "2026.11.0",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/ghostty-org/ghostty/releases/tag/vt-1.0.1",
+   "title": "vt-1.0.1",
+   "kind": "release",
+   "source": "Ghostty Releases",
+   "published_at": "2026-11-11T22:10:46+02:00",
+   "headline": "vt-1.0.1",
+   "anchor": null
+  },
+  {
+   "url": "https://www.python.org/downloads/release/python-3160a2/",
+   "title": "Python 3.16.0a2",
+   "kind": "release",
+   "source": "Python Releases",
+   "published_at": "2026-11-10T20:49:50+02:00",
+   "headline": "Python 3.16.0a2",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/astral-sh/ruff/releases/tag/0.17.5",
+   "title": "ruff - Redirect renamed rules (#30081)",
+   "kind": "release",
+   "source": "ruff Releases",
+   "published_at": "2026-11-12T19:55:55+02:00",
+   "headline": "0.17.5",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/13/datasette-cluster-map/",
+   "title": "datasette-cluster-map 0.19",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-14T01:02:45+02:00",
+   "headline": "datasette-cluster-map 0.19",
+   "anchor": null
+  },
+  {
+   "url": "https://seclists.org/oss-sec/2026/q4/690",
+   "title": "Dropbear: the restriction names an address — permitopen/permitlisten not enforced for unix-socket forwarding, docker.sock reachable (HEAD 99baf182, live-proven)",
+   "kind": "article",
+   "source": "oss-security: core tools",
+   "published_at": "2026-11-13T23:10:13+02:00",
+   "headline": "Dropbear: the restriction names an address — permitopen/permitlisten not enforced for unix-socket forwarding, docker.sock reachable (HEAD 99baf182, live-proven)",
+   "anchor": null
+  },
+  {
+   "url": "https://www.anthropic.com/research/building-strong-safety-evaluations",
+   "title": "Building strong safety evaluations",
+   "kind": "article",
+   "source": "Anthropic Engineering",
+   "published_at": "2026-11-13T02:00:00+02:00",
+   "headline": "Building strong safety evaluations",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/ai-and-ml/github-copilot/build-once-run-on-any-agent-a-practical-guide-to-agent-skills/",
+   "title": "Build once, run on any agent: A practical guide to agent skills",
+   "kind": "article",
+   "source": "GitHub Blog",
+   "published_at": "2026-11-13T00:54:52+02:00",
+   "headline": "Build once, run on any agent: A practical guide to agent skills",
+   "anchor": null
+  },
+  {
+   "url": "https://techcrunch.com/2026/11/12/nectar-launches-an-ai-agent-to-automate-creator-discovery-and-outreach-for-brands/",
+   "title": "Nectar launches an AI agent to automate creator discovery and outreach for brands",
+   "kind": "article",
+   "source": "TechCrunch: AI agents",
+   "published_at": "2026-11-12T21:11:00+02:00",
+   "headline": "Nectar launches an AI agent to automate creator discovery and outreach for brands",
+   "anchor": null
+  },
+  {
+   "url": "https://blog.jetbrains.com/idea/2026/11/forrester-consulting-finds-intellij-idea-delivered-155-roi-and-highlights-open-approach-to-ai/",
+   "title": "Forrester Consulting Finds IntelliJ IDEA Delivered 155% ROI and Highlights Open Approach to AI",
+   "kind": "article",
+   "source": "IntelliJ IDEA Blog",
+   "published_at": "2026-11-12T16:43:36+02:00",
+   "headline": "Forrester Consulting Finds IntelliJ IDEA Delivered 155% ROI and Highlights Open Approach to AI",
+   "anchor": null
+  },
+  {
+   "url": "https://github.blog/changelog/2026-11-12-secret-scanning-adds-a-detector-for-cloudflare",
+   "title": "Secret scanning detects Cloudflare service tokens",
+   "kind": "article",
+   "source": "Github Blog Changelog",
+   "published_at": "2026-11-12T16:38:25+02:00",
+   "headline": "Secret scanning detects Cloudflare service tokens",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/business/customer-stories/gondola",
+   "title": "Gondola doubles revenue as its team builds more with Codex",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-12T14:00:00+02:00",
+   "headline": "Gondola doubles revenue as its team builds more with Codex",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/business/customer-stories/holidays-extras-codex",
+   "title": "Holiday Extras is rethinking what it can build with Codex",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-12T11:30:00+02:00",
+   "headline": "Holiday Extras is rethinking what it can build with Codex",
+   "anchor": null
+  },
+  {
+   "url": "https://openai.com/index/gilbert-tobin-sam-nickless",
+   "title": "Gilbert + Tobin rethinks the business of law with AI",
+   "kind": "article",
+   "source": "OpenAI News",
+   "published_at": "2026-11-12T02:00:00+02:00",
+   "headline": "Gilbert + Tobin rethinks the business of law with AI",
+   "anchor": null
+  },
+  {
+   "url": "https://simonwillison.net/2026/Nov/11/tools-tags/",
+   "title": "Browse tools.simonwillison.net by tag",
+   "kind": "article",
+   "source": "Simon Willison",
+   "published_at": "2026-11-11T20:42:50+02:00",
+   "headline": "Browse tools.simonwillison.net by tag",
+   "anchor": null
+  },
+  {
+   "url": "https://seclists.org/oss-sec/2026/q4/657",
+   "title": "The GNU C Library security advisories update for 2026-11-11",
+   "kind": "article",
+   "source": "oss-security: core tools",
+   "published_at": "2026-11-11T18:17:07+02:00",
+   "headline": "The GNU C Library security advisories update for 2026-11-11",
+   "anchor": null
+  },
+  {
+   "url": "https://techcrunch.com/2026/11/11/siri-co-founder-backs-helix-for-its-voice-id-tech/",
+   "title": "Siri co-founder backs Helix for its voice ID tech",
+   "kind": "article",
+   "source": "TechCrunch: AI agents",
+   "published_at": "2026-11-11T17:02:47+02:00",
+   "headline": "Siri co-founder backs Helix for its voice ID tech",
+   "anchor": null
+  },
+  {
+   "url": "https://techcrunch.com/2026/11/11/databricks-new-ai-agent-tells-ceo-ali-ghodsi-the-unvarnished-truth/",
+   "title": "Databricks’ new AI agent tells CEO Ali Ghodsi the unvarnished truth",
+   "kind": "article",
+   "source": "TechCrunch: AI agents",
+   "published_at": "2026-11-11T17:00:00+02:00",
+   "headline": "Databricks’ new AI agent tells CEO Ali Ghodsi the unvarnished truth",
+   "anchor": null
+  },
+  {
+   "url": "https://www.eurogamer.net/arc-raiders-17-million-sales-nexon-decline",
+   "title": "As Arc Raiders celebrates its first birthday, publisher Nexon reveals the extraction shooter has topped 17 million sales, but revenue is set to decline",
+   "kind": "article",
+   "source": "Eurogamer",
+   "published_at": "2026-11-10T14:28:00+02:00",
+   "headline": "ARC Raiders turns one with 17 million sold, as sales slow",
+   "anchor": "story-arc-raiders-turns-one-with-17-million-sold-as-sales-slow"
+  },
+  {
+   "url": "https://www.reachthefinals.com/patchnotes/12-30",
+   "title": "Update 12.3.0",
+   "kind": "article",
+   "source": "THE FINALS Patch Notes",
+   "published_at": "2026-11-12T12:00:51+02:00",
+   "headline": "THE FINALS brings back Head Hunter for the Grand Major",
+   "anchor": "story-the-finals-brings-back-head-hunter-for-the-grand-major"
+  },
+  {
+   "url": "https://store.steampowered.com/news/app/2073850/view/695403626868244549",
+   "title": "Update 12.3.0",
+   "kind": "article",
+   "source": "THE FINALS News",
+   "published_at": "2026-11-12T12:03:15+02:00",
+   "headline": "Update 12.3.0",
+   "anchor": null
+  },
+  {
+   "url": "https://www.minecraft.net/en-us/article/introducing-realms-pro",
+   "title": "Introducing Realms Pro",
+   "kind": "article",
+   "source": "Minecraft News",
+   "published_at": "2026-11-09T21:00:08+02:00",
+   "headline": "Realms Pro hosts 50 Bedrock players on a dedicated server",
+   "anchor": "story-realms-pro-hosts-50-bedrock-players-on-a-dedicated-server"
+  },
+  {
+   "url": "https://www.minecraft.net/en-us/article/twitchcon-watch-time-quest",
+   "title": "New watch time challenge",
+   "kind": "article",
+   "source": "Minecraft News",
+   "published_at": "2026-11-10T20:00:00+02:00",
+   "headline": "New watch time challenge",
+   "anchor": null
+  },
+  {
+   "url": "https://www.minecraft.net/en-us/article/minecraft-26-4-snapshot-8",
+   "title": "Minecraft 26.4 Snapshot 8",
+   "kind": "article",
+   "source": "Minecraft News",
+   "published_at": "2026-11-10T16:00:00+02:00",
+   "headline": "Snapshot 8 teaches the Ender Dragon to fly again",
+   "anchor": "story-snapshot-8-teaches-the-ender-dragon-to-fly-again"
+  },
+  {
+   "url": "https://wardogshub.gg/blog/how-wardogs-anti-cheat-works/",
+   "title": "How WARDOGS anti-cheat really catches cheaters",
+   "kind": "article",
+   "source": "WARDOGS Hub",
+   "published_at": "2026-11-11T02:00:00+02:00",
+   "headline": "WARDOGS' anti-cheat builds a case before it bans",
+   "anchor": "story-wardogs-anti-cheat-builds-a-case-before-it-bans"
+  },
+  {
+   "url": "https://arcraiders.com/news/store-update-2-5-0",
+   "title": "Store Update 2.5.0",
+   "kind": "article",
+   "source": "ARC Raiders Official News",
+   "published_at": "2026-11-10T02:00:00+02:00",
+   "headline": "Store Update 2.5.0",
+   "anchor": null
+  },
+  {
+   "url": "https://www.minecraft.net/en-us/article/marketplace-spotlight-sound-effects",
+   "title": "Marketplace Spotlight: The Sound Effects Edition",
+   "kind": "article",
+   "source": "Minecraft News",
+   "published_at": "2026-11-10T21:00:50+02:00",
+   "headline": "Marketplace Spotlight: The Sound Effects Edition",
+   "anchor": null
+  },
+  {
+   "url": "https://www.minecraft.net/en-us/article/lets-play-decocraft",
+   "title": "LET’S PLAY: DECOCRAFT: SEASONS AND UGLY SWEATER",
+   "kind": "article",
+   "source": "Minecraft News",
+   "published_at": "2026-11-09T19:00:00+02:00",
+   "headline": "LET’S PLAY: DECOCRAFT: SEASONS AND UGLY SWEATER",
+   "anchor": null
+  },
+  {
+   "url": "https://www.minecraft.net/en-us/article/parents--guide-minecraft",
+   "title": "Minecraft Parents’ Guide",
+   "kind": "article",
+   "source": "Minecraft News",
+   "published_at": "2026-11-12T11:00:00+02:00",
+   "headline": "Minecraft Parents’ Guide",
+   "anchor": null
+  },
+  {
+   "url": "https://github.com/AppliedEnergistics/Applied-Energistics-2/releases/tag/neoforge%2Fv19.2.19",
+   "title": "19.2.19 for Minecraft 1.21.1",
+   "kind": "release",
+   "source": "Applied Energistics 2 Releases",
+   "published_at": "2026-11-09T03:31:11+02:00",
+   "headline": "19.2.19 for Minecraft 1.21.1",
+   "anchor": null
+  }
+ ]
+}
